@@ -3,7 +3,6 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Landing from '../screens/preScreen/LandingScreen';
 import PreCadastro from '../screens/preScreen/PreCadastroScreen';
 import Login from '../screens/preScreen/LoginScreen';
-import Cadastro from '../screens/preScreen/CadastroScreen';
 import HomeScreen from '../screens/appScreens/HomeScreen';
 import BottomTabsNavigator from './BottomTabsNavigator';
 import SearchScreen from '../screens/appScreens/SearchScreen';
@@ -19,7 +18,6 @@ export type RootStackParamList = {
   Landing: undefined;
   PreCadastro: undefined;
   Login: undefined;
-  Cadastro: undefined;
   HomeScreen: undefined;
   SearchScreen: { param: string };
   SubmitScreen: { param: string };
@@ -42,7 +40,6 @@ export default function RootNavigator() {
         <Stack.Screen name="Landing" component={Landing} />
         <Stack.Screen name="PreCadastro" component={PreCadastro} />
         <Stack.Screen name="Login" component={Login} />
-        <Stack.Screen name="Cadastro" component={Cadastro} />
         <Stack.Screen name="CadastroMoto" component={CadastroMoto} />
         <Stack.Screen name="CadastroSetor" component={CadastroSetor} />
         <Stack.Screen name="FormMoto" component={FormMoto} />

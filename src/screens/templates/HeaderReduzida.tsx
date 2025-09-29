@@ -3,19 +3,17 @@ import {
   Text,
   StyleSheet,
   Image,
-  Touchable,
   TouchableOpacity,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { useNavigation, useRoute } from '@react-navigation/native';
-import { useAuth, useUser } from '../contexts/UserContext';
+import { useNavigation } from '@react-navigation/native';
+import { auth } from '../../config/firebase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const roxo = '#f900cf';
-const roxo_escuro = '#9F0095';
 
 export default function HeaderReduzida() {
-  const { usuario } = useAuth();
+  const navigation = useNavigation();
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem('usuario');
@@ -24,17 +22,19 @@ export default function HeaderReduzida() {
       routes: [{ name: 'Login' }],
     });
   };
-  const navigation = useNavigation();
+
   return (
     <View>
       <View style={styles.header}>
         <View style={styles.topHeader}>
           <TouchableOpacity
             style={styles.linkProfile}
-            onPress={() => handleLogout()}
+            onPress={handleLogout}
           >
-            <Icon name="person-circle-outline" size={30} color={'#000'}></Icon>
-            <Text style={styles.TextProfile}>{usuario?.user}</Text>
+            <Icon name="person-circle-outline" size={30} color={'#000'} />
+            <Text style={styles.TextProfile}>
+              {auth.currentUser?.displayName || 'Usuário'}
+            </Text>
           </TouchableOpacity>
           <View>
             <Image
@@ -47,13 +47,8 @@ export default function HeaderReduzida() {
     </View>
   );
 }
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-  },
   topHeader: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -80,12 +75,6 @@ const styles = StyleSheet.create({
     height: 50,
     left: 20,
     top: 30,
-  },
-  voltarBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    position: 'absolute',
-    left: 20,
   },
   logo: {
     width: 120,

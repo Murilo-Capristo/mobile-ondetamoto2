@@ -1,14 +1,14 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { useAuth, useUser } from '../contexts/UserContext';
+import { auth } from '../../config/firebase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const roxo = '#f900cf';
 const roxo_escuro = '#9F0095';
 
 export default function HeaderTemplate() {
-  const { usuario } = useAuth();
+
   const handleLogout = async () => {
     await AsyncStorage.removeItem('usuario');
     navigation.reset({
@@ -27,7 +27,7 @@ export default function HeaderTemplate() {
             onPress={() => handleLogout()}
           >
             <Icon name="person-circle-outline" size={30} color={'#000'}></Icon>
-            <Text style={styles.TextProfile}>{usuario?.user}</Text>
+            <Text style={styles.TextProfile}>{auth.currentUser?.displayName || 'Usuário'}</Text>
           </TouchableOpacity>
           <View>
             <Image

@@ -6,49 +6,87 @@ import {
   Text,
   Image,
   StyleSheet,
-  Dimensions,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { RootStackParamList } from '../../navigation/RootNavigator';
-import Modal from 'react-native-modal';
-import { useState } from 'react';
-import { useAuth, useUser } from '../contexts/UserContext';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useState, useEffect } from 'react';
+import { auth } from '../../config/firebase';
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from 'firebase/auth';
 
 const roxo = '#f900cf';
 const roxo_escuro = '#9F0095';
-const { width, height } = Dimensions.get('window');
 
-type LoginScreenNavigationProp = NativeStackNavigationProp<
+type AuthScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
   'Login'
 >;
 
-export default function Cadastro() {
-  const { setUsuario } = useAuth();
-  const [usuarioInput, setUsuarioInput] = useState('');
+export default function AuthScreen() {
+  const navigation = useNavigation<AuthScreenNavigationProp>();
 
-  const navigation = useNavigation<LoginScreenNavigationProp>();
+  const [isLogin, setIsLogin] = useState(true);
 
-  const handleLogin = async () => {
-    const usuario = {
-      user: usuarioInput.trim(),
-    };
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
 
-    if (usuario.user) {
-      await AsyncStorage.setItem('usuario', JSON.stringify(usuario));
-      setUsuario(usuario);
+  useEffect(() => {
+    setIsButtonDisabled(!(email.trim() && password.trim()));
+  }, [email, password]);
+
+  const onLoginPress = async () => {
+    try {
+      const response = await signInWithEmailAndPassword(auth, email, password);
+      const user = response.user;
+      console.log('Login realizado com sucesso:', user.uid);
       navigation.reset({
         index: 0,
         routes: [{ name: 'HomeScreen' }],
       });
+    } catch (error) {
+      Alert.alert(
+        'Ops!',
+        'Não foi possível fazer login. Verifique suas credenciais e tente novamente.'
+      );
+    }
+  };
+
+  const onRegisterPress = async () => {
+    if (!name || !email || !password) {
+      Alert.alert('Atenção!', 'Por favor, preencha todos os campos.');
+      return;
+    }
+    try {
+      const response = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const user = response.user;
+
+      await updateProfile(user, { displayName: name });
+      
+
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'HomeScreen' }],
+      });
+    } catch (error: any) {
+      Alert.alert('Problemas ao cadastrar!', error.message);
     }
   };
 
   return (
     <LinearGradient colors={[roxo, roxo_escuro]} style={styles.container}>
+      {/* Logo */}
       <View style={styles.logoContainer}>
         <Image
           source={require('../../../assets/Vector.png')}
@@ -56,49 +94,72 @@ export default function Cadastro() {
           resizeMode="contain"
         />
       </View>
+
+      <Text style={styles.title}>
+        {isLogin ? 'Bem-vindo de volta' : 'Crie sua conta'}
+      </Text>
+
+      {/* Formulário */}
       <View style={styles.formulario}>
-        {/* Campo email */}
+        {!isLogin && (
+          <View style={styles.inputContainer}>
+            <Icon name="person" size={20} color={'#fff'} />
+            <TextInput
+              placeholder="Nome"
+              placeholderTextColor="#ccc"
+              style={styles.input}
+              value={name}
+              onChangeText={setName}
+            />
+          </View>
+        )}
+
         <View style={styles.inputContainer}>
-          <Icon name="mail-outline" size={20} color={'#fff'}></Icon>
+          <Icon name="mail-outline" size={20} color={'#fff'} />
           <TextInput
-            placeholder="Usuário"
+            placeholder="Email"
             placeholderTextColor="#ccc"
             style={styles.input}
-            onChangeText={setUsuarioInput}
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
           />
         </View>
-        {/* Campo senha */}
+
         <View style={styles.inputContainer}>
-          <Icon name="lock-closed" size={20} color={'#fff'}></Icon>
+          <Icon name="lock-closed" size={20} color={'#fff'} />
           <TextInput
             placeholder="Senha"
             placeholderTextColor="#ccc"
             style={styles.input}
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
           />
         </View>
       </View>
-      <View>
+
+      {/* Botão */}
+      <View style={{ width: '100%', alignItems: 'center' }}>
         <TouchableOpacity
           style={[
             styles.button,
-            { backgroundColor: usuarioInput ? '#fff' : '#ccc' },
+            { backgroundColor: isButtonDisabled ? '#ccc' : '#fff' },
           ]}
-          onPress={() => {
-            handleLogin();
-          }}
-          disabled={!usuarioInput}
+          onPress={isLogin ? onLoginPress : onRegisterPress}
+          disabled={isButtonDisabled}
         >
-          <Text style={styles.textButton}>Login</Text>
+          <Text style={styles.textButton}>
+            {isLogin ? 'Entrar' : 'Cadastrar'}
+          </Text>
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={{ marginBottom: 30, alignItems: 'center' }}
-          onPress={() => {
-            navigation.navigate('PreCadastro');
-          }}
+          style={{ marginBottom: 40, alignItems: 'center' }}
+          onPress={() => setIsLogin(!isLogin)}
         >
-          <Text style={{ color: '#fff', fontSize: 20, fontWeight: '300' }}>
-            Crie uma conta
+          <Text style={{ color: '#fff', fontSize: 16, fontWeight: '300' }}>
+            {isLogin ? 'Não possui uma conta? Crie aqui' : 'Já possui conta? Entrar'}
           </Text>
         </TouchableOpacity>
       </View>
@@ -113,13 +174,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logoContainer: {
-    alignItems: 'flex-start',
-    // marginBottom: 20,
+    alignItems: 'center',
     marginTop: 90,
   },
   logo: {
     width: 300,
     height: 100,
+  },
+  title: {
+    color: '#fff',
+    fontSize: 28,
+    fontWeight: '300',
+    marginBottom: 20,
   },
   input: {
     flex: 1,
@@ -132,33 +198,25 @@ const styles = StyleSheet.create({
     borderBottomColor: '#fff',
     borderBottomWidth: 1,
     width: '80%',
+    marginVertical: 8,
   },
-
   formulario: {
-    width: '70%',
-    height: '30%',
-    borderRadius: 20,
-    paddingBottom: 40,
-    paddingTop: 40,
-
-    // marginTop:200,
-    justifyContent: 'space-between',
+    width: '80%',
+    paddingBottom: 20,
+    justifyContent: 'center',
     alignItems: 'center',
-    // marginBottom:40,
   },
   textButton: {
     color: '#000',
-    fontSize: 20,
-    fontWeight: 'semibold',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
   button: {
-    backgroundColor: '#fff',
     borderRadius: 10,
     paddingVertical: 16,
     paddingHorizontal: '20%',
     alignItems: 'center',
-    marginBottom: 210,
-    // marginTop: 20,
+    marginTop: 20,
     width: '80%',
   },
 });

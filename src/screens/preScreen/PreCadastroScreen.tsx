@@ -63,7 +63,7 @@ export default function PreCadastro() {
         <TouchableOpacity
           style={styles.button}
           onPress={() => {
-            navigation.push('Cadastro');
+            navigation.push('Login');
           }}
         >
           <Text style={styles.buttonText}>Conecte Já</Text>
