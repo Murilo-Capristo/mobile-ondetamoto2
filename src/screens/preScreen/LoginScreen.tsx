@@ -54,7 +54,7 @@ export default function AuthScreen() {
     } catch (error) {
       Alert.alert(
         'Ops!',
-        'Não foi possível fazer login. Verifique suas credenciais e tente novamente.'
+        'Não foi possível fazer login. Verifique suas credenciais e tente novamente.',
       );
     }
   };
@@ -68,12 +68,11 @@ export default function AuthScreen() {
       const response = await createUserWithEmailAndPassword(
         auth,
         email,
-        password
+        password,
       );
       const user = response.user;
 
       await updateProfile(user, { displayName: name });
-      
 
       navigation.reset({
         index: 0,
@@ -159,7 +158,9 @@ export default function AuthScreen() {
           onPress={() => setIsLogin(!isLogin)}
         >
           <Text style={{ color: '#fff', fontSize: 16, fontWeight: '300' }}>
-            {isLogin ? 'Não possui uma conta? Crie aqui' : 'Já possui conta? Entrar'}
+            {isLogin
+              ? 'Não possui uma conta? Crie aqui'
+              : 'Já possui conta? Entrar'}
           </Text>
         </TouchableOpacity>
       </View>

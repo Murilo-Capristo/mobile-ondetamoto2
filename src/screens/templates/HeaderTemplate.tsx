@@ -8,7 +8,6 @@ const roxo = '#f900cf';
 const roxo_escuro = '#9F0095';
 
 export default function HeaderTemplate() {
-
   const handleLogout = async () => {
     await AsyncStorage.removeItem('usuario');
     navigation.reset({
@@ -27,7 +26,9 @@ export default function HeaderTemplate() {
             onPress={() => handleLogout()}
           >
             <Icon name="person-circle-outline" size={30} color={'#000'}></Icon>
-            <Text style={styles.TextProfile}>{auth.currentUser?.displayName || 'Usuário'}</Text>
+            <Text style={styles.TextProfile}>
+              {auth.currentUser?.displayName || 'Usuário'}
+            </Text>
           </TouchableOpacity>
           <View>
             <Image

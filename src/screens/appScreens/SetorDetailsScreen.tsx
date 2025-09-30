@@ -18,7 +18,6 @@ const roxo_texto = '#a100ff';
 export default function SetorDetailsScreen() {
   const navigation = useNavigation();
 
-
   const route = useRoute();
   const { setorId } = route.params as { setorId: string };
   const { setorNome } = route.params as { setorNome: string };
@@ -81,9 +80,6 @@ export default function SetorDetailsScreen() {
       if (client.isConnected()) client.disconnect();
     };
   }, []);
-
-
-
 
   return (
     <>

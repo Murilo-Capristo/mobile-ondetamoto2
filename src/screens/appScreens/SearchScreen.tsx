@@ -39,7 +39,7 @@ export default function SearchScreen() {
     param
       ? categoryOptions.find((option) => option.id === param) ||
         categoryOptions[0]
-      : categoryOptions[0]
+      : categoryOptions[0],
   );
   const [filterVisible, setFilterVisible] = useState(false);
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -89,12 +89,12 @@ export default function SearchScreen() {
         selectedFilter.id.toLowerCase() === 'id'
           ? item.id?.toString()
           : selectedFilter.id.toLowerCase() === 'tag'
-          ? item.tipo
-          : selectedFilter.id.toLowerCase() === 'nome'
-          ? item.tipo
-          : selectedFilter.id.toLowerCase() === 'placa'
-          ? item.placa
-          : item.nome;
+            ? item.tipo
+            : selectedFilter.id.toLowerCase() === 'nome'
+              ? item.tipo
+              : selectedFilter.id.toLowerCase() === 'placa'
+                ? item.placa
+                : item.nome;
 
       return campo?.toLowerCase().includes(search.toLowerCase());
     });

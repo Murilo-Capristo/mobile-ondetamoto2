@@ -187,7 +187,9 @@ const handleCadastro = async () => {
         <Text style={styles.dadosTitulo}>Dados preenchidos:</Text>
         <Text style={styles.dadosTexto}>Placa: {placa || '-'}</Text>
         <Text style={styles.dadosTexto}>Tipo: {selectedTipo || '-'}</Text>
-        <Text style={styles.dadosTexto}>Setor: {selectedSetor || '-'}</Text>
+        <Text style={styles.dadosTexto}>
+          Setor: {selectedSetor ? setores.find((s) => s.id === selectedSetor)?.nome : '-'}
+        </Text>
 
         <TouchableOpacity style={styles.limparBtn} onPress={handleLimpar}>
           <Text style={styles.limparText}>Limpar</Text>

@@ -1,106 +1,102 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import HeaderReduzida from '../templates/HeaderReduzida';
-import { StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { useEffect, useState } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { useRoute } from '@react-navigation/native';
+import { Client, Message } from 'paho-mqtt';
 
-const roxo = '#f900cf';
 const roxo_escuro = '#9F0095';
-const roxo_texto = '#a100ff';
 
 export default function CadastroMoto() {
   const navigation = useNavigation();
 
-  const [moto, setMoto] = useState({
-    tagId: '',
-  });
-  const [detectedMotos, setDetectedMotos] = useState<{ tagId: string }[]>([]);
-
+  const [detectedMotos, setDetectedMotos] = useState<
+    { tag: string; setor: string }[]
+  >([]);
   const [isDetecting, setIsDetecting] = useState(false);
-  const [isPageExited, setIsPageExited] = useState(false);
 
-  const saveMoto = async (motoData) => {
-    try {
-      await AsyncStorage.setItem('motoData', JSON.stringify(motoData));
-      console.log('Salvo');
-    } catch (error) {
-      console.error('Erro ao salvar:', error);
-    }
-  };
-
-  const getMoto = async () => {
-    try {
-      const storedMoto = await AsyncStorage.getItem('motoData');
-      if (storedMoto) {
-        const parsedMoto = JSON.parse(storedMoto);
-        setMoto(parsedMoto);
-        console.log('Moto recuperada:', parsedMoto);
-      }
-    } catch (error) {
-      console.error('Erro ao obter:', error);
-    }
-  };
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const clientRef = useRef<Client | null>(null);
 
   useEffect(() => {
-    const fetchStoredMotos = async () => {
+    const client = new Client(
+      '104.41.50.188',
+      8080,
+      '/mqtt',
+      'clientId-' + Math.random().toString(16).substr(2, 8),
+    );
+
+    client.connect({
+      userName: 'admin',
+      password: 'otm-password-VM#',
+      useSSL: false,
+      onSuccess: () => {
+        console.log('MQTT conectado');
+        client.subscribe('rfid-moto/leituras');
+      },
+      onFailure: (err) => {
+        console.log('Erro conexão MQTT:', err);
+      },
+    });
+
+    client.onMessageArrived = (message: Message) => {
       try {
-        const storedMotos = await AsyncStorage.getItem('detectedMotos');
-        if (storedMotos) {
-          setDetectedMotos(JSON.parse(storedMotos));
-          console.log(
-            'Motos recuperadas do armazenamento:',
-            JSON.parse(storedMotos),
-          );
-        }
-      } catch (error) {
-        console.error('Erro ao recuperar motos do armazenamento:', error);
+        const payload = JSON.parse(message.payloadString); // { setor: "1", moto: "1234" }
+
+        setDetectedMotos((oldMotos) => {
+          const existe = oldMotos.some((m) => m.tag === payload.moto);
+          if (!existe) {
+            return [
+              { tag: payload.moto, setor: payload.setor },
+              ...oldMotos,
+            ].slice(0, 3);
+          }
+          return oldMotos;
+        });
+      } catch (e) {
+        console.error('Erro ao parsear mensagem MQTT:', e);
       }
     };
 
-    fetchStoredMotos();
-    getMoto();
+    client.onConnectionLost = (responseObject) => {
+      if (responseObject.errorCode !== 0) {
+        console.log('Conexão perdida: ' + responseObject.errorMessage);
+      }
+    };
+
+    clientRef.current = client;
 
     return () => {
-      setIsPageExited(true);
+      if (client.isConnected()) client.disconnect();
     };
   }, []);
 
-  const handleMoto = async () => {
+  const handleMoto = () => {
     setIsDetecting(true);
+    setDetectedMotos([]);
 
-    try {
-      const storedMotos = await AsyncStorage.getItem('detectedMotos');
-      if (storedMotos) {
-        setTimeout(() => {
-          setDetectedMotos(JSON.parse(storedMotos));
-          console.log(
-            'Motos recuperadas do armazenamento:',
-            JSON.parse(storedMotos),
-          );
-          setIsDetecting(false);
-        }, 1000);
-      } else {
-        setTimeout(async () => {
-          const motosDetectadas = Array.from({ length: 3 }, () => ({
-            tagId: Math.floor(1000 + Math.random() * 9000).toString(),
-          }));
-          setDetectedMotos(motosDetectadas);
-          await AsyncStorage.setItem(
-            'detectedMotos',
-            JSON.stringify(motosDetectadas),
-          );
-          console.log('Motos detectadas e salvas:', motosDetectadas);
-          setIsDetecting(false);
-        }, 1000);
-      }
-    } catch (error) {
-      console.error('Erro ao detectar motos:', error);
+    timeoutRef.current = setTimeout(() => {
+      setIsDetecting(false);
+      alert('Nenhuma moto detectada em 1 minuto. Tente novamente.');
+    }, 60000);
+  };
+
+  useEffect(() => {
+    if (detectedMotos.length > 0 && isDetecting) {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
       setIsDetecting(false);
     }
-  };
+  }, [detectedMotos]);
+
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      if (clientRef.current && clientRef.current.isConnected()) {
+        clientRef.current.disconnect();
+      }
+    };
+  }, []);
 
   return (
     <View>
@@ -118,9 +114,9 @@ export default function CadastroMoto() {
       <TouchableOpacity
         style={styles.detectarMoto}
         onPress={handleMoto}
-        disabled={isDetecting || isPageExited}
+        disabled={isDetecting}
       >
-        <Icon name="wifi-tethering" style={styles.icon}></Icon>
+        <Icon name="wifi-tethering" style={styles.icon} />
         <Text style={styles.detecText}>Detectar Motocicleta</Text>
       </TouchableOpacity>
 
@@ -132,9 +128,7 @@ export default function CadastroMoto() {
         </View>
       ) : (
         detectedMotos.length > 0 && (
-          <View
-            style={[styles.boxBuscando, { height: detectedMotos.length * 100 }]}
-          >
+          <View style={styles.boxBuscando}>
             <View style={styles.buscando}>
               <Text style={styles.titlebuscando}>Motos Detectadas:</Text>
               {detectedMotos.map((moto, index) => (
@@ -142,12 +136,15 @@ export default function CadastroMoto() {
                   key={index}
                   style={styles.motos}
                   onPress={() =>
-                    (navigation as any).navigate('FormMoto', {
-                      tagId: moto.tagId,
+                    navigation.navigate('FormMoto', {
+                      tagId: moto.tag,
+                      setor: moto.setor,
                     })
                   }
                 >
-                  <Text style={styles.textMotos}>{`Tag - ${moto.tagId}`}</Text>
+                  <Text
+                    style={styles.textMotos}
+                  >{`Tag - ${moto.tag} | Setor - ${moto.setor}`}</Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -159,12 +156,6 @@ export default function CadastroMoto() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-  },
   voltarBtn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -178,12 +169,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     width: '100%',
   },
-
-  textMotos: {
-    fontSize: 28,
-    fontWeight: '400',
-    color: '#000',
-  },
+  textMotos: { fontSize: 28, fontWeight: '400', color: '#000' },
   boxBuscando: {
     marginTop: 50,
     marginHorizontal: 30,
@@ -193,23 +179,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#DCDEDF',
     borderRadius: 20,
   },
-
-  titlebuscando: {
-    fontSize: 18,
-    fontWeight: 'semibold',
-    color: '#8b8b8b',
-  },
+  titlebuscando: { fontSize: 18, fontWeight: '600', color: '#8b8b8b' },
   buscando: {
     justifyContent: 'center',
     alignItems: 'flex-start',
     paddingHorizontal: 10,
   },
-
-  detecText: {
-    fontSize: 29,
-    fontWeight: 'semibold',
-    color: '#000',
-  },
+  detecText: { fontSize: 29, fontWeight: '600', color: '#000' },
   detectarMoto: {
     marginTop: 50,
     margin: 40,
@@ -222,16 +198,8 @@ const styles = StyleSheet.create({
     borderColor: '#009213',
     borderWidth: 4,
   },
-  title: {
-    marginTop: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  titleText: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#000',
-  },
+  title: { marginTop: 20, alignItems: 'center', justifyContent: 'center' },
+  titleText: { fontSize: 28, fontWeight: 'bold', color: '#000' },
   icon: {
     position: 'absolute',
     top: 0,

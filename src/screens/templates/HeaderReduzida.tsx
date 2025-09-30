@@ -1,10 +1,4 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-} from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import { auth } from '../../config/firebase';
@@ -27,10 +21,7 @@ export default function HeaderReduzida() {
     <View>
       <View style={styles.header}>
         <View style={styles.topHeader}>
-          <TouchableOpacity
-            style={styles.linkProfile}
-            onPress={handleLogout}
-          >
+          <TouchableOpacity style={styles.linkProfile} onPress={handleLogout}>
             <Icon name="person-circle-outline" size={30} color={'#000'} />
             <Text style={styles.TextProfile}>
               {auth.currentUser?.displayName || 'Usuário'}
