@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import HeaderReduzida from '../templates/HeaderReduzida';
 import { Menu, Provider } from 'react-native-paper';
-import { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { TextInput } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
@@ -22,24 +22,55 @@ const tipoSetores = [
 
 export default function FormMoto() {
   const [isModalVisible, setModalVisible] = useState(false);
-
-  const handleCadastro = () => {
-    setModalVisible(true);
-    setTimeout(() => {
-      setModalVisible(false);
-      navigation.popToTop();
-    }, 2000);
-  };
+  const [setores, setSetores] = useState<{ id: number; nome: string }[]>([]);
   const route = useRoute();
   const { tagId } = route.params;
-
   const navigation = useNavigation();
-
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [selectedTipo, setSelectedTipo] = useState<string | null>(null);
   const [selectedSetor, setSelectedSetor] = useState<string | null>(null);
   const [dropdownSetorVisible, setDropdownSetorVisible] = useState(false);
   const [placa, setPlaca] = useState('');
+
+
+  useEffect(() => {
+  fetch("http://191.235.235.207:5294/api/setor")
+    .then(res => res.json())
+    .then(data => setSetores(data))
+    .catch(err => console.error("Erro ao carregar setores:", err));
+}, []);
+
+const handleCadastro = async () => {
+  try {
+    const response = await fetch('http://191.235.235.207:5294/api/moto', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id: 0,
+        nome: selectedTipo,
+        tag: tagId, //só o int que vem da rota
+        placa: placa,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error('Erro ao cadastrar moto');
+    }
+
+    setModalVisible(true);
+    setTimeout(() => {
+      setModalVisible(false);
+      navigation.popToTop();
+    }, 2000);
+  } catch (error) {
+    console.error(error);
+    alert("Erro ao cadastrar moto");
+  }
+};
+
+
 
   const handleLimpar = () => {
     setPlaca('');
@@ -76,9 +107,7 @@ export default function FormMoto() {
                     selectedTipo && { color: roxo_escuro },
                   ]}
                 >
-                  {selectedTipo
-                    ? tipoOptions.find((opt) => opt.id === selectedTipo)?.label
-                    : 'Tipo'}
+                  {selectedTipo || 'Tipo'}
                 </Text>
                 <Icon name="chevron-down" size={20} />
               </TouchableOpacity>
@@ -88,7 +117,7 @@ export default function FormMoto() {
               <Menu.Item
                 key={option.id}
                 onPress={() => {
-                  setSelectedTipo(option.id);
+                  setSelectedTipo(option.label);
                   setDropdownVisible(false);
                 }}
                 titleStyle={{
@@ -99,42 +128,43 @@ export default function FormMoto() {
             ))}
           </Menu>
 
-          <Menu
-            visible={dropdownSetorVisible}
-            onDismiss={() => setDropdownSetorVisible(false)}
-            anchor={
-              <TouchableOpacity
-                onPress={() => setDropdownSetorVisible(true)}
-                style={styles.dropdown}
+            <Menu
+          visible={dropdownSetorVisible}
+          onDismiss={() => setDropdownSetorVisible(false)}
+          anchor={
+            <TouchableOpacity
+              onPress={() => setDropdownSetorVisible(true)}
+              style={styles.dropdown}
+            >
+              <Text
+                style={[
+                  styles.dropdownText,
+                  selectedSetor && { color: roxo_escuro },
+                ]}
               >
-                <Text
-                  style={[
-                    styles.dropdownText,
-                    selectedSetor && { color: roxo_escuro },
-                  ]}
-                >
-                  {selectedSetor
-                    ? tipoSetores.find((set) => set.id === selectedSetor)?.label
-                    : 'Setor'}
-                </Text>
-                <Icon name="chevron-down" size={20} />
-              </TouchableOpacity>
-            }
-          >
-            {tipoSetores.map((setor) => (
-              <Menu.Item
-                key={setor.id}
-                onPress={() => {
-                  setSelectedSetor(setor.id);
-                  setDropdownSetorVisible(false);
-                }}
-                titleStyle={{
-                  color: 'purple',
-                }}
-                title={setor.label}
-              />
-            ))}
-          </Menu>
+                {selectedSetor
+                  ? setores.find((s) => s.id === selectedSetor)?.nome
+                  : 'Setor'}
+              </Text>
+              <Icon name="chevron-down" size={20} />
+            </TouchableOpacity>
+          }
+        >
+          {setores.map((setor) => (
+            <Menu.Item
+              key={setor.id}
+              onPress={() => {
+                setSelectedSetor(setor.id);
+                setDropdownSetorVisible(false);
+              }}
+              titleStyle={{
+                color: 'purple',
+              }}
+              title={setor.nome}
+            />
+          ))}
+        </Menu>
+
         </View>
 
         <TextInput

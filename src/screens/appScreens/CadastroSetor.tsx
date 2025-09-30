@@ -1,44 +1,62 @@
-import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Modal,
+  TextInput,
+} from 'react-native';
 import HeaderReduzida from '../templates/HeaderReduzida';
-import { Menu, Provider } from 'react-native-paper';
+import { Provider } from 'react-native-paper';
 import { useState } from 'react';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { TextInput } from 'react-native-gesture-handler';
-import { useNavigation } from '@react-navigation/native';
 import IconIon from 'react-native-vector-icons/Ionicons';
-import { useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 
 const roxo_escuro = '#9F0095';
 const roxo = '#f900cf';
-const tipoOptions = [
-  { id: 'Quebrada', label: 'Quebrada' },
-  { id: 'Ok', label: 'Ok' },
-];
-
-const tipoSetores = [
-  { id: 'Roxo', label: 'Roxo' },
-  { id: 'Verde', label: 'Verde' },
-];
 
 export default function CadastroSetor() {
   const navigation = useNavigation();
   const [isModalVisible, setModalVisible] = useState(false);
 
-  const handleCadastro = () => {
-    setModalVisible(true);
-    setTimeout(() => {
-      setModalVisible(false);
-      navigation.popToTop();
-    }, 2000);
+  // states para inputs
+  const [nome, setNome] = useState('');
+  const [tamanho, setTamanho] = useState('');
+
+  const handleCadastro = async () => {
+    try {
+      const response = await fetch('http://191.235.235.207:5294/api/setor', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: 0,
+          nome: nome,
+          tamanho: parseInt(tamanho, 10), // transforma string em número
+        }),
+      });
+
+      if (response.ok) {
+        setModalVisible(true);
+        setTimeout(() => {
+          setModalVisible(false);
+          navigation.popToTop();
+        }, 2000);
+      } else {
+        const errorText = await response.text();
+        console.error('Erro no cadastro:', errorText);
+        alert('Erro ao cadastrar setor!');
+      }
+    } catch (err) {
+      console.error('Erro na requisição:', err);
+      alert('Falha de conexão com o servidor!');
+    }
   };
-  const [dropdownVisible, setDropdownVisible] = useState(false);
-  const [selectedTipo, setSelectedTipo] = useState<string | null>(null);
-  const [selectedSetor, setSelectedSetor] = useState<string | null>(null);
-  const [dropdownSetorVisible, setDropdownSetorVisible] = useState(false);
 
   return (
     <Provider style={{ backgroundColor: '#fff' }}>
-      <HeaderReduzida></HeaderReduzida>
+      <HeaderReduzida />
       <TouchableOpacity
         onPress={() => navigation.goBack()}
         style={styles.voltarBtn}
@@ -50,54 +68,25 @@ export default function CadastroSetor() {
           <Text style={styles.textTag}>Cadastro de Setor</Text>
         </View>
 
-        <TextInput style={styles.nome} placeholder="Nome personalizado" />
-
-        <View style={styles.drawer}>
-          <Menu
-            visible={dropdownSetorVisible}
-            onDismiss={() => setDropdownSetorVisible(false)}
-            anchor={
-              <TouchableOpacity
-                onPress={() => setDropdownSetorVisible(true)}
-                style={styles.dropdown}
-              >
-                <Text
-                  style={[
-                    styles.dropdownText,
-                    selectedSetor && { color: roxo_escuro },
-                  ]}
-                >
-                  {selectedSetor ? selectedSetor : 'Tipo'}
-                </Text>
-                <Icon name="chevron-down" size={20} color="#000" />
-              </TouchableOpacity>
-            }
-          >
-            {tipoSetores.map((option) => (
-              <Menu.Item
-                key={option.id}
-                onPress={() => {
-                  setSelectedSetor(option.label);
-                  setDropdownSetorVisible(false);
-                }}
-                title={option.label}
-              />
-            ))}
-          </Menu>
-        </View>
+        <TextInput
+          style={styles.nome}
+          placeholder="Nome personalizado"
+          value={nome}
+          onChangeText={setNome}
+        />
 
         <View style={styles.viewTam}>
           <TextInput
             style={styles.placa}
-            placeholder="Tamanho Máximo Suportado (ex.: 100 “motos” )"
+            placeholder="Tamanho Máximo Suportado (ex.: 100 )"
+            keyboardType="numeric"
+            value={tamanho}
+            onChangeText={setTamanho}
           />
         </View>
       </View>
       <View style={styles.containerBotao}>
-        <TouchableOpacity
-          style={styles.cadasBtn}
-          onPress={() => handleCadastro()}
-        >
+        <TouchableOpacity style={styles.cadasBtn} onPress={handleCadastro}>
           <Text style={styles.cadasText}>Cadastrar</Text>
         </TouchableOpacity>
       </View>
@@ -140,7 +129,6 @@ const styles = StyleSheet.create({
     top: 20,
     left: 20,
   },
-
   cadasText: {
     color: '#fff',
     fontSize: 20,
@@ -154,20 +142,6 @@ const styles = StyleSheet.create({
     margin: 40,
     marginHorizontal: 20,
   },
-  dropdown: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
-    padding: 2,
-    paddingHorizontal: 20,
-    flexDirection: 'row',
-    borderRadius: 8,
-    justifyContent: 'space-between',
-  },
-  dropdownText: {
-    fontSize: 16,
-    color: '#000',
-    fontWeight: '300',
-  },
   tag: {
     padding: 10,
     borderRadius: 5,
@@ -179,13 +153,6 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: '700',
     textAlign: 'center',
-  },
-  drawer: {
-    backgroundColor: '#f0f0f0',
-    padding: 20,
-    borderRadius: 5,
-    marginBottom: 20,
-    flexDirection: 'row',
   },
   nome: {
     alignSelf: 'flex-start',
@@ -220,11 +187,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#fff',
-  },
-  textPlaca: {
-    color: '#000',
-    fontSize: 18,
-    fontWeight: 'bold',
-    textAlign: 'center',
   },
 });

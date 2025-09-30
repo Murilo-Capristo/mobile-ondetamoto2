@@ -6,15 +6,17 @@ import {
   StyleSheet,
   TextInput,
   TouchableOpacity,
+  FlatList,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import HeaderReduzida from '../templates/HeaderReduzida';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { RootStackParamList } from '../../navigation/RootNavigator';
-const roxo = '#f900cf';
+
 const roxo_escuro = '#9F0095';
 const roxo_texto = '#a100ff';
+
 type SearchScreenRouteProp = RouteProp<RootStackParamList, 'SearchScreen'>;
 
 const searchOptions = [
@@ -28,89 +30,123 @@ const categoryOptions = [
   { id: 'setores', label: 'Setores' },
 ];
 
-const motosMock = [
-  { id: '2334', tipo: 'Scooter', placa: 'ABC1234' },
-  { id: '1234', tipo: 'Custom', placa: 'XYZ5678' },
-  { id: '4321', tipo: 'Sport', placa: 'DEF9012' },
-];
-
-const setoresMock = [
-  { id: 'S1', nome: 'Administrativo' },
-  { id: 'S2', nome: 'Manutenção' },
-  { id: 'S3', nome: 'Logística' },
-];
-
 export default function SearchScreen() {
   const navigation = useNavigation();
-
   const route = useRoute<SearchScreenRouteProp>();
   const { param = 'motos' } = route.params || {};
 
-  const [selectedTab, setSelectedTab] = useState(() => {
-    return param
+  const [selectedTab, setSelectedTab] = useState(() =>
+    param
       ? categoryOptions.find((option) => option.id === param) ||
-          categoryOptions[0]
-      : categoryOptions[0];
-  });
+        categoryOptions[0]
+      : categoryOptions[0]
+  );
   const [filterVisible, setFilterVisible] = useState(false);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [search, setSearch] = useState('');
 
+  const [motos, setMotos] = useState<any[]>([]);
+  const [setores, setSetores] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+
   const relativeOptions = searchOptions.map((option) => {
-    if (selectedTab.id === 'setores' && param && option.id === 'Placa') {
-      return { ...option, id: 'Nome', label: 'Buscar Nome' };
+    if (selectedTab.id === 'setores' && option.id === 'Placa') {
+      return { id: 'Nome', label: 'Buscar Nome' };
     }
     return option;
   });
-  const [selectedFilter, setSelectedFilter] = useState(searchOptions[0]);
+
+  const [selectedFilter, setSelectedFilter] = useState(relativeOptions[0]);
 
   useEffect(() => {
-    const currentIds = relativeOptions.map((option) => option.id);
-    if (!currentIds.includes(selectedFilter.id)) {
-      setSelectedFilter(relativeOptions[0]);
-    }
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        if (selectedTab.id === 'motos') {
+          const res = await fetch('http://191.235.235.207:5294/api/Moto');
+          const data = await res.json();
+          setMotos(data);
+        } else {
+          const res = await fetch('http://191.235.235.207:5294/api/Setor');
+          const data = await res.json();
+          setSetores(data);
+        }
+      } catch (err) {
+        console.error('Erro ao buscar dados:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, [selectedTab]);
 
+  const filtrarResultados = (itens: any[]) => {
+    if (!search) return itens;
+
+    return itens.filter((item) => {
+      const campo =
+        selectedFilter.id.toLowerCase() === 'id'
+          ? item.id?.toString()
+          : selectedFilter.id.toLowerCase() === 'tag'
+          ? item.tipo
+          : selectedFilter.id.toLowerCase() === 'nome'
+          ? item.tipo
+          : selectedFilter.id.toLowerCase() === 'placa'
+          ? item.placa
+          : item.nome;
+
+      return campo?.toLowerCase().includes(search.toLowerCase());
+    });
+  };
+
   const renderResultados = () => {
+    if (loading) {
+      return <Text>Carregando...</Text>;
+    }
+
     if (selectedTab.id === 'motos') {
       return (
-        <View style={styles.resultadosContainer}>
-          {motosMock.map((moto) => (
-            <View key={moto.id} style={styles.resultadoItem}>
-              <Text style={styles.resultadoTitulo}>ID: {moto.id}</Text>
-              <Text>Tipo: {moto.tipo}</Text>
-              <Text>Placa: {moto.placa}</Text>
+        <FlatList
+          data={filtrarResultados(motos)}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <View style={styles.resultadoItem}>
+              <Text style={styles.resultadoTitulo}>ID: {item.id}</Text>
+              <Text>Tag: {item.tag}</Text>
+              <Text>Tipo: {item.nome}</Text>
+              <Text>Placa: {item.placa}</Text>
             </View>
-          ))}
-        </View>
+          )}
+        />
       );
-    } else if (selectedTab.id === 'setores') {
+    } else {
       return (
-        <View style={styles.resultadosContainer}>
-          {setoresMock.map((setor) => (
+        <FlatList
+          data={filtrarResultados(setores)}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
             <TouchableOpacity
-              key={setor.id}
               style={styles.resultadoItem}
               onPress={() =>
                 (navigation as any).navigate('SetorDetailsScreen', {
-                  setorId: setor.id,
-                  setorNome: setor.nome,
+                  setorId: item.id,
+                  setorNome: item.nome,
                 })
               }
             >
-              <Text style={styles.resultadoTitulo}>ID: {setor.id}</Text>
-              <Text>Nome: {setor.nome}</Text>
+              <Text style={styles.resultadoTitulo}>ID: {item.id}</Text>
+              <Text>Nome: {item.nome}</Text>
             </TouchableOpacity>
-          ))}
-        </View>
+          )}
+        />
       );
     }
-    return null;
   };
 
   return (
     <Provider>
-      <HeaderReduzida></HeaderReduzida>
+      <HeaderReduzida />
       <View style={styles.container}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -121,7 +157,7 @@ export default function SearchScreen() {
 
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Text style={styles.label}>
-            Pesquise Motos ou Garagens Registradas.
+            Pesquise Motos ou Setores Registrados.
           </Text>
           <Menu
             visible={dropdownVisible}
@@ -162,7 +198,7 @@ export default function SearchScreen() {
           >
             <AntDesign name="filter" size={30} color="#000" />
             <Text style={{ marginLeft: 5, color: roxo_texto }}>
-              {selectedFilter.id}
+              {selectedFilter.label}
             </Text>
           </TouchableOpacity>
         </View>
@@ -183,6 +219,7 @@ export default function SearchScreen() {
             ))}
           </View>
         )}
+
         {renderResultados()}
       </View>
     </Provider>
@@ -203,7 +240,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-
   input: {
     flex: 1,
     borderRadius: 8,
@@ -216,6 +252,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 8,
     borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   filterOptions: {
     marginTop: 10,
@@ -233,6 +271,8 @@ const styles = StyleSheet.create({
     padding: 10,
     margin: 10,
     borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   voltarBtn: {
     flexDirection: 'row',
@@ -242,11 +282,8 @@ const styles = StyleSheet.create({
   },
   dropdownText: {
     marginRight: 5,
-    color: '#a100ff',
+    color: roxo_texto,
     fontWeight: 'bold',
-  },
-  resultadosContainer: {
-    marginTop: 20,
   },
   resultadoItem: {
     padding: 10,
