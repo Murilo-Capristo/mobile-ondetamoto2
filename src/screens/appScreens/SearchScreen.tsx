@@ -7,6 +7,7 @@ import {
   TextInput,
   TouchableOpacity,
   FlatList,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -44,6 +45,7 @@ export default function SearchScreen() {
   const [filterVisible, setFilterVisible] = useState(false);
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [search, setSearch] = useState('');
+  const [editando, setEditando] = useState<{ [key: number]: any }>({});
 
   const [motos, setMotos] = useState<any[]>([]);
   const [setores, setSetores] = useState<any[]>([]);
@@ -89,15 +91,78 @@ export default function SearchScreen() {
         selectedFilter.id.toLowerCase() === 'id'
           ? item.id?.toString()
           : selectedFilter.id.toLowerCase() === 'tag'
-            ? item.tipo
-            : selectedFilter.id.toLowerCase() === 'nome'
-              ? item.tipo
-              : selectedFilter.id.toLowerCase() === 'placa'
-                ? item.placa
-                : item.nome;
+          ? item.tipo
+          : selectedFilter.id.toLowerCase() === 'nome'
+          ? item.tipo
+          : selectedFilter.id.toLowerCase() === 'placa'
+          ? item.placa
+          : item.nome;
 
       return campo?.toLowerCase().includes(search.toLowerCase());
     });
+  };
+
+  const atualizarItem = async (item: any) => {
+    const url = selectedTab.id === 'motos'
+      ? `http://191.235.235.207:5294/api/moto/${item.id}`
+      : `http://191.235.235.207:5294/api/setor/${item.id}`;
+
+    try {
+      await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(item),
+      });
+
+      const res = await fetch(
+        selectedTab.id === 'motos'
+          ? 'http://191.235.235.207:5294/api/Moto'
+          : 'http://191.235.235.207:5294/api/Setor',
+      );
+      const data = await res.json();
+      selectedTab.id === 'motos' ? setMotos(data) : setSetores(data);
+
+      setEditando((prev) => {
+        const novo = { ...prev };
+        delete novo[item.id];
+        return novo;
+      });
+    } catch (err) {
+      console.error('Erro ao atualizar:', err);
+    }
+  };
+
+  const excluirItem = (id: number) => {
+    Alert.alert('Confirmação', 'Deseja realmente excluir este item?', [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Excluir',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            const url = selectedTab.id === 'motos'
+              ? `http://191.235.235.207:5294/api/moto/${id}`
+              : `http://191.235.235.207:5294/api/setor/${id}`;
+
+            await fetch(url, {
+              method: 'DELETE',
+            });
+
+            const res = await fetch(
+              selectedTab.id === 'motos'
+                ? 'http://191.235.235.207:5294/api/Moto'
+                : 'http://191.235.235.207:5294/api/Setor',
+            );
+            const data = await res.json();
+            selectedTab.id === 'motos' ? setMotos(data) : setSetores(data);
+          } catch (err) {
+            console.error('Erro ao excluir:', err);
+          }
+        },
+      },
+    ]);
   };
 
   const renderResultados = () => {
@@ -105,43 +170,85 @@ export default function SearchScreen() {
       return <Text>Carregando...</Text>;
     }
 
-    if (selectedTab.id === 'motos') {
-      return (
-        <FlatList
-          data={filtrarResultados(motos)}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
+    const data = selectedTab.id === 'motos' ? motos : setores;
+
+    return (
+      <FlatList
+        data={filtrarResultados(data)}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => {
+          const edicao = editando[item.id] || item;
+
+          return (
             <View style={styles.resultadoItem}>
               <Text style={styles.resultadoTitulo}>ID: {item.id}</Text>
-              <Text>Tag: {item.tag}</Text>
-              <Text>Tipo: {item.nome}</Text>
-              <Text>Placa: {item.placa}</Text>
+
+              {selectedTab.id === 'motos' ? (
+                <>
+                  <TextInput
+                    style={styles.editInput}
+                    value={edicao.tag}
+                    onChangeText={(text) =>
+                      setEditando((prev) => ({
+                        ...prev,
+                        [item.id]: { ...edicao, tag: text },
+                      }))
+                    }
+                    placeholder="Tag"
+                  />
+                  <TextInput
+                    style={styles.editInput}
+                    value={edicao.nome}
+                    onChangeText={(text) =>
+                      setEditando((prev) => ({
+                        ...prev,
+                        [item.id]: { ...edicao, nome: text },
+                      }))
+                    }
+                    placeholder="Tipo"
+                  />
+                  <TextInput
+                    style={styles.editInput}
+                    value={edicao.placa}
+                    onChangeText={(text) =>
+                      setEditando((prev) => ({
+                        ...prev,
+                        [item.id]: { ...edicao, placa: text },
+                      }))
+                    }
+                    placeholder="Placa"
+                  />
+                </>
+              ) : (
+                <TextInput
+                  style={styles.editInput}
+                  value={edicao.nome}
+                  onChangeText={(text) =>
+                    setEditando((prev) => ({
+                      ...prev,
+                      [item.id]: { ...edicao, nome: text },
+                    }))
+                  }
+                  placeholder="Nome"
+                />
+              )}
+
+              <View style={styles.actions}>
+                <TouchableOpacity onPress={() => atualizarItem(edicao)}>
+                  <AntDesign name="checkcircle" size={24} color="green" />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => excluirItem(item.id)}
+                  style={{ marginLeft: 10 }}
+                >
+                  <AntDesign name="delete" size={24} color="red" />
+                </TouchableOpacity>
+              </View>
             </View>
-          )}
-        />
-      );
-    } else {
-      return (
-        <FlatList
-          data={filtrarResultados(setores)}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.resultadoItem}
-              onPress={() =>
-                (navigation as any).navigate('SetorDetailsScreen', {
-                  setorId: item.id,
-                  setorNome: item.nome,
-                })
-              }
-            >
-              <Text style={styles.resultadoTitulo}>ID: {item.id}</Text>
-              <Text>Nome: {item.nome}</Text>
-            </TouchableOpacity>
-          )}
-        />
-      );
-    }
+          );
+        }}
+      />
+    );
   };
 
   return (
@@ -297,5 +404,17 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: roxo_escuro,
     marginBottom: 4,
+  },
+  editInput: {
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 6,
+    padding: 6,
+    marginVertical: 4,
+  },
+  actions: {
+    flexDirection: 'row',
+    marginTop: 6,
   },
 });
