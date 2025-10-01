@@ -10,7 +10,7 @@ const roxo = '#f900cf';
 
 export default function HeaderTemplate() {
   const navigation = useNavigation();
-  const { theme, toggleTheme, isDarkTheme } = useThemeContext(); // Acesso ao tema
+  const { theme, toggleTheme, isDark } = useThemeContext(); // Acesso ao tema
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem('usuario');
@@ -38,7 +38,7 @@ export default function HeaderTemplate() {
         {/* Botão de alternância de tema */}
         <TouchableOpacity style={styles.themeToggle} onPress={toggleTheme}>
           <Icon
-            name={isDarkTheme ? 'sunny-outline' : 'moon-outline'}
+            name={isDark ? 'sunny-outline' : 'moon-outline'}
             size={24}
             color={theme.colors.onBackground}
           />
