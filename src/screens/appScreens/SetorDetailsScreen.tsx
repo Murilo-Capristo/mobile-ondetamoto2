@@ -15,11 +15,16 @@ import { useThemeContext } from '../../context/ThemeContext';
 export default function SetorDetailsScreen() {
   const navigation = useNavigation();
   const route = useRoute();
-  const { setorId, setorNome } = route.params as { setorId: string; setorNome: string };
+  const { setorId, setorNome } = route.params as {
+    setorId: string;
+    setorNome: string;
+  };
   const { theme } = useThemeContext();
 
   // Estado das mensagens
-  const [messages, setMessages] = useState<{ tag: string; status: 'entrando' | 'saindo' }[]>([]);
+  const [messages, setMessages] = useState<
+    { tag: string; status: 'entrando' | 'saindo' }[]
+  >([]);
   const payloadGlobal = useRef<any>(null);
 
   // Ref para guardar status das motos
@@ -53,7 +58,8 @@ export default function SetorDetailsScreen() {
       const tag = payloadJson.moto;
 
       // Alterna o status
-      const novoStatus = statusMotos.current[tag] === 'entrando' ? 'saindo' : 'entrando';
+      const novoStatus =
+        statusMotos.current[tag] === 'entrando' ? 'saindo' : 'entrando';
       statusMotos.current[tag] = novoStatus;
 
       // Adiciona no estado para renderização
@@ -74,7 +80,9 @@ export default function SetorDetailsScreen() {
   return (
     <>
       <HeaderReduzida />
-      <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
+      <View
+        style={[styles.container, { backgroundColor: theme.colors.surface }]}
+      >
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.voltarBtn}
@@ -82,13 +90,23 @@ export default function SetorDetailsScreen() {
           <IconIon name="arrow-back" size={28} color={theme.colors.primary} />
         </TouchableOpacity>
 
-        <Text style={[styles.title1, { backgroundColor: theme.colors.primary, color: theme.colors.onPrimary }]}>
+        <Text
+          style={[
+            styles.title1,
+            {
+              backgroundColor: theme.colors.primary,
+              color: theme.colors.onPrimary,
+            },
+          ]}
+        >
           Logs de Entrada e Saída do Setor
         </Text>
 
         <Text style={[styles.title, { color: theme.colors.primary }]}>
-          Id: <Text style={{ color: theme.colors.secondary }}>{setorId}</Text> {'  '}
-          Nome: <Text style={{ color: theme.colors.secondary }}>{setorNome}</Text>
+          Id: <Text style={{ color: theme.colors.secondary }}>{setorId}</Text>{' '}
+          {'  '}
+          Nome:{' '}
+          <Text style={{ color: theme.colors.secondary }}>{setorNome}</Text>
         </Text>
 
         <Text style={[styles.subtitle, { color: theme.colors.text }]}>
@@ -99,10 +117,20 @@ export default function SetorDetailsScreen() {
           {messages.map((msg, index) => (
             <View
               key={index}
-              style={[styles.messageBox, { backgroundColor: theme.colors.surface, borderColor: theme.colors.outline }]}
+              style={[
+                styles.messageBox,
+                {
+                  backgroundColor: theme.colors.surface,
+                  borderColor: theme.colors.outline,
+                },
+              ]}
             >
               <Text style={[styles.messageText, { color: theme.colors.text }]}>
-                Tag: {msg.tag} {msg.status === 'entrando' ? 'Entrando no Setor' : 'Saindo do Setor'} {payloadGlobal.current?.setor}
+                Tag: {msg.tag}{' '}
+                {msg.status === 'entrando'
+                  ? 'Entrando no Setor'
+                  : 'Saindo do Setor'}{' '}
+                {payloadGlobal.current?.setor}
               </Text>
             </View>
           ))}

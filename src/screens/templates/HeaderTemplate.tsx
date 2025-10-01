@@ -30,18 +30,20 @@ export default function HeaderTemplate() {
             size={30}
             color={theme.colors.onBackground}
           />
-          <Text style={[styles.textProfile, { color: theme.colors.onBackground }]}>
+          <Text
+            style={[styles.textProfile, { color: theme.colors.onBackground }]}
+          >
             {auth.currentUser?.displayName || 'Usuário'}
           </Text>
         </TouchableOpacity>
 
         {/* Botão de alternância de tema */}
         <TouchableOpacity style={styles.themeToggle} onPress={toggleTheme}>
-                    <Icon
-                      name={isDark ? 'sunny-outline' : 'moon-outline'}
-                      size={24}
-                      color={theme.colors.onBackground}
-                    />
+          <Icon
+            name={isDark ? 'sunny-outline' : 'moon-outline'}
+            size={24}
+            color={theme.colors.onBackground}
+          />
         </TouchableOpacity>
 
         {/* Logo */}

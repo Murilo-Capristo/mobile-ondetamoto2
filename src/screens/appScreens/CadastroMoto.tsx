@@ -41,7 +41,8 @@ export default function CadastroMoto() {
 
     client.onMessageArrived = (message: Message) => {
       try {
-        const payload = JSON.parse(message.payloadString); // { setor: "1", moto: "1234" }
+        // { setor: "1", moto: "1234" }
+        const payload = JSON.parse(message.payloadString); 
 
         setDetectedMotos((oldMotos) => {
           const existe = oldMotos.some((m) => m.tag === payload.moto);
@@ -98,7 +99,9 @@ export default function CadastroMoto() {
   }, []);
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       <HeaderReduzida />
 
       <View style={styles.title}>
@@ -116,30 +119,47 @@ export default function CadastroMoto() {
       <TouchableOpacity
         style={[
           styles.detectarMoto,
-          { backgroundColor: "#e4e3e3", borderColor:"green" },
+          { backgroundColor: '#e4e3e3', borderColor: 'green' },
         ]}
         onPress={handleMoto}
         disabled={isDetecting}
       >
-        <Icon name="wifi-tethering" style={[styles.icon, { color: "green" }]} />
-        <Text style={[styles.detecText, { color: "black" }]}>
+        <Icon name="wifi-tethering" style={[styles.icon, { color: 'green' }]} />
+        <Text style={[styles.detecText, { color: 'black' }]}>
           Detectar Motocicleta
         </Text>
       </TouchableOpacity>
 
       {isDetecting ? (
-        <View style={[styles.boxBuscando, { backgroundColor: theme.colors.surface }]}>
+        <View
+          style={[
+            styles.boxBuscando,
+            { backgroundColor: theme.colors.surface },
+          ]}
+        >
           <View style={styles.buscando}>
-            <Text style={[styles.titlebuscando, { color: theme.colors.onSurface }]}>
+            <Text
+              style={[styles.titlebuscando, { color: theme.colors.onSurface }]}
+            >
               Buscando...
             </Text>
           </View>
         </View>
       ) : (
         detectedMotos.length > 0 && (
-          <View style={[styles.boxBuscando, { backgroundColor: theme.colors.surface }]}>
+          <View
+            style={[
+              styles.boxBuscando,
+              { backgroundColor: theme.colors.surface },
+            ]}
+          >
             <View style={styles.buscando}>
-              <Text style={[styles.titlebuscando, { color: theme.colors.onSurface }]}>
+              <Text
+                style={[
+                  styles.titlebuscando,
+                  { color: theme.colors.onSurface },
+                ]}
+              >
                 Motos Detectadas:
               </Text>
               {detectedMotos.map((moto, index) => (
@@ -153,7 +173,9 @@ export default function CadastroMoto() {
                     })
                   }
                 >
-                  <Text style={[styles.textMotos, { color: theme.colors.text }]}>
+                  <Text
+                    style={[styles.textMotos, { color: theme.colors.text }]}
+                  >
                     {`Tag - ${moto.tag} | Setor - ${moto.setor}`}
                   </Text>
                 </TouchableOpacity>

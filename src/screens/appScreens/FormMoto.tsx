@@ -6,40 +6,39 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { TextInput } from 'react-native-gesture-handler';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import IconIon from 'react-native-vector-icons/Ionicons';
-import { useThemeContext } from '../../context/ThemeContext'; 
-
+import { useThemeContext } from '../../context/ThemeContext';
 
 export default function FormMoto() {
   const [isModalVisible, setModalVisible] = useState(false);
   const [setores, setSetores] = useState<{ id: number; nome: string }[]>([]);
   const route = useRoute();
   const { tagId } = route.params as { tagId: string };
-  const {setor} = route.params as { setor: string };
+  const { setor } = route.params as { setor: string };
   console.log('Route params:', route.params);
   const navigation = useNavigation();
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [selectedTipo, setSelectedTipo] = useState<string | null>(null);
-  const [selectedSetor, setSelectedSetor] = useState<number | null>(setor ? Number(setor) : null);
+  const [selectedSetor, setSelectedSetor] = useState<number | null>(
+    setor ? Number(setor) : null,
+  );
   const [dropdownSetorVisible, setDropdownSetorVisible] = useState(false);
   const [placa, setPlaca] = useState('');
-  const { theme } = useThemeContext(); 
-
+  const { theme } = useThemeContext();
 
   useEffect(() => {
-    fetch("http://191.235.235.207:5294/api/setor")
-      .then(res => res.json())
-      .then(data => setSetores(data))
-      .catch(err => console.error("Erro ao carregar setores:", err));
+    fetch('http://191.235.235.207:5294/api/setor')
+      .then((res) => res.json())
+      .then((data) => setSetores(data))
+      .catch((err) => console.error('Erro ao carregar setores:', err));
   }, []);
 
   useEffect(() => {
-  if (setores.length > 0 && setor) {
-    const setorNum = Number(setor);
-    const setorExiste = setores.some(s => s.id === setorNum);
-    if (setorExiste) setSelectedSetor(setorNum);
-  }
-}, [setores, setor]);
-
+    if (setores.length > 0 && setor) {
+      const setorNum = Number(setor);
+      const setorExiste = setores.some((s) => s.id === setorNum);
+      if (setorExiste) setSelectedSetor(setorNum);
+    }
+  }, [setores, setor]);
 
   const handleCadastro = async () => {
     try {
@@ -65,7 +64,7 @@ export default function FormMoto() {
       }, 2000);
     } catch (error) {
       console.error(error);
-      alert("Erro ao cadastrar moto");
+      alert('Erro ao cadastrar moto');
     }
   };
 
@@ -86,10 +85,15 @@ export default function FormMoto() {
           <IconIon name="arrow-back" size={28} color={theme.colors.primary} />
         </TouchableOpacity>
 
-        <View style={[
-          styles.container,
-          { backgroundColor: theme.colors.surface, borderColor: theme.colors.outline }
-        ]}>
+        <View
+          style={[
+            styles.container,
+            {
+              backgroundColor: theme.colors.surface,
+              borderColor: theme.colors.outline,
+            },
+          ]}
+        >
           <View style={styles.tag}>
             <Text style={[styles.textTag, { color: theme.colors.primary }]}>
               Tag {tagId}
@@ -106,23 +110,27 @@ export default function FormMoto() {
                   onPress={() => setDropdownVisible(true)}
                   style={[
                     styles.dropdown,
-                    { borderBottomColor: theme.colors.outline }
+                    { borderBottomColor: theme.colors.outline },
                   ]}
                 >
                   <Text
                     style={[
                       styles.dropdownText,
                       { color: theme.colors.outline },
-                      selectedTipo && { color: theme.colors.primary }
+                      selectedTipo && { color: theme.colors.primary },
                     ]}
                   >
                     {selectedTipo || 'Tipo'}
                   </Text>
-                  <Icon name="chevron-down" size={20} color={theme.colors.onSurface} />
+                  <Icon
+                    name="chevron-down"
+                    size={20}
+                    color={theme.colors.onSurface}
+                  />
                 </TouchableOpacity>
               }
             >
-              {["Quebrada", "Ok"].map((option) => (
+              {['Quebrada', 'Ok'].map((option) => (
                 <Menu.Item
                   key={option}
                   onPress={() => {
@@ -144,21 +152,26 @@ export default function FormMoto() {
                   onPress={() => setDropdownSetorVisible(true)}
                   style={[
                     styles.dropdown,
-                    { borderBottomColor: theme.colors.outline }
+                    { borderBottomColor: theme.colors.outline },
                   ]}
                 >
                   <Text
                     style={[
                       styles.dropdownText,
                       { color: theme.colors.outline },
-                      selectedSetor && { color: theme.colors.primary }
+                      selectedSetor && { color: theme.colors.primary },
                     ]}
                   >
                     {selectedSetor
-                      ? setores.find((s) => s.id === selectedSetor)?.nome || `Setor ${selectedSetor}`
-                      : "Setor"}
+                      ? setores.find((s) => s.id === selectedSetor)?.nome ||
+                        `Setor ${selectedSetor}`
+                      : 'Setor'}
                   </Text>
-                  <Icon name="chevron-down" size={20} color={theme.colors.onSurface} />
+                  <Icon
+                    name="chevron-down"
+                    size={20}
+                    color={theme.colors.onSurface}
+                  />
                 </TouchableOpacity>
               }
             >
@@ -179,7 +192,7 @@ export default function FormMoto() {
           <TextInput
             style={[
               styles.placa,
-              { borderBottomColor: theme.colors.outline, color: "#f900cf" }
+              { borderBottomColor: theme.colors.outline, color: '#f900cf' },
             ]}
             placeholder="Placa"
             placeholderTextColor={theme.colors.outline}
@@ -200,11 +213,21 @@ export default function FormMoto() {
 
         {/* Dados preenchidos */}
         <View style={styles.dadosContainer}>
-          <Text style={[styles.dadosTitulo, { color: theme.colors.primary }]}>Dados preenchidos:</Text>
-          <Text style={[styles.dadosTexto, { color: theme.colors.onSurface }]}>Placa: {placa || '-'}</Text>
-          <Text style={[styles.dadosTexto, { color: theme.colors.onSurface }]}>Tipo: {selectedTipo || '-'}</Text>
+          <Text style={[styles.dadosTitulo, { color: theme.colors.primary }]}>
+            Dados preenchidos:
+          </Text>
           <Text style={[styles.dadosTexto, { color: theme.colors.onSurface }]}>
-            Setor: {selectedSetor ? setores.find((s) => s.id === selectedSetor)?.nome || `${selectedSetor}` : '-'}
+            Placa: {placa || '-'}
+          </Text>
+          <Text style={[styles.dadosTexto, { color: theme.colors.onSurface }]}>
+            Tipo: {selectedTipo || '-'}
+          </Text>
+          <Text style={[styles.dadosTexto, { color: theme.colors.onSurface }]}>
+            Setor:{' '}
+            {selectedSetor
+              ? setores.find((s) => s.id === selectedSetor)?.nome ||
+                `${selectedSetor}`
+              : '-'}
           </Text>
 
           <TouchableOpacity
@@ -222,10 +245,12 @@ export default function FormMoto() {
           onRequestClose={() => setModalVisible(false)}
         >
           <View style={styles.modal}>
-            <View style={[
-              styles.modalContainer,
-              { backgroundColor: theme.colors.success }
-            ]}>
+            <View
+              style={[
+                styles.modalContainer,
+                { backgroundColor: theme.colors.success },
+              ]}
+            >
               <Text style={styles.modalTitle}>Cadastro Bem-Sucedido!</Text>
             </View>
           </View>

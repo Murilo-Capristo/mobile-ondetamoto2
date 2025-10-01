@@ -20,9 +20,15 @@ export default function HeaderReduzida() {
 
   return (
     <View style={[styles.header, { backgroundColor: theme.colors.background }]}>
-      <View style={[styles.topHeader, { backgroundColor: theme.colors.background }]}>
+      <View
+        style={[styles.topHeader, { backgroundColor: theme.colors.background }]}
+      >
         <TouchableOpacity style={styles.linkProfile} onPress={handleLogout}>
-          <Icon name="person-circle-outline" size={30} color={theme.colors.text} />
+          <Icon
+            name="person-circle-outline"
+            size={30}
+            color={theme.colors.text}
+          />
           <Text style={[styles.TextProfile, { color: theme.colors.text }]}>
             {auth.currentUser?.displayName || 'Usuário'}
           </Text>
@@ -40,11 +46,11 @@ export default function HeaderReduzida() {
           onPress={toggleTheme}
           style={{ position: 'absolute', right: 20, top: 30 }}
         >
-                    <Icon
-                      name={isDark ? 'sunny-outline' : 'moon-outline'}
-                      size={24}
-                      color={theme.colors.onBackground}
-                    />
+          <Icon
+            name={isDark ? 'sunny-outline' : 'moon-outline'}
+            size={24}
+            color={theme.colors.onBackground}
+          />
         </TouchableOpacity>
       </View>
     </View>

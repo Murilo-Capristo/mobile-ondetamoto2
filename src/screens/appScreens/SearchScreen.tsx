@@ -100,21 +100,22 @@ export default function SearchScreen() {
         selectedFilter.id.toLowerCase() === 'id'
           ? item.id?.toString()
           : selectedFilter.id.toLowerCase() === 'tag'
-          ? item.tipo
-          : selectedFilter.id.toLowerCase() === 'nome'
-          ? item.tipo
-          : selectedFilter.id.toLowerCase() === 'placa'
-          ? item.placa
-          : item.nome;
+            ? item.tipo
+            : selectedFilter.id.toLowerCase() === 'nome'
+              ? item.tipo
+              : selectedFilter.id.toLowerCase() === 'placa'
+                ? item.placa
+                : item.nome;
 
       return campo?.toLowerCase().includes(search.toLowerCase());
     });
   };
 
   const atualizarItem = async (item: any) => {
-    const url = selectedTab.id === 'motos'
-      ? `http://191.235.235.207:5294/api/moto/${item.id}`
-      : `http://191.235.235.207:5294/api/setor/${item.id}`;
+    const url =
+      selectedTab.id === 'motos'
+        ? `http://191.235.235.207:5294/api/moto/${item.id}`
+        : `http://191.235.235.207:5294/api/setor/${item.id}`;
 
     try {
       await fetch(url, {
@@ -152,9 +153,10 @@ export default function SearchScreen() {
         style: 'destructive',
         onPress: async () => {
           try {
-            const url = selectedTab.id === 'motos'
-              ? `http://191.235.235.207:5294/api/moto/${id}`
-              : `http://191.235.235.207:5294/api/setor/${id}`;
+            const url =
+              selectedTab.id === 'motos'
+                ? `http://191.235.235.207:5294/api/moto/${id}`
+                : `http://191.235.235.207:5294/api/setor/${id}`;
 
             await fetch(url, {
               method: 'DELETE',
@@ -194,18 +196,37 @@ export default function SearchScreen() {
             <View
               style={[
                 styles.resultadoItem,
-                { backgroundColor: theme.colors.surface, borderColor: theme.colors.outline },
+                {
+                  backgroundColor: theme.colors.surface,
+                  borderColor: theme.colors.outline,
+                },
               ]}
             >
-              <Text style={[styles.resultadoTitulo, { color: theme.colors.primary }]}>
+              <Text
+                style={[
+                  styles.resultadoTitulo,
+                  { color: theme.colors.primary },
+                ]}
+              >
                 ID: {item.id}
               </Text>
-              // SE ESCOLHIDO MOTO
               {selectedTab.id === 'motos' ? (
                 <>
-                  <Text style={[styles.labelPequena, { color: theme.colors.text }]}>Tag</Text>
+                {/* // SE FOR MOTO */}
+                  <Text
+                    style={[styles.labelPequena, { color: theme.colors.text }]}
+                  >
+                    Tag
+                  </Text>
                   <TextInput
-                    style={[styles.editInput, { backgroundColor: theme.colors.background, color: theme.colors.text, borderColor: theme.colors.outline }]}
+                    style={[
+                      styles.editInput,
+                      {
+                        backgroundColor: theme.colors.background,
+                        color: theme.colors.text,
+                        borderColor: theme.colors.outline,
+                      },
+                    ]}
                     value={edicao.tag}
                     onChangeText={(text) =>
                       setEditando((prev) => ({
@@ -216,9 +237,20 @@ export default function SearchScreen() {
                     placeholder="Tag"
                     placeholderTextColor={theme.colors.onSurface}
                   />
-                  <Text style={[styles.labelPequena, { color: theme.colors.text }]}>Tipo</Text>
+                  <Text
+                    style={[styles.labelPequena, { color: theme.colors.text }]}
+                  >
+                    Tipo
+                  </Text>
                   <TextInput
-                    style={[styles.editInput, { backgroundColor: theme.colors.background, color: theme.colors.text, borderColor: theme.colors.outline }]}
+                    style={[
+                      styles.editInput,
+                      {
+                        backgroundColor: theme.colors.background,
+                        color: theme.colors.text,
+                        borderColor: theme.colors.outline,
+                      },
+                    ]}
                     value={edicao.nome}
                     onChangeText={(text) =>
                       setEditando((prev) => ({
@@ -229,9 +261,20 @@ export default function SearchScreen() {
                     placeholder="Tipo"
                     placeholderTextColor={theme.colors.onSurface}
                   />
-                  <Text style={[styles.labelPequena, { color: theme.colors.text }]}>Placa</Text>
+                  <Text
+                    style={[styles.labelPequena, { color: theme.colors.text }]}
+                  >
+                    Placa
+                  </Text>
                   <TextInput
-                    style={[styles.editInput, { backgroundColor: theme.colors.background, color: theme.colors.text, borderColor: theme.colors.outline }]}
+                    style={[
+                      styles.editInput,
+                      {
+                        backgroundColor: theme.colors.background,
+                        color: theme.colors.text,
+                        borderColor: theme.colors.outline,
+                      },
+                    ]}
                     value={edicao.placa}
                     onChangeText={(text) =>
                       setEditando((prev) => ({
@@ -245,10 +288,21 @@ export default function SearchScreen() {
                 </>
               ) : (
                 <>
-                // SE ESCOLHIDO SETOR
-                  <Text style={[styles.labelPequena, { color: theme.colors.text }]}>Nome</Text>
+                {/* // SE FOR SETOR */}
+                  <Text
+                    style={[styles.labelPequena, { color: theme.colors.text }]}
+                  >
+                    Nome
+                  </Text>
                   <TextInput
-                    style={[styles.editInput, { backgroundColor: theme.colors.background, color: theme.colors.text, borderColor: theme.colors.outline }]}
+                    style={[
+                      styles.editInput,
+                      {
+                        backgroundColor: theme.colors.background,
+                        color: theme.colors.text,
+                        borderColor: theme.colors.outline,
+                      },
+                    ]}
                     value={edicao.nome}
                     onChangeText={(text) =>
                       setEditando((prev) => ({
@@ -259,9 +313,20 @@ export default function SearchScreen() {
                     placeholder="Nome"
                     placeholderTextColor={theme.colors.onSurface}
                   />
-                  <Text style={[styles.labelPequena, { color: theme.colors.text }]}>Capacidade</Text>
+                  <Text
+                    style={[styles.labelPequena, { color: theme.colors.text }]}
+                  >
+                    Capacidade
+                  </Text>
                   <TextInput
-                    style={[styles.editInput, { backgroundColor: theme.colors.background, color: theme.colors.text, borderColor: theme.colors.outline }]}
+                    style={[
+                      styles.editInput,
+                      {
+                        backgroundColor: theme.colors.background,
+                        color: theme.colors.text,
+                        borderColor: theme.colors.outline,
+                      },
+                    ]}
                     value={String(edicao.tamanho ?? '')}
                     keyboardType="numeric"
                     onChangeText={(text) =>
@@ -278,30 +343,32 @@ export default function SearchScreen() {
                   />
                 </>
               )}
-
               <View style={styles.actions}>
-                // UPDATE
                 <TouchableOpacity onPress={() => atualizarItem(edicao)}>
                   <AntDesign name="checkcircle" size={24} color="green" />
                 </TouchableOpacity>
-                // DELETE
                 <TouchableOpacity
                   onPress={() => excluirItem(item.id)}
                   style={{ marginLeft: 10 }}
                 >
                   <AntDesign name="delete" size={24} color="red" />
                 </TouchableOpacity>
-                // DASHBOARD
-                <TouchableOpacity
-                  onPress={() => navigation.navigate('SetorDetailsScreen', { 
-                    setorId: item.id,
-                    setorNome: item.nome
-                  })}
-                  style={{ marginLeft: 10 }}
-                >
-                  <AntDesign name="dashboard" size={24} color="blue" />
-                </TouchableOpacity>
-                <Text style={{ color: theme.colors.text }}> Dashboard</Text>
+                {selectedTab.id === 'setores' && (
+                  <>
+                    <TouchableOpacity
+                      onPress={() =>
+                        navigation.navigate('SetorDetailsScreen', {
+                          setorId: item.id,
+                          setorNome: item.nome,
+                        })
+                      }
+                      style={{ marginLeft: 10 }}
+                    >
+                      <AntDesign name="dashboard" size={24} color="blue" />
+                    </TouchableOpacity>
+                    <Text style={{ color: theme.colors.text }}> Dashboard</Text>
+                  </>
+                )}
               </View>
             </View>
           );
@@ -313,7 +380,9 @@ export default function SearchScreen() {
   return (
     <Provider>
       <HeaderReduzida />
-      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <View
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
+      >
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.voltarBtn}
@@ -331,9 +400,14 @@ export default function SearchScreen() {
             anchor={
               <TouchableOpacity
                 onPress={() => setDropdownVisible(true)}
-                style={[styles.dropdown, { backgroundColor: theme.colors.surface }]}
+                style={[
+                  styles.dropdown,
+                  { backgroundColor: theme.colors.surface },
+                ]}
               >
-                <Text style={[styles.dropdownText, { color: theme.colors.primary }]}>
+                <Text
+                  style={[styles.dropdownText, { color: theme.colors.primary }]}
+                >
                   {selectedTab.label}
                 </Text>
                 <Icon name="chevron-down" size={20} color={theme.colors.text} />
@@ -355,7 +429,13 @@ export default function SearchScreen() {
 
         <View style={styles.searchRow}>
           <TextInput
-            style={[styles.input, { backgroundColor: theme.colors.surface, color: theme.colors.text }]}
+            style={[
+              styles.input,
+              {
+                backgroundColor: theme.colors.surface,
+                color: theme.colors.text,
+              },
+            ]}
             placeholder="Pesquise aqui..."
             placeholderTextColor={theme.colors.onSurface}
             value={search}
@@ -363,7 +443,10 @@ export default function SearchScreen() {
           />
           <TouchableOpacity
             onPress={() => setFilterVisible(!filterVisible)}
-            style={[styles.filterButton, { backgroundColor: theme.colors.surface }]}
+            style={[
+              styles.filterButton,
+              { backgroundColor: theme.colors.surface },
+            ]}
           >
             <AntDesign name="filter" size={30} color={theme.colors.text} />
             <Text style={{ marginLeft: 5, color: theme.colors.primary }}>
@@ -373,7 +456,12 @@ export default function SearchScreen() {
         </View>
 
         {filterVisible && (
-          <View style={[styles.filterOptions, { backgroundColor: theme.colors.surface }]}>
+          <View
+            style={[
+              styles.filterOptions,
+              { backgroundColor: theme.colors.surface },
+            ]}
+          >
             {relativeOptions.map((item) => (
               <TouchableOpacity
                 key={item.id}
@@ -398,8 +486,12 @@ export default function SearchScreen() {
         onRequestClose={() => setSuccessModalVisible(false)}
       >
         <View style={styles.modal}>
-          <View style={[styles.modalContainer, { backgroundColor: theme.colors.primary }]}>
-            <Text style={styles.modalTitle}>Operação realizada com sucesso!</Text>
+          <View
+            style={[styles.modalContainer, { backgroundColor: theme.colors.primary }]}
+          >
+            <Text style={styles.modalTitle}>
+              Operação realizada com sucesso!
+            </Text>
           </View>
         </View>
       </Modal>

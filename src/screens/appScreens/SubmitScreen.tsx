@@ -7,13 +7,15 @@ import { useThemeContext } from '../../context/ThemeContext';
 
 export default function SubmitScreen() {
   const navigation = useNavigation();
-  const { theme } = useThemeContext(); // 🎨 Pega o tema
+  const { theme } = useThemeContext(); 
 
   const featureCards = [
     {
       title: 'Motos',
       navegacao: 'CadastroMoto',
-      icon: <IconFont name="motorcycle" size={50} color={theme.colors.primary} />,
+      icon: (
+        <IconFont name="motorcycle" size={50} color={theme.colors.primary} />
+      ),
     },
     {
       title: 'Setores',
@@ -23,9 +25,11 @@ export default function SubmitScreen() {
   ];
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+    <View
+      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    >
       <HeaderReduzida />
-      
+
       <View style={styles.title}>
         <Text style={[styles.text, { color: theme.colors.onBackground }]}>
           O que deseja Cadastrar?

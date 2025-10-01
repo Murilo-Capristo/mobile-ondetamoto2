@@ -16,7 +16,7 @@ import { useThemeContext } from '../../context/ThemeContext';
 export default function CadastroSetor() {
   const navigation = useNavigation();
   const [isModalVisible, setModalVisible] = useState(false);
-  const { theme } = useThemeContext(); // 🎨 pega o tema atual
+  const { theme } = useThemeContext(); //  pega o tema atual
 
   // states para inputs
   const [nome, setNome] = useState('');
@@ -55,86 +55,88 @@ export default function CadastroSetor() {
 
   return (
     <Provider theme={theme}>
-  <View style={{ flex: 1, backgroundColor: theme.colors.surface }}>
-    <HeaderReduzida />
-    <TouchableOpacity
-      onPress={() => navigation.goBack()}
-      style={styles.voltarBtn}
-    >
-      <IconIon name="arrow-back" size={28} color={theme.colors.primary} />
-    </TouchableOpacity>
+      <View style={{ flex: 1, backgroundColor: theme.colors.surface }}>
+        <HeaderReduzida />
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.voltarBtn}
+        >
+          <IconIon name="arrow-back" size={28} color={theme.colors.primary} />
+        </TouchableOpacity>
 
-    <View
-      style={[
-        styles.container,
-        {
-          backgroundColor: theme.colors.background,
-          borderColor: theme.colors.outline,
-        },
-      ]}
-    >
-      <View style={styles.tag}>
-        <Text style={[styles.textTag, { color: theme.colors.primary }]}>
-          Cadastro de Setor
-        </Text>
-      </View>
-
-      <TextInput
-        style={[
-          styles.nome,
-          {
-            borderBottomColor: theme.colors.outline,
-            color: theme.colors.onSurface,
-          },
-        ]}
-        placeholder="Nome personalizado"
-        placeholderTextColor={theme.colors.outline}
-        value={nome}
-        onChangeText={setNome}
-      />
-
-      <View
-        style={[styles.viewTam, { borderBottomColor: theme.colors.outline }]}
-      >
-        <TextInput
-          style={[styles.placa, { color: theme.colors.onSurface }]}
-          placeholder="Tamanho Máximo Suportado (ex.: 100)"
-          placeholderTextColor={theme.colors.outline}
-          keyboardType="numeric"
-          value={tamanho}
-          onChangeText={setTamanho}
-        />
-      </View>
-    </View>
-
-    <View style={styles.containerBotao}>
-      <TouchableOpacity
-        style={[styles.cadasBtn, { backgroundColor: theme.colors.primary }]}
-        onPress={handleCadastro}
-      >
-        <Text style={styles.cadasText}>Cadastrar</Text>
-      </TouchableOpacity>
-    </View>
-
-    <Modal
-      visible={isModalVisible}
-      transparent
-      onRequestClose={() => setModalVisible(false)}
-    >
-      <View style={styles.modal}>
         <View
           style={[
-            styles.modalContainer,
-            { backgroundColor: theme.colors.sucesso }, // 👈 aqui usei "sucesso" do seu tema
+            styles.container,
+            {
+              backgroundColor: theme.colors.background,
+              borderColor: theme.colors.outline,
+            },
           ]}
         >
-          <Text style={styles.modalTitle}>Cadastro Bem-Sucedido!</Text>
-        </View>
-      </View>
-    </Modal>
-  </View>
-</Provider>
+          <View style={styles.tag}>
+            <Text style={[styles.textTag, { color: theme.colors.primary }]}>
+              Cadastro de Setor
+            </Text>
+          </View>
 
+          <TextInput
+            style={[
+              styles.nome,
+              {
+                borderBottomColor: theme.colors.outline,
+                color: theme.colors.onSurface,
+              },
+            ]}
+            placeholder="Nome personalizado"
+            placeholderTextColor={theme.colors.outline}
+            value={nome}
+            onChangeText={setNome}
+          />
+
+          <View
+            style={[
+              styles.viewTam,
+              { borderBottomColor: theme.colors.outline },
+            ]}
+          >
+            <TextInput
+              style={[styles.placa, { color: theme.colors.onSurface }]}
+              placeholder="Tamanho Máximo Suportado (ex.: 100)"
+              placeholderTextColor={theme.colors.outline}
+              keyboardType="numeric"
+              value={tamanho}
+              onChangeText={setTamanho}
+            />
+          </View>
+        </View>
+
+        <View style={styles.containerBotao}>
+          <TouchableOpacity
+            style={[styles.cadasBtn, { backgroundColor: theme.colors.primary }]}
+            onPress={handleCadastro}
+          >
+            <Text style={styles.cadasText}>Cadastrar</Text>
+          </TouchableOpacity>
+        </View>
+
+        <Modal
+          visible={isModalVisible}
+          transparent
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View style={styles.modal}>
+            <View
+              style={[
+                styles.modalContainer,
+                { backgroundColor: theme.colors.sucesso }, 
+              ]}
+            >
+              <Text style={styles.modalTitle}>Cadastro Bem-Sucedido!</Text>
+            </View>
+          </View>
+        </Modal>
+      </View>
+    </Provider>
   );
 }
 

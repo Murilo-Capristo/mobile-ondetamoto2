@@ -1,4 +1,10 @@
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+} from 'react-native';
 import IconFont from 'react-native-vector-icons/Fontisto';
 import MCI from 'react-native-vector-icons/MaterialCommunityIcons';
 import Feather from 'react-native-vector-icons/Feather';
@@ -25,13 +31,17 @@ export default function HomeScreen() {
       title: 'Motos',
       navegacao: 'SearchScreen',
       param: 'motos',
-      icon: <IconFont name="motorcycle" size={50} color={theme.colors.primary} />,
+      icon: (
+        <IconFont name="motorcycle" size={50} color={theme.colors.primary} />
+      ),
     },
     {
       title: 'Cadastrar Moto',
       navegacao: 'CadastroMoto',
       param: 'motos',
-      icon: <Feather name="plus-square" size={50} color={theme.colors.primary} />,
+      icon: (
+        <Feather name="plus-square" size={50} color={theme.colors.primary} />
+      ),
     },
     {
       title: 'Setores',
@@ -43,7 +53,9 @@ export default function HomeScreen() {
       title: 'Cadastrar Setor',
       navegacao: 'CadastroSetor',
       param: 'setores',
-      icon: <Feather name="plus-square" size={50} color={theme.colors.primary} />,
+      icon: (
+        <Feather name="plus-square" size={50} color={theme.colors.primary} />
+      ),
     },
   ];
 
