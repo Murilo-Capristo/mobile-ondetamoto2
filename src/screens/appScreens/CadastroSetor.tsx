@@ -11,13 +11,12 @@ import { Provider } from 'react-native-paper';
 import { useState } from 'react';
 import IconIon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
-
-const roxo_escuro = '#9F0095';
-const roxo = '#f900cf';
+import { useThemeContext } from '../../context/ThemeContext';
 
 export default function CadastroSetor() {
   const navigation = useNavigation();
   const [isModalVisible, setModalVisible] = useState(false);
+  const { theme } = useThemeContext(); // 🎨 pega o tema atual
 
   // states para inputs
   const [nome, setNome] = useState('');
@@ -55,67 +54,98 @@ export default function CadastroSetor() {
   };
 
   return (
-    <Provider style={{ backgroundColor: '#fff' }}>
-      <HeaderReduzida />
-      <TouchableOpacity
-        onPress={() => navigation.goBack()}
-        style={styles.voltarBtn}
-      >
-        <IconIon name="arrow-back" size={28} color={roxo_escuro} />
-      </TouchableOpacity>
-      <View style={styles.container}>
-        <View style={styles.tag}>
-          <Text style={styles.textTag}>Cadastro de Setor</Text>
-        </View>
+    <Provider theme={theme}>
+  <View style={{ flex: 1, backgroundColor: theme.colors.surface }}>
+    <HeaderReduzida />
+    <TouchableOpacity
+      onPress={() => navigation.goBack()}
+      style={styles.voltarBtn}
+    >
+      <IconIon name="arrow-back" size={28} color={theme.colors.primary} />
+    </TouchableOpacity>
 
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: theme.colors.background,
+          borderColor: theme.colors.outline,
+        },
+      ]}
+    >
+      <View style={styles.tag}>
+        <Text style={[styles.textTag, { color: theme.colors.primary }]}>
+          Cadastro de Setor
+        </Text>
+      </View>
+
+      <TextInput
+        style={[
+          styles.nome,
+          {
+            borderBottomColor: theme.colors.outline,
+            color: theme.colors.onSurface,
+          },
+        ]}
+        placeholder="Nome personalizado"
+        placeholderTextColor={theme.colors.outline}
+        value={nome}
+        onChangeText={setNome}
+      />
+
+      <View
+        style={[styles.viewTam, { borderBottomColor: theme.colors.outline }]}
+      >
         <TextInput
-          style={styles.nome}
-          placeholder="Nome personalizado"
-          value={nome}
-          onChangeText={setNome}
+          style={[styles.placa, { color: theme.colors.onSurface }]}
+          placeholder="Tamanho Máximo Suportado (ex.: 100)"
+          placeholderTextColor={theme.colors.outline}
+          keyboardType="numeric"
+          value={tamanho}
+          onChangeText={setTamanho}
         />
+      </View>
+    </View>
 
-        <View style={styles.viewTam}>
-          <TextInput
-            style={styles.placa}
-            placeholder="Tamanho Máximo Suportado (ex.: 100 )"
-            keyboardType="numeric"
-            value={tamanho}
-            onChangeText={setTamanho}
-          />
-        </View>
-      </View>
-      <View style={styles.containerBotao}>
-        <TouchableOpacity style={styles.cadasBtn} onPress={handleCadastro}>
-          <Text style={styles.cadasText}>Cadastrar</Text>
-        </TouchableOpacity>
-      </View>
-      <Modal
-        visible={isModalVisible}
-        transparent
-        onRequestClose={() => setModalVisible(false)}
+    <View style={styles.containerBotao}>
+      <TouchableOpacity
+        style={[styles.cadasBtn, { backgroundColor: theme.colors.primary }]}
+        onPress={handleCadastro}
       >
-        <View style={styles.modal}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.modalTitle}>Cadastro Bem-Sucedido!</Text>
-          </View>
+        <Text style={styles.cadasText}>Cadastrar</Text>
+      </TouchableOpacity>
+    </View>
+
+    <Modal
+      visible={isModalVisible}
+      transparent
+      onRequestClose={() => setModalVisible(false)}
+    >
+      <View style={styles.modal}>
+        <View
+          style={[
+            styles.modalContainer,
+            { backgroundColor: theme.colors.sucesso }, // 👈 aqui usei "sucesso" do seu tema
+          ]}
+        >
+          <Text style={styles.modalTitle}>Cadastro Bem-Sucedido!</Text>
         </View>
-      </Modal>
-    </Provider>
+      </View>
+    </Modal>
+  </View>
+</Provider>
+
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-    backgroundColor: '#F2F2F2',
     borderWidth: 1,
-    borderColor: '#ccc',
     borderRadius: 10,
     margin: 40,
   },
   cadasBtn: {
-    backgroundColor: roxo,
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 10,
@@ -149,7 +179,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   textTag: {
-    color: '#e205bd',
     fontSize: 30,
     fontWeight: '700',
     textAlign: 'center',
@@ -160,13 +189,11 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
     paddingRight: 90,
     paddingBottom: 1,
   },
   viewTam: {
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
     marginBottom: 20,
   },
   placa: {
@@ -177,7 +204,6 @@ const styles = StyleSheet.create({
     margin: 0,
   },
   modalContainer: {
-    backgroundColor: '#4CAF50',
     padding: 10,
     borderRadius: 5,
     alignItems: 'center',

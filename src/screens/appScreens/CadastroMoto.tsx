@@ -4,11 +4,11 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useEffect, useState, useRef } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Client, Message } from 'paho-mqtt';
-
-const roxo_escuro = '#9F0095';
+import { useThemeContext } from '../../context/ThemeContext';
 
 export default function CadastroMoto() {
   const navigation = useNavigation();
+  const { theme } = useThemeContext();
 
   const [detectedMotos, setDetectedMotos] = useState<
     { tag: string; setor: string }[]
@@ -88,7 +88,6 @@ export default function CadastroMoto() {
     }
   }, [detectedMotos]);
 
-
   useEffect(() => {
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -99,38 +98,50 @@ export default function CadastroMoto() {
   }, []);
 
   return (
-    <View>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <HeaderReduzida />
+
       <View style={styles.title}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.voltarBtn}
         >
-          <Icon name="arrow-back" size={28} color={roxo_escuro} />
+          <Icon name="arrow-back" size={28} color={theme.colors.secondary} />
         </TouchableOpacity>
-        <Text style={styles.titleText}>Cadastro de Moto</Text>
+        <Text style={[styles.titleText, { color: theme.colors.text }]}>
+          Cadastro de Moto
+        </Text>
       </View>
 
       <TouchableOpacity
-        style={styles.detectarMoto}
+        style={[
+          styles.detectarMoto,
+          { backgroundColor: "#e4e3e3", borderColor:"green" },
+        ]}
         onPress={handleMoto}
         disabled={isDetecting}
       >
-        <Icon name="wifi-tethering" style={styles.icon} />
-        <Text style={styles.detecText}>Detectar Motocicleta</Text>
+        <Icon name="wifi-tethering" style={[styles.icon, { color: "green" }]} />
+        <Text style={[styles.detecText, { color: "black" }]}>
+          Detectar Motocicleta
+        </Text>
       </TouchableOpacity>
 
       {isDetecting ? (
-        <View style={styles.boxBuscando}>
+        <View style={[styles.boxBuscando, { backgroundColor: theme.colors.surface }]}>
           <View style={styles.buscando}>
-            <Text style={styles.titlebuscando}>Buscando...</Text>
+            <Text style={[styles.titlebuscando, { color: theme.colors.onSurface }]}>
+              Buscando...
+            </Text>
           </View>
         </View>
       ) : (
         detectedMotos.length > 0 && (
-          <View style={styles.boxBuscando}>
+          <View style={[styles.boxBuscando, { backgroundColor: theme.colors.surface }]}>
             <View style={styles.buscando}>
-              <Text style={styles.titlebuscando}>Motos Detectadas:</Text>
+              <Text style={[styles.titlebuscando, { color: theme.colors.onSurface }]}>
+                Motos Detectadas:
+              </Text>
               {detectedMotos.map((moto, index) => (
                 <TouchableOpacity
                   key={index}
@@ -142,9 +153,9 @@ export default function CadastroMoto() {
                     })
                   }
                 >
-                  <Text
-                    style={styles.textMotos}
-                  >{`Tag - ${moto.tag} | Setor - ${moto.setor}`}</Text>
+                  <Text style={[styles.textMotos, { color: theme.colors.text }]}>
+                    {`Tag - ${moto.tag} | Setor - ${moto.setor}`}
+                  </Text>
                 </TouchableOpacity>
               ))}
             </View>
@@ -156,6 +167,7 @@ export default function CadastroMoto() {
 }
 
 const styles = StyleSheet.create({
+  container: { flex: 1 },
   voltarBtn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -169,23 +181,22 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     width: '100%',
   },
-  textMotos: { fontSize: 28, fontWeight: '400', color: '#000' },
+  textMotos: { fontSize: 28, fontWeight: '400' },
   boxBuscando: {
     marginTop: 50,
     marginHorizontal: 30,
     paddingTop: 40,
     paddingBottom: 40,
     paddingHorizontal: 10,
-    backgroundColor: '#DCDEDF',
     borderRadius: 20,
   },
-  titlebuscando: { fontSize: 18, fontWeight: '600', color: '#8b8b8b' },
+  titlebuscando: { fontSize: 18, fontWeight: '600' },
   buscando: {
     justifyContent: 'center',
     alignItems: 'flex-start',
     paddingHorizontal: 10,
   },
-  detecText: { fontSize: 29, fontWeight: '600', color: '#000' },
+  detecText: { fontSize: 29, fontWeight: '600' },
   detectarMoto: {
     marginTop: 50,
     margin: 40,
@@ -193,18 +204,15 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#DCDEDF',
     borderRadius: 20,
-    borderColor: '#009213',
     borderWidth: 4,
   },
   title: { marginTop: 20, alignItems: 'center', justifyContent: 'center' },
-  titleText: { fontSize: 28, fontWeight: 'bold', color: '#000' },
+  titleText: { fontSize: 28, fontWeight: 'bold' },
   icon: {
     position: 'absolute',
     top: 0,
     right: 3,
-    color: '#009213',
     fontSize: 35,
   },
 });

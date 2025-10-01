@@ -15,9 +15,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import HeaderReduzida from '../templates/HeaderReduzida';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { RootStackParamList } from '../../navigation/RootNavigator';
-
-const roxo_escuro = '#9F0095';
-const roxo_texto = '#a100ff';
+import { useThemeContext } from '../../context/ThemeContext';
 
 type SearchScreenRouteProp = RouteProp<RootStackParamList, 'SearchScreen'>;
 
@@ -33,6 +31,8 @@ const categoryOptions = [
 ];
 
 export default function SearchScreen() {
+  const { theme } = useThemeContext(); // pega o tema atual
+
   const [successModalVisible, setSuccessModalVisible] = useState(false);
   const showSuccessModal = () => {
     setSuccessModalVisible(true);
@@ -41,7 +41,6 @@ export default function SearchScreen() {
     }, 2000);
   };
 
-  
   const navigation = useNavigation();
   const route = useRoute<SearchScreenRouteProp>();
   const { param = 'motos' } = route.params || {};
@@ -179,7 +178,7 @@ export default function SearchScreen() {
 
   const renderResultados = () => {
     if (loading) {
-      return <Text>Carregando...</Text>;
+      return <Text style={{ color: theme.colors.text }}>Carregando...</Text>;
     }
 
     const data = selectedTab.id === 'motos' ? motos : setores;
@@ -192,14 +191,21 @@ export default function SearchScreen() {
           const edicao = editando[item.id] || item;
 
           return (
-            <View style={styles.resultadoItem}>
-              <Text style={styles.resultadoTitulo}>ID: {item.id}</Text>
+            <View
+              style={[
+                styles.resultadoItem,
+                { backgroundColor: theme.colors.surface, borderColor: theme.colors.outline },
+              ]}
+            >
+              <Text style={[styles.resultadoTitulo, { color: theme.colors.primary }]}>
+                ID: {item.id}
+              </Text>
 
               {selectedTab.id === 'motos' ? (
                 <>
-                  <Text style={styles.labelPequena}>Tag</Text>
+                  <Text style={[styles.labelPequena, { color: theme.colors.text }]}>Tag</Text>
                   <TextInput
-                    style={styles.editInput}
+                    style={[styles.editInput, { backgroundColor: theme.colors.background, color: theme.colors.text, borderColor: theme.colors.outline }]}
                     value={edicao.tag}
                     onChangeText={(text) =>
                       setEditando((prev) => ({
@@ -208,10 +214,11 @@ export default function SearchScreen() {
                       }))
                     }
                     placeholder="Tag"
+                    placeholderTextColor={theme.colors.onSurface}
                   />
-                  <Text style={styles.labelPequena}>Tipo</Text>
+                  <Text style={[styles.labelPequena, { color: theme.colors.text }]}>Tipo</Text>
                   <TextInput
-                    style={styles.editInput}
+                    style={[styles.editInput, { backgroundColor: theme.colors.background, color: theme.colors.text, borderColor: theme.colors.outline }]}
                     value={edicao.nome}
                     onChangeText={(text) =>
                       setEditando((prev) => ({
@@ -220,10 +227,11 @@ export default function SearchScreen() {
                       }))
                     }
                     placeholder="Tipo"
+                    placeholderTextColor={theme.colors.onSurface}
                   />
-                  <Text style={styles.labelPequena}>Placa</Text>
+                  <Text style={[styles.labelPequena, { color: theme.colors.text }]}>Placa</Text>
                   <TextInput
-                    style={styles.editInput}
+                    style={[styles.editInput, { backgroundColor: theme.colors.background, color: theme.colors.text, borderColor: theme.colors.outline }]}
                     value={edicao.placa}
                     onChangeText={(text) =>
                       setEditando((prev) => ({
@@ -232,13 +240,14 @@ export default function SearchScreen() {
                       }))
                     }
                     placeholder="Placa"
+                    placeholderTextColor={theme.colors.onSurface}
                   />
                 </>
               ) : (
                 <>
-                  <Text style={styles.labelPequena}>Nome</Text>
+                  <Text style={[styles.labelPequena, { color: theme.colors.text }]}>Nome</Text>
                   <TextInput
-                    style={styles.editInput}
+                    style={[styles.editInput, { backgroundColor: theme.colors.background, color: theme.colors.text, borderColor: theme.colors.outline }]}
                     value={edicao.nome}
                     onChangeText={(text) =>
                       setEditando((prev) => ({
@@ -247,10 +256,11 @@ export default function SearchScreen() {
                       }))
                     }
                     placeholder="Nome"
+                    placeholderTextColor={theme.colors.onSurface}
                   />
-                  <Text style={styles.labelPequena}>Capacidade</Text>
+                  <Text style={[styles.labelPequena, { color: theme.colors.text }]}>Capacidade</Text>
                   <TextInput
-                    style={styles.editInput}
+                    style={[styles.editInput, { backgroundColor: theme.colors.background, color: theme.colors.text, borderColor: theme.colors.outline }]}
                     value={String(edicao.tamanho ?? '')}
                     keyboardType="numeric"
                     onChangeText={(text) =>
@@ -263,6 +273,7 @@ export default function SearchScreen() {
                       }))
                     }
                     placeholder="Capacidade"
+                    placeholderTextColor={theme.colors.onSurface}
                   />
                 </>
               )}
@@ -280,7 +291,6 @@ export default function SearchScreen() {
               </View>
             </View>
           );
-
         }}
       />
     );
@@ -289,16 +299,16 @@ export default function SearchScreen() {
   return (
     <Provider>
       <HeaderReduzida />
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.voltarBtn}
         >
-          <Icon name="arrow-back" size={28} color={roxo_escuro} />
+          <Icon name="arrow-back" size={28} color={theme.colors.primary} />
         </TouchableOpacity>
 
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Text style={styles.label}>
+          <Text style={[styles.label, { color: theme.colors.text }]}>
             Pesquise Motos ou Setores Registrados.
           </Text>
           <Menu
@@ -307,10 +317,12 @@ export default function SearchScreen() {
             anchor={
               <TouchableOpacity
                 onPress={() => setDropdownVisible(true)}
-                style={styles.dropdown}
+                style={[styles.dropdown, { backgroundColor: theme.colors.surface }]}
               >
-                <Text style={styles.dropdownText}>{selectedTab.label}</Text>
-                <Icon name="chevron-down" size={20} />
+                <Text style={[styles.dropdownText, { color: theme.colors.primary }]}>
+                  {selectedTab.label}
+                </Text>
+                <Icon name="chevron-down" size={20} color={theme.colors.text} />
               </TouchableOpacity>
             }
           >
@@ -329,34 +341,35 @@ export default function SearchScreen() {
 
         <View style={styles.searchRow}>
           <TextInput
-            style={styles.input}
+            style={[styles.input, { backgroundColor: theme.colors.surface, color: theme.colors.text }]}
             placeholder="Pesquise aqui..."
+            placeholderTextColor={theme.colors.onSurface}
             value={search}
             onChangeText={setSearch}
           />
           <TouchableOpacity
             onPress={() => setFilterVisible(!filterVisible)}
-            style={styles.filterButton}
+            style={[styles.filterButton, { backgroundColor: theme.colors.surface }]}
           >
-            <AntDesign name="filter" size={30} color="#000" />
-            <Text style={{ marginLeft: 5, color: roxo_texto }}>
+            <AntDesign name="filter" size={30} color={theme.colors.text} />
+            <Text style={{ marginLeft: 5, color: theme.colors.primary }}>
               {selectedFilter.label}
             </Text>
           </TouchableOpacity>
         </View>
 
         {filterVisible && (
-          <View style={styles.filterOptions}>
+          <View style={[styles.filterOptions, { backgroundColor: theme.colors.surface }]}>
             {relativeOptions.map((item) => (
               <TouchableOpacity
                 key={item.id}
-                style={styles.filterItem}
+                style={[styles.filterItem, { borderBottomColor: theme.colors.outline }]}
                 onPress={() => {
                   setSelectedFilter(item);
                   setFilterVisible(false);
                 }}
               >
-                <Text>{item.label}</Text>
+                <Text style={{ color: theme.colors.text }}>{item.label}</Text>
               </TouchableOpacity>
             ))}
           </View>
@@ -364,18 +377,18 @@ export default function SearchScreen() {
 
         {renderResultados()}
       </View>
-          <Modal
-      visible={successModalVisible}
-      transparent
-      onRequestClose={() => setSuccessModalVisible(false)}
-    >
-      <View style={styles.modal}>
-        <View style={styles.modalContainer}>
-          <Text style={styles.modalTitle}>Operação realizada com sucesso!</Text>
-        </View>
-      </View>
-    </Modal>
 
+      <Modal
+        visible={successModalVisible}
+        transparent
+        onRequestClose={() => setSuccessModalVisible(false)}
+      >
+        <View style={styles.modal}>
+          <View style={[styles.modalContainer, { backgroundColor: theme.colors.primary }]}>
+            <Text style={styles.modalTitle}>Operação realizada com sucesso!</Text>
+          </View>
+        </View>
+      </Modal>
     </Provider>
   );
 }
@@ -383,7 +396,6 @@ export default function SearchScreen() {
 const styles = StyleSheet.create({
   container: {
     padding: 16,
-    backgroundColor: '#fff',
     flex: 1,
   },
   label: {
@@ -399,17 +411,15 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 10,
     height: 40,
-    backgroundColor: '#f2f2f2',
   },
   modal: {
-  flex: 1,
-  justifyContent: 'flex-start',
-  alignItems: 'center',
-  backgroundColor: 'rgba(0,0,0,0.2)',
-  paddingTop: 50,
-},
+    flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.2)',
+    paddingTop: 50,
+  },
   modalContainer: {
-    backgroundColor: '#4CAF50',
     padding: 10,
     borderRadius: 5,
     alignItems: 'center',
@@ -420,10 +430,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#fff',
   },
-
   filterButton: {
     marginLeft: 10,
-    backgroundColor: '#fff',
     padding: 8,
     borderRadius: 8,
     flexDirection: 'row',
@@ -431,17 +439,14 @@ const styles = StyleSheet.create({
   },
   filterOptions: {
     marginTop: 10,
-    backgroundColor: '#e0e0e0',
     borderRadius: 8,
     paddingVertical: 5,
   },
   filterItem: {
     padding: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
   },
   dropdown: {
-    backgroundColor: '#e0e0e0',
     padding: 10,
     margin: 10,
     borderRadius: 8,
@@ -456,26 +461,20 @@ const styles = StyleSheet.create({
   },
   dropdownText: {
     marginRight: 5,
-    color: roxo_texto,
     fontWeight: 'bold',
   },
   resultadoItem: {
     padding: 10,
     marginBottom: 10,
-    backgroundColor: '#f4f4f4',
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#ccc',
   },
   resultadoTitulo: {
     fontWeight: 'bold',
-    color: roxo_escuro,
     marginBottom: 4,
   },
   editInput: {
-    backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: '#ccc',
     borderRadius: 6,
     padding: 6,
     marginVertical: 4,
@@ -484,10 +483,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     marginTop: 6,
   },
-    labelPequena: {
+  labelPequena: {
     fontSize: 12,
     fontWeight: '500',
-    marginBottom: 4,  
-    color: '#333',   
+    marginBottom: 4,
   },
 });
