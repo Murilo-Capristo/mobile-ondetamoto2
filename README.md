@@ -41,6 +41,36 @@ O **OndeTáMoto** é uma solução web e mobile integrada, que permite identific
 - Context API
 - Bluetooth Serial (simulação ainda indisponível)
 
+# Estrutura de Pastas do Diretório `src`
+
+```plaintext
+src/
+├── config/
+│   └── firebase.ts
+├── context/
+│   └── ThemeContext.tsx
+├── navigation/
+│   ├── BottomTabsNavigator.tsx
+│   └── RootNavigator.tsx
+├── screens/
+│   ├── Splash.tsx
+│   ├── appScreens/
+│   │   ├── CadastroMoto.tsx
+│   │   ├── FormMoto.tsx
+│   │   ├── SearchScreen.tsx
+│   │   ├── SubmitScreen.tsx
+│   │   ├── CadastroSetor.tsx
+│   │   ├── HomeScreen.tsx
+│   │   └── SetorDetailsScreen.tsx
+│   ├── preScreen/
+│   │   ├── LandingScreen.tsx
+│   │   ├── LoginScreen.tsx
+│   │   └── PreCadastroScreen.tsx
+│   └── templates/
+│       ├── HeaderReduzida.tsx
+│       └── HeaderTemplate.tsx
+└── theme.ts
+```
 ### 🔹 Outros
 
 - RFID tags (ainda não simuláveis no app)
