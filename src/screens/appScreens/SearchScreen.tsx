@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   FlatList,
   Alert,
+  Modal,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -32,6 +33,15 @@ const categoryOptions = [
 ];
 
 export default function SearchScreen() {
+  const [successModalVisible, setSuccessModalVisible] = useState(false);
+  const showSuccessModal = () => {
+    setSuccessModalVisible(true);
+    setTimeout(() => {
+      setSuccessModalVisible(false);
+    }, 2000);
+  };
+
+  
   const navigation = useNavigation();
   const route = useRoute<SearchScreenRouteProp>();
   const { param = 'motos' } = route.params || {};
@@ -127,6 +137,7 @@ export default function SearchScreen() {
       setEditando((prev) => {
         const novo = { ...prev };
         delete novo[item.id];
+        showSuccessModal();
         return novo;
       });
     } catch (err) {
@@ -157,6 +168,7 @@ export default function SearchScreen() {
             );
             const data = await res.json();
             selectedTab.id === 'motos' ? setMotos(data) : setSetores(data);
+            showSuccessModal();
           } catch (err) {
             console.error('Erro ao excluir:', err);
           }
@@ -352,6 +364,18 @@ export default function SearchScreen() {
 
         {renderResultados()}
       </View>
+          <Modal
+      visible={successModalVisible}
+      transparent
+      onRequestClose={() => setSuccessModalVisible(false)}
+    >
+      <View style={styles.modal}>
+        <View style={styles.modalContainer}>
+          <Text style={styles.modalTitle}>Operação realizada com sucesso!</Text>
+        </View>
+      </View>
+    </Modal>
+
     </Provider>
   );
 }
@@ -377,6 +401,26 @@ const styles = StyleSheet.create({
     height: 40,
     backgroundColor: '#f2f2f2',
   },
+  modal: {
+  flex: 1,
+  justifyContent: 'flex-start',
+  alignItems: 'center',
+  backgroundColor: 'rgba(0,0,0,0.2)',
+  paddingTop: 50,
+},
+  modalContainer: {
+    backgroundColor: '#4CAF50',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 50,
+  },
+  modalTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+
   filterButton: {
     marginLeft: 10,
     backgroundColor: '#fff',
