@@ -6,38 +6,24 @@ import {
   StyleSheet,
   TouchableOpacity,
 } from 'react-native';
-import { Client, Message } from 'paho-mqtt';
+import { Client } from 'paho-mqtt';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import HeaderReduzida from '../templates/HeaderReduzida';
 import IconIon from 'react-native-vector-icons/Ionicons';
-
-const roxo = '#f900cf';
-const roxo_escuro = '#9F0095';
-const roxo_texto = '#a100ff';
+import { useThemeContext } from '../../context/ThemeContext';
 
 export default function SetorDetailsScreen() {
   const navigation = useNavigation();
-
   const route = useRoute();
-  const { setorId } = route.params as { setorId: string };
-  const { setorNome } = route.params as { setorNome: string };
+  const { setorId, setorNome } = route.params as { setorId: string; setorNome: string };
+  const { theme } = useThemeContext();
 
-  const [messages, setMessages] = useState([]);
-
+  // Estado das mensagens
+  const [messages, setMessages] = useState<{ tag: string; status: 'entrando' | 'saindo' }[]>([]);
   const payloadGlobal = useRef<any>(null);
 
-  const mensagens = [];
-
-  const verificarMensagens = (msg) => {
-    let i = 0;
-    for (i in mensagens) {
-      if (mensagens[i] === msg) {
-        return ` Saindo Do Setor ${payloadGlobal.current.setor}`;
-      }
-    }
-    mensagens.push(msg);
-    return ` Entrando No Setor ${payloadGlobal.current.setor}`;
-  };
+  // Ref para guardar status das motos
+  const statusMotos = useRef<{ [tag: string]: 'entrando' | 'saindo' }>({});
 
   useEffect(() => {
     const client = new Client(
@@ -61,13 +47,17 @@ export default function SetorDetailsScreen() {
     });
 
     client.onMessageArrived = (message) => {
-      console.log(
-        `Mensagem no tópico ${message.destinationName}: ${message.payloadString}`,
-      );
       const payloadJson = JSON.parse(message.payloadString);
       payloadGlobal.current = payloadJson;
 
-      setMessages((oldMsgs) => [...oldMsgs, payloadJson.moto]);
+      const tag = payloadJson.moto;
+
+      // Alterna o status
+      const novoStatus = statusMotos.current[tag] === 'entrando' ? 'saindo' : 'entrando';
+      statusMotos.current[tag] = novoStatus;
+
+      // Adiciona no estado para renderização
+      setMessages((oldMsgs) => [...oldMsgs, { tag, status: novoStatus }]);
     };
 
     client.onConnectionLost = (responseObject) => {
@@ -84,28 +74,35 @@ export default function SetorDetailsScreen() {
   return (
     <>
       <HeaderReduzida />
-
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.voltarBtn}
         >
-          <IconIon name="arrow-back" size={28} color={roxo_escuro} />
+          <IconIon name="arrow-back" size={28} color={theme.colors.primary} />
         </TouchableOpacity>
-        <View>
-          <Text style={styles.title1}>Logs de Entrada e Saída do Setor</Text>
-        </View>
 
-        <Text style={styles.title}>
-          Id: <Text style={{ color: roxo_texto }}>{setorId} </Text>
-          Nome: <Text style={{ color: roxo_texto }}>{setorNome}</Text>
+        <Text style={[styles.title1, { backgroundColor: theme.colors.primary, color: theme.colors.onPrimary }]}>
+          Logs de Entrada e Saída do Setor
         </Text>
-        <Text style={styles.subtitle}>Leitura RFID Recebidas:</Text>
+
+        <Text style={[styles.title, { color: theme.colors.primary }]}>
+          Id: <Text style={{ color: theme.colors.secondary }}>{setorId}</Text> {'  '}
+          Nome: <Text style={{ color: theme.colors.secondary }}>{setorNome}</Text>
+        </Text>
+
+        <Text style={[styles.subtitle, { color: theme.colors.text }]}>
+          Leituras RFID Recebidas:
+        </Text>
+
         <ScrollView style={styles.scroll}>
           {messages.map((msg, index) => (
-            <View key={index} style={styles.messageBox}>
-              <Text style={styles.messageText}>
-                MotoID: {msg} {verificarMensagens(msg)}
+            <View
+              key={index}
+              style={[styles.messageBox, { backgroundColor: theme.colors.surface, borderColor: theme.colors.outline }]}
+            >
+              <Text style={[styles.messageText, { color: theme.colors.text }]}>
+                Tag: {msg.tag} {msg.status === 'entrando' ? 'Entrando no Setor' : 'Saindo do Setor'} {payloadGlobal.current?.setor}
               </Text>
             </View>
           ))}
@@ -118,7 +115,6 @@ export default function SetorDetailsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fce4ec', // rosa claro
     padding: 20,
     paddingTop: 20,
   },
@@ -130,21 +126,16 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 22,
-    flexDirection: 'column',
     fontWeight: '900',
-    color: '#880e4f', // rosa escuro
     textAlign: 'center',
     marginBottom: 15,
     fontFamily: 'sans-serif-condensed',
   },
   title1: {
-    backgroundColor: roxo_escuro,
     borderRadius: 10,
     padding: 12,
     fontSize: 25,
-    flexDirection: 'column',
     fontWeight: '900',
-    color: '#ffffff', // rosa escuro
     textAlign: 'center',
     marginBottom: 15,
     fontFamily: 'sans-serif-condensed',
@@ -152,25 +143,18 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#ad1457', // rosa médio
     marginBottom: 10,
   },
   scroll: {
     marginTop: 5,
   },
   messageBox: {
-    backgroundColor: '#f8bbd0', // rosa médio claro
     padding: 12,
     borderRadius: 10,
     marginBottom: 8,
-    shadowColor: '#ad1457',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 3,
+    borderWidth: 1,
   },
   messageText: {
-    color: '#4a148c', // roxo escuro para contraste
     fontSize: 16,
   },
 });

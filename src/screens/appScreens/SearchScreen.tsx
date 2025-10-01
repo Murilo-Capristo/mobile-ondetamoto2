@@ -200,7 +200,7 @@ export default function SearchScreen() {
               <Text style={[styles.resultadoTitulo, { color: theme.colors.primary }]}>
                 ID: {item.id}
               </Text>
-
+              // SE ESCOLHIDO MOTO
               {selectedTab.id === 'motos' ? (
                 <>
                   <Text style={[styles.labelPequena, { color: theme.colors.text }]}>Tag</Text>
@@ -245,6 +245,7 @@ export default function SearchScreen() {
                 </>
               ) : (
                 <>
+                // SE ESCOLHIDO SETOR
                   <Text style={[styles.labelPequena, { color: theme.colors.text }]}>Nome</Text>
                   <TextInput
                     style={[styles.editInput, { backgroundColor: theme.colors.background, color: theme.colors.text, borderColor: theme.colors.outline }]}
@@ -279,15 +280,28 @@ export default function SearchScreen() {
               )}
 
               <View style={styles.actions}>
+                // UPDATE
                 <TouchableOpacity onPress={() => atualizarItem(edicao)}>
                   <AntDesign name="checkcircle" size={24} color="green" />
                 </TouchableOpacity>
+                // DELETE
                 <TouchableOpacity
                   onPress={() => excluirItem(item.id)}
                   style={{ marginLeft: 10 }}
                 >
                   <AntDesign name="delete" size={24} color="red" />
                 </TouchableOpacity>
+                // DASHBOARD
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('SetorDetailsScreen', { 
+                    setorId: item.id,
+                    setorNome: item.nome
+                  })}
+                  style={{ marginLeft: 10 }}
+                >
+                  <AntDesign name="dashboard" size={24} color="blue" />
+                </TouchableOpacity>
+                <Text style={{ color: theme.colors.text }}> Dashboard</Text>
               </View>
             </View>
           );
