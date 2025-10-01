@@ -26,7 +26,7 @@
 O **OndeTáMoto** é uma solução web e mobile integrada, que permite identificar ou registrar motocicletas por meio de **tags RFID** e um **leitor Bluetooth externo**, sem necessidade de hardware fixo na moto.
 
 - 📲 App desenvolvido em **React Native**
-- 🌐 Backend em **Spring Boot**
+- 🌐 Backend em **.NET**
 - 💡 Ideal para sistemas de garagem, estacionamento ou rastreamento inteligente
 - 🛰️ Conexão automática com o leitor Bluetooth ao se aproximar de uma moto com tag RFID
 
@@ -53,19 +53,8 @@ O **OndeTáMoto** é uma solução web e mobile integrada, que permite identific
 - 📍 Detectar moto por aproximação do leitor RFID
 - ➕ Cadastrar nova moto ao detectar uma tag desconhecida
 - 👤 Login por nome de usuário
-- 📊 Listar e avaliar estabelecimentos
-- 🔐 Segurança com JWT
+- 📊 Listar e avaliar Setores
+- 🔐 Segurança com Firebase
 
 ---
 
-#Próximos Passos:
-
-## 🧪 Simulação sem Hardware
-
-Para testes sem o leitor Bluetooth real:
-
-- Simule a leitura de tags RFID com dados mockados
-- Utilize uma tela especial de "Simulação de Leitura"
-- O app identifica como se a tag tivesse sido lida via Bluetooth
-
----
