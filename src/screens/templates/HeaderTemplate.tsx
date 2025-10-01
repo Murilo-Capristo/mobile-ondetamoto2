@@ -1,13 +1,17 @@
+import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import { auth } from '../../config/firebase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useThemeContext } from '../../context/ThemeContext'; // Importa o contexto
 
 const roxo = '#f900cf';
-const roxo_escuro = '#9F0095';
 
 export default function HeaderTemplate() {
+  const navigation = useNavigation();
+  const { theme, toggleTheme, isDarkTheme } = useThemeContext(); // Acesso ao tema
+
   const handleLogout = async () => {
     await AsyncStorage.removeItem('usuario');
     navigation.reset({
@@ -15,54 +19,60 @@ export default function HeaderTemplate() {
       routes: [{ name: 'Login' }],
     });
   };
-  const navigation = useNavigation();
 
   return (
-    <View>
-      <View style={styles.header}>
-        <View style={styles.topHeader}>
-          <TouchableOpacity
-            style={styles.linkProfile}
-            onPress={() => handleLogout()}
-          >
-            <Icon name="person-circle-outline" size={30} color={'#000'}></Icon>
-            <Text style={styles.TextProfile}>
-              {auth.currentUser?.displayName || 'Usuário'}
-            </Text>
-          </TouchableOpacity>
-          <View>
-            <Image
-              source={require('../../../assets/logo-preenchida.png')}
-              style={styles.logo}
-            />
-          </View>
-        </View>
-        <View style={styles.title}>
-          <Text style={styles.textTitle}> Controle total em tempo real.</Text>
-        </View>
+    <View style={[styles.header, { backgroundColor: theme.colors.background }]}>
+      <View style={styles.topHeader}>
+        {/* Botão de Perfil */}
+        <TouchableOpacity style={styles.linkProfile} onPress={handleLogout}>
+          <Icon
+            name="person-circle-outline"
+            size={30}
+            color={theme.colors.onBackground}
+          />
+          <Text style={[styles.textProfile, { color: theme.colors.onBackground }]}>
+            {auth.currentUser?.displayName || 'Usuário'}
+          </Text>
+        </TouchableOpacity>
+
+        {/* Botão de alternância de tema */}
+        <TouchableOpacity style={styles.themeToggle} onPress={toggleTheme}>
+          <Icon
+            name={isDarkTheme ? 'sunny-outline' : 'moon-outline'}
+            size={24}
+            color={theme.colors.onBackground}
+          />
+        </TouchableOpacity>
+
+        {/* Logo */}
+        <Image
+          source={require('../../../assets/logo-preenchida.png')}
+          style={styles.logo}
+        />
+      </View>
+
+      {/* Título */}
+      <View style={styles.title}>
+        <Text style={[styles.textTitle, { color: theme.colors.onBackground }]}>
+          Controle total em tempo real.
+        </Text>
       </View>
     </View>
   );
 }
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
+  header: {
+    borderBottomColor: roxo,
+    borderBottomWidth: 20,
   },
   topHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
     justifyContent: 'center',
     paddingTop: 30,
+    paddingBottom: 10,
     position: 'relative',
-  },
-  textTitle: {
-    fontSize: 20,
-    fontWeight: 'regular',
-    color: '#000',
   },
   title: {
     alignItems: 'center',
@@ -71,12 +81,11 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     textAlign: 'center',
   },
-  header: {
-    backgroundColor: '#fff',
-    borderBottomColor: roxo,
-    borderBottomWidth: 20,
+  textTitle: {
+    fontSize: 20,
+    fontWeight: '500',
   },
-  TextProfile: {
+  textProfile: {
     fontSize: 17,
     fontWeight: 'bold',
   },
@@ -84,14 +93,18 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     position: 'absolute',
-    resizeMode: 'contain',
     height: 50,
     left: 20,
     top: 30,
   },
+  themeToggle: {
+    position: 'absolute',
+    right: 20,
+    top: 30,
+  },
   logo: {
     width: 120,
-    resizeMode: 'contain',
     height: 45,
+    resizeMode: 'contain',
   },
 });
