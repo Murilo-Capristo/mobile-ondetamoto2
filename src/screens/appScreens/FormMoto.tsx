@@ -14,10 +14,12 @@ export default function FormMoto() {
   const [setores, setSetores] = useState<{ id: number; nome: string }[]>([]);
   const route = useRoute();
   const { tagId } = route.params as { tagId: string };
+  const {setor} = route.params as { setor: string };
+  console.log('Route params:', route.params);
   const navigation = useNavigation();
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [selectedTipo, setSelectedTipo] = useState<string | null>(null);
-  const [selectedSetor, setSelectedSetor] = useState<number | null>(null);
+  const [selectedSetor, setSelectedSetor] = useState<number | null>(setor ? Number(setor) : null);
   const [dropdownSetorVisible, setDropdownSetorVisible] = useState(false);
   const [placa, setPlaca] = useState('');
   const { theme } = useThemeContext(); 
@@ -29,6 +31,15 @@ export default function FormMoto() {
       .then(data => setSetores(data))
       .catch(err => console.error("Erro ao carregar setores:", err));
   }, []);
+
+  useEffect(() => {
+  if (setores.length > 0 && setor) {
+    const setorNum = Number(setor);
+    const setorExiste = setores.some(s => s.id === setorNum);
+    if (setorExiste) setSelectedSetor(setorNum);
+  }
+}, [setores, setor]);
+
 
   const handleCadastro = async () => {
     try {
@@ -144,8 +155,8 @@ export default function FormMoto() {
                     ]}
                   >
                     {selectedSetor
-                      ? setores.find((s) => s.id === selectedSetor)?.nome
-                      : 'Setor'}
+                      ? setores.find((s) => s.id === selectedSetor)?.nome || `Setor ${selectedSetor}`
+                      : "Setor"}
                   </Text>
                   <Icon name="chevron-down" size={20} color={theme.colors.onSurface} />
                 </TouchableOpacity>
@@ -193,7 +204,7 @@ export default function FormMoto() {
           <Text style={[styles.dadosTexto, { color: theme.colors.onSurface }]}>Placa: {placa || '-'}</Text>
           <Text style={[styles.dadosTexto, { color: theme.colors.onSurface }]}>Tipo: {selectedTipo || '-'}</Text>
           <Text style={[styles.dadosTexto, { color: theme.colors.onSurface }]}>
-            Setor: {selectedSetor ? setores.find((s) => s.id === selectedSetor)?.nome : '-'}
+            Setor: {selectedSetor ? setores.find((s) => s.id === selectedSetor)?.nome || `${selectedSetor}` : '-'}
           </Text>
 
           <TouchableOpacity
