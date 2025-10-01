@@ -185,6 +185,7 @@ export default function SearchScreen() {
 
               {selectedTab.id === 'motos' ? (
                 <>
+                  <Text style={styles.labelPequena}>Tag</Text>
                   <TextInput
                     style={styles.editInput}
                     value={edicao.tag}
@@ -196,6 +197,7 @@ export default function SearchScreen() {
                     }
                     placeholder="Tag"
                   />
+                  <Text style={styles.labelPequena}>Tipo</Text>
                   <TextInput
                     style={styles.editInput}
                     value={edicao.nome}
@@ -207,6 +209,7 @@ export default function SearchScreen() {
                     }
                     placeholder="Tipo"
                   />
+                  <Text style={styles.labelPequena}>Placa</Text>
                   <TextInput
                     style={styles.editInput}
                     value={edicao.placa}
@@ -220,17 +223,36 @@ export default function SearchScreen() {
                   />
                 </>
               ) : (
-                <TextInput
-                  style={styles.editInput}
-                  value={edicao.nome}
-                  onChangeText={(text) =>
-                    setEditando((prev) => ({
-                      ...prev,
-                      [item.id]: { ...edicao, nome: text },
-                    }))
-                  }
-                  placeholder="Nome"
-                />
+                <>
+                  <Text style={styles.labelPequena}>Nome</Text>
+                  <TextInput
+                    style={styles.editInput}
+                    value={edicao.nome}
+                    onChangeText={(text) =>
+                      setEditando((prev) => ({
+                        ...prev,
+                        [item.id]: { ...edicao, nome: text },
+                      }))
+                    }
+                    placeholder="Nome"
+                  />
+                  <Text style={styles.labelPequena}>Capacidade</Text>
+                  <TextInput
+                    style={styles.editInput}
+                    value={String(edicao.tamanho ?? '')}
+                    keyboardType="numeric"
+                    onChangeText={(text) =>
+                      setEditando((prev) => ({
+                        ...prev,
+                        [item.id]: {
+                          ...edicao,
+                          tamanho: parseInt(text) || 0,
+                        },
+                      }))
+                    }
+                    placeholder="Capacidade"
+                  />
+                </>
               )}
 
               <View style={styles.actions}>
@@ -246,6 +268,7 @@ export default function SearchScreen() {
               </View>
             </View>
           );
+
         }}
       />
     );
@@ -416,5 +439,11 @@ const styles = StyleSheet.create({
   actions: {
     flexDirection: 'row',
     marginTop: 6,
+  },
+    labelPequena: {
+    fontSize: 12,
+    fontWeight: '500',
+    marginBottom: 4,  
+    color: '#333',   
   },
 });
