@@ -40,7 +40,11 @@ export default function HeaderReduzida() {
           onPress={toggleTheme}
           style={{ position: 'absolute', right: 20, top: 30 }}
         >
-          <Feather name={isDark ? 'sun' : 'moon'} size={24} color={theme.colors.text} />
+                    <Icon
+                      name={isDark ? 'sunny-outline' : 'moon-outline'}
+                      size={24}
+                      color={theme.colors.onBackground}
+                    />
         </TouchableOpacity>
       </View>
     </View>
