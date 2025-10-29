@@ -1,15 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import { auth } from '../../config/firebase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useThemeContext } from '../../context/ThemeContext';
-import Feather from 'react-native-vector-icons/Feather';
+import LogoutDialog from '../components/LogoutDialog';
 
 export default function HeaderReduzida() {
   const navigation = useNavigation();
   const { toggleTheme, isDark, theme } = useThemeContext();
+  const [logoutDialogVisible, setLogoutDialogVisible] = useState(false);
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem('usuario');
@@ -21,15 +22,9 @@ export default function HeaderReduzida() {
 
   return (
     <View style={[styles.header, { backgroundColor: theme.colors.background }]}>
-      <View
-        style={[styles.topHeader, { backgroundColor: theme.colors.background }]}
-      >
-        <TouchableOpacity style={styles.linkProfile} onPress={handleLogout}>
-          <Icon
-            name="person-circle-outline"
-            size={30}
-            color={theme.colors.text}
-          />
+      <View style={[styles.topHeader, { backgroundColor: theme.colors.background }]}>
+        <TouchableOpacity style={styles.linkProfile} onPress={() => setLogoutDialogVisible(true)}>
+          <Icon name="person-circle-outline" size={30} color={theme.colors.text} />
           <Text style={[styles.TextProfile, { color: theme.colors.text }]}>
             {auth.currentUser?.displayName || 'Usuário'}
           </Text>
@@ -42,18 +37,20 @@ export default function HeaderReduzida() {
           />
         </View>
 
-        {/* Botão de alternância de tema */}
         <TouchableOpacity
           onPress={toggleTheme}
           style={{ position: 'absolute', right: 20, top: 30 }}
         >
-          <Icon
-            name={isDark ? 'sunny-outline' : 'moon-outline'}
-            size={24}
-            color={theme.colors.onBackground}
-          />
+          <Icon name={isDark ? 'sunny-outline' : 'moon-outline'} size={24} color={theme.colors.onBackground} />
         </TouchableOpacity>
       </View>
+
+      {/* Componente do dialog */}
+      <LogoutDialog
+        visible={logoutDialogVisible}
+        onCancel={() => setLogoutDialogVisible(false)}
+        onConfirm={handleLogout}
+      />
     </View>
   );
 }

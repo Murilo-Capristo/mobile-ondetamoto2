@@ -5,12 +5,15 @@ import { useNavigation } from '@react-navigation/native';
 import { auth } from '../../config/firebase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useThemeContext } from '../../context/ThemeContext'; // Importa o contexto
+import LogoutDialog from '../components/LogoutDialog';
+
 
 const roxo = '#f900cf';
 
 export default function HeaderTemplate() {
   const navigation = useNavigation();
   const { theme, toggleTheme, isDark } = useThemeContext(); // Acesso ao tema
+  const [logoutDialogVisible, setLogoutDialogVisible] = useState(false);
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem('usuario');
@@ -24,7 +27,7 @@ export default function HeaderTemplate() {
     <View style={[styles.header, { backgroundColor: theme.colors.background }]}>
       <View style={styles.topHeader}>
         {/* Botão de Perfil */}
-        <TouchableOpacity style={styles.linkProfile} onPress={handleLogout}>
+        <TouchableOpacity style={styles.linkProfile} onPress={() => setLogoutDialogVisible(true)}>
           <Icon
             name="person-circle-outline"
             size={30}
@@ -59,6 +62,12 @@ export default function HeaderTemplate() {
           Controle total em tempo real.
         </Text>
       </View>
+      <LogoutDialog
+        visible={logoutDialogVisible}
+        onCancel={() => setLogoutDialogVisible(false)}
+        onConfirm={handleLogout}
+      />
+
     </View>
   );
 }
