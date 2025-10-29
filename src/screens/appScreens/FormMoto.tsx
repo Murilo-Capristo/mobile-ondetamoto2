@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, ActivityIndicator } from 'react-native';
 import HeaderReduzida from '../templates/HeaderReduzida';
 import { Menu, Provider } from 'react-native-paper';
 import React, { useEffect, useState } from 'react';
@@ -23,6 +23,7 @@ export default function FormMoto() {
     setor ? Number(setor) : null,
   );
   const [placa, setPlaca] = useState('');
+  const [loading, setLoading] = useState(false);
   const { theme } = useThemeContext();
 
   useEffect(() => {
@@ -43,12 +44,13 @@ export default function FormMoto() {
       return;
     }
 
+    setLoading(true);
     try {
       await createMoto({
         nome: selectedTipo,
         tag: tagId,
         placa: placa,
-        setorId: selectedSetor, // se a API aceitar
+        setorId: selectedSetor,
       });
 
       setModalVisible(true);
@@ -59,6 +61,8 @@ export default function FormMoto() {
     } catch (err) {
       console.error(err);
       alert('Erro ao cadastrar moto');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -190,10 +194,7 @@ export default function FormMoto() {
           </View>
 
           <TextInput
-            style={[
-              styles.placa,
-              { borderBottomColor: theme.colors.outline, color: '#f900cf' },
-            ]}
+            style={[styles.placa, { borderBottomColor: theme.colors.outline, color: '#f900cf' }]}
             placeholder="Placa"
             placeholderTextColor={theme.colors.outline}
             value={placa}
@@ -206,8 +207,13 @@ export default function FormMoto() {
           <TouchableOpacity
             style={[styles.cadasBtn, { backgroundColor: theme.colors.primary }]}
             onPress={handleCadastro}
+            disabled={loading}
           >
-            <Text style={styles.cadasText}>Cadastrar</Text>
+            {loading ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Text style={styles.cadasText}>Cadastrar</Text>
+            )}
           </TouchableOpacity>
         </View>
 
@@ -245,10 +251,7 @@ export default function FormMoto() {
         >
           <View style={styles.modal}>
             <View
-              style={[
-                styles.modalContainer,
-                { backgroundColor: theme.colors.success },
-              ]}
+              style={[styles.modalContainer, { backgroundColor: theme.colors.success }]}
             >
               <Text style={styles.modalTitle}>Cadastro Bem-Sucedido!</Text>
             </View>
@@ -258,6 +261,7 @@ export default function FormMoto() {
     </Provider>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {

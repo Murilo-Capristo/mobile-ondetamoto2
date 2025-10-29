@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   View,
   Text,
@@ -5,6 +6,7 @@ import {
   TouchableOpacity,
   Modal,
   TextInput,
+  ActivityIndicator,
 } from 'react-native';
 import HeaderReduzida from '../templates/HeaderReduzida';
 import { Provider } from 'react-native-paper';
@@ -17,13 +19,14 @@ import { createSetor } from '../../services/setorService';
 export default function CadastroSetor() {
   const navigation = useNavigation();
   const [isModalVisible, setModalVisible] = useState(false);
-  const { theme } = useThemeContext(); //  pega o tema atual
+  const [loading, setLoading] = useState(false);
+  const { theme } = useThemeContext();
 
-  // states para inputs
   const [nome, setNome] = useState('');
   const [tamanho, setTamanho] = useState('');
 
   const handleCadastro = async () => {
+    setLoading(true);
     try {
       await createSetor({ nome, tamanho: parseInt(tamanho, 10) });
       setModalVisible(true);
@@ -33,6 +36,8 @@ export default function CadastroSetor() {
       }, 2000);
     } catch (err) {
       alert('Erro ao cadastrar setor!');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -77,10 +82,7 @@ export default function CadastroSetor() {
           />
 
           <View
-            style={[
-              styles.viewTam,
-              { borderBottomColor: theme.colors.outline },
-            ]}
+            style={[styles.viewTam, { borderBottomColor: theme.colors.outline }]}
           >
             <TextInput
               style={[styles.placa, { color: theme.colors.onSurface }]}
@@ -97,8 +99,13 @@ export default function CadastroSetor() {
           <TouchableOpacity
             style={[styles.cadasBtn, { backgroundColor: theme.colors.primary }]}
             onPress={handleCadastro}
+            disabled={loading}
           >
-            <Text style={styles.cadasText}>Cadastrar</Text>
+            {loading ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Text style={styles.cadasText}>Cadastrar</Text>
+            )}
           </TouchableOpacity>
         </View>
 

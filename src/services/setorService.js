@@ -32,7 +32,7 @@ export async function deleteSetor(id: number) {
   }
 }
 
-export async function createSetor(data: { nome: string; tamanho: number }) {
+export async function createSetor(data) {
   try {
     const response = await fetch(BASE_URL, {
       method: 'POST',

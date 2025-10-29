@@ -1,32 +1,13 @@
 import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, FlatList, Modal, ActivityIndicator } from 'react-native';
 import { Menu, Provider } from 'react-native-paper';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  FlatList,
-  Alert,
-  Modal,
-} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import HeaderReduzida from '../templates/HeaderReduzida';
-import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
-import { RootStackParamList } from '../../navigation/RootNavigator';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { useThemeContext } from '../../context/ThemeContext';
 import { getMotos, updateMoto, deleteMoto } from '../../services/motoService';
 import { getSetores, updateSetor, deleteSetor } from '../../services/setorService';
-
-
-type SearchScreenRouteProp = RouteProp<RootStackParamList, 'SearchScreen'>;
-
-const searchOptions = [
-  { id: 'Id', label: 'Buscar ID' },
-  { id: 'Tipo', label: 'Buscar Tipo' },
-  { id: 'Placa', label: 'Buscar Placa' },
-];
 
 const categoryOptions = [
   { id: 'motos', label: 'Motos' },
@@ -34,96 +15,59 @@ const categoryOptions = [
 ];
 
 export default function SearchScreen() {
-  const { theme } = useThemeContext(); // pega o tema atual
-
-  const [successModalVisible, setSuccessModalVisible] = useState(false);
-  const showSuccessModal = () => {
-    setSuccessModalVisible(true);
-    setTimeout(() => {
-      setSuccessModalVisible(false);
-    }, 2000);
-  };
-
+  const { theme } = useThemeContext();
   const navigation = useNavigation();
-  const route = useRoute<SearchScreenRouteProp>();
+  const route = useRoute();
   const { param = 'motos' } = route.params || {};
 
-  const [selectedTab, setSelectedTab] = useState(() =>
-    param
-      ? categoryOptions.find((option) => option.id === param) ||
-        categoryOptions[0]
-      : categoryOptions[0],
+  const [selectedTab, setSelectedTab] = useState(
+    param ? categoryOptions.find(o => o.id === param) || categoryOptions[0] : categoryOptions[0]
   );
-  const [filterVisible, setFilterVisible] = useState(false);
+
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [search, setSearch] = useState('');
   const [editando, setEditando] = useState<{ [key: number]: any }>({});
-
   const [motos, setMotos] = useState<any[]>([]);
   const [setores, setSetores] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [successModalVisible, setSuccessModalVisible] = useState(false);
 
-  const relativeOptions = searchOptions.map((option) => {
-    if (selectedTab.id === 'setores' && option.id === 'Placa') {
-      return { id: 'Nome', label: 'Buscar Nome' };
-    }
-    return option;
-  });
-
-  const [selectedFilter, setSelectedFilter] = useState(relativeOptions[0]);
+  const showSuccessModal = () => setSuccessModalVisible(true);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        if (selectedTab.id === 'motos') {
-          const data = await getMotos();
-          setMotos(data);
-        } else {
-          const data = await getSetores();
-          setSetores(data);
-        }
-      } catch (err) {
-        console.error('Erro ao buscar dados:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, [selectedTab]);
+    const timer = setTimeout(() => setSuccessModalVisible(false), 2000);
+    return () => clearTimeout(timer);
+  }, [successModalVisible]);
 
-  const filtrarResultados = (itens: any[]) => {
-    if (!search) return itens;
-
-    return itens.filter((item) => {
-      const campo =
-        selectedFilter.id.toLowerCase() === 'id'
-          ? item.id?.toString()
-          : selectedFilter.id.toLowerCase() === 'tag'
-            ? item.tipo
-            : selectedFilter.id.toLowerCase() === 'nome'
-              ? item.tipo
-              : selectedFilter.id.toLowerCase() === 'placa'
-                ? item.placa
-                : item.nome;
-
-      return campo?.toLowerCase().includes(search.toLowerCase());
-    });
-  };
-
-  const atualizarItem = async (item: any) => {
+  const fetchData = async () => {
     try {
+      setLoading(true);
       if (selectedTab.id === 'motos') {
-        await updateMoto(item.id, item);
         const data = await getMotos();
         setMotos(data);
       } else {
-        await updateSetor(item.id, item);
         const data = await getSetores();
         setSetores(data);
       }
+    } catch (err) {
+      console.error('Erro ao buscar dados:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      setEditando((prev) => {
+  useEffect(() => {
+    fetchData();
+    setDropdownVisible(false);
+  }, [selectedTab]);
+
+  const atualizarItem = async (item: any) => {
+    try {
+      if (selectedTab.id === 'motos') await updateMoto(item.id, item);
+      else await updateSetor(item.id, item);
+
+      await fetchData();
+      setEditando(prev => {
         const novo = { ...prev };
         delete novo[item.id];
         showSuccessModal();
@@ -134,23 +78,17 @@ export default function SearchScreen() {
     }
   };
 
-const excluirItem = (id: number) => {
-  Alert.alert('Confirmação', 'Deseja realmente excluir este item?', [
-    { text: 'Cancelar', style: 'cancel' },
+  const excluirItem = (id: number) => {
+    Alert.alert('Confirmação', 'Deseja realmente excluir este item?', [
+      { text: 'Cancelar', style: 'cancel' },
       {
         text: 'Excluir',
         style: 'destructive',
         onPress: async () => {
           try {
-            if (selectedTab.id === 'motos') {
-              await deleteMoto(id);
-              const data = await getMotos();
-              setMotos(data);
-            } else {
-              await deleteSetor(id);
-              const data = await getSetores();
-              setSetores(data);
-            }
+            if (selectedTab.id === 'motos') await deleteMoto(id);
+            else await deleteSetor(id);
+            await fetchData();
             showSuccessModal();
           } catch (err) {
             console.error('Erro ao excluir:', err);
@@ -160,327 +98,147 @@ const excluirItem = (id: number) => {
     ]);
   };
 
-  const renderResultados = () => {
-    if (loading) {
-      return <Text style={{ color: theme.colors.text }}>Carregando...</Text>;
-    }
+  const filtrarResultados = (itens: any[]) => {
+    if (!search) return itens;
+    const searchLower = search.toLowerCase();
+    return itens.filter(item =>
+      Object.values(item)
+        .join(' ')
+        .toLowerCase()
+        .includes(searchLower)
+    );
+  };
 
-    const data = selectedTab.id === 'motos' ? motos : setores;
-
+  const MotoItem = ({ item }: { item: any }) => {
+    const edicao = editando[item.id] || item;
     return (
-      <FlatList
-        data={filtrarResultados(data)}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => {
-          const edicao = editando[item.id] || item;
+      <View style={[styles.resultadoItem, { backgroundColor: theme.colors.surface, borderColor: theme.colors.outline }]}>
+        <Text style={[styles.resultadoTitulo, { color: theme.colors.primary }]}>ID: {item.id}</Text>
+        {['tag', 'nome', 'placa'].map((campo) => (
+          <React.Fragment key={campo}>
+            <Text style={[styles.labelPequena, { color: theme.colors.text }]}>{campo.toUpperCase()}</Text>
+            <TextInput
+              style={[styles.editInput, { backgroundColor: theme.colors.background, color: theme.colors.text, borderColor: theme.colors.outline }]}
+              value={edicao[campo]}
+              onChangeText={(text) => setEditando(prev => ({ ...prev, [item.id]: { ...edicao, [campo]: text } }))}
+              placeholder={campo.toUpperCase()}
+              placeholderTextColor={theme.colors.onSurface}
+            />
+          </React.Fragment>
+        ))}
+        <View style={styles.actions}>
+          <TouchableOpacity onPress={() => atualizarItem(edicao)}>
+            <AntDesign name="checkcircle" size={24} color="green" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => excluirItem(item.id)} style={{ marginLeft: 10 }}>
+            <AntDesign name="delete" size={24} color="red" />
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  };
 
-          return (
-            <View
-              style={[
-                styles.resultadoItem,
-                {
-                  backgroundColor: theme.colors.surface,
-                  borderColor: theme.colors.outline,
-                },
-              ]}
-            >
-              <Text
-                style={[
-                  styles.resultadoTitulo,
-                  { color: theme.colors.primary },
-                ]}
-              >
-                ID: {item.id}
-              </Text>
-              {selectedTab.id === 'motos' ? (
-                <>
-                {/* // SE FOR MOTO */}
-                  <Text
-                    style={[styles.labelPequena, { color: theme.colors.text }]}
-                  >
-                    Tag
-                  </Text>
-                  <TextInput
-                    style={[
-                      styles.editInput,
-                      {
-                        backgroundColor: theme.colors.background,
-                        color: theme.colors.text,
-                        borderColor: theme.colors.outline,
-                      },
-                    ]}
-                    value={edicao.tag}
-                    onChangeText={(text) =>
-                      setEditando((prev) => ({
-                        ...prev,
-                        [item.id]: { ...edicao, tag: text },
-                      }))
-                    }
-                    placeholder="Tag"
-                    placeholderTextColor={theme.colors.onSurface}
-                  />
-                  <Text
-                    style={[styles.labelPequena, { color: theme.colors.text }]}
-                  >
-                    Tipo
-                  </Text>
-                  <TextInput
-                    style={[
-                      styles.editInput,
-                      {
-                        backgroundColor: theme.colors.background,
-                        color: theme.colors.text,
-                        borderColor: theme.colors.outline,
-                      },
-                    ]}
-                    value={edicao.nome}
-                    onChangeText={(text) =>
-                      setEditando((prev) => ({
-                        ...prev,
-                        [item.id]: { ...edicao, nome: text },
-                      }))
-                    }
-                    placeholder="Tipo"
-                    placeholderTextColor={theme.colors.onSurface}
-                  />
-                  <Text
-                    style={[styles.labelPequena, { color: theme.colors.text }]}
-                  >
-                    Placa
-                  </Text>
-                  <TextInput
-                    style={[
-                      styles.editInput,
-                      {
-                        backgroundColor: theme.colors.background,
-                        color: theme.colors.text,
-                        borderColor: theme.colors.outline,
-                      },
-                    ]}
-                    value={edicao.placa}
-                    onChangeText={(text) =>
-                      setEditando((prev) => ({
-                        ...prev,
-                        [item.id]: { ...edicao, placa: text },
-                      }))
-                    }
-                    placeholder="Placa"
-                    placeholderTextColor={theme.colors.onSurface}
-                  />
-                </>
-              ) : (
-                <>
-                {/* // SE FOR SETOR */}
-                  <Text
-                    style={[styles.labelPequena, { color: theme.colors.text }]}
-                  >
-                    Nome
-                  </Text>
-                  <TextInput
-                    style={[
-                      styles.editInput,
-                      {
-                        backgroundColor: theme.colors.background,
-                        color: theme.colors.text,
-                        borderColor: theme.colors.outline,
-                      },
-                    ]}
-                    value={edicao.nome}
-                    onChangeText={(text) =>
-                      setEditando((prev) => ({
-                        ...prev,
-                        [item.id]: { ...edicao, nome: text },
-                      }))
-                    }
-                    placeholder="Nome"
-                    placeholderTextColor={theme.colors.onSurface}
-                  />
-                  <Text
-                    style={[styles.labelPequena, { color: theme.colors.text }]}
-                  >
-                    Capacidade
-                  </Text>
-                  <TextInput
-                    style={[
-                      styles.editInput,
-                      {
-                        backgroundColor: theme.colors.background,
-                        color: theme.colors.text,
-                        borderColor: theme.colors.outline,
-                      },
-                    ]}
-                    value={String(edicao.tamanho ?? '')}
-                    keyboardType="numeric"
-                    onChangeText={(text) =>
-                      setEditando((prev) => ({
-                        ...prev,
-                        [item.id]: {
-                          ...edicao,
-                          tamanho: parseInt(text) || 0,
-                        },
-                      }))
-                    }
-                    placeholder="Capacidade"
-                    placeholderTextColor={theme.colors.onSurface}
-                  />
-                </>
-              )}
-              <View style={styles.actions}>
-                <TouchableOpacity onPress={() => atualizarItem(edicao)}>
-                  <AntDesign name="checkcircle" size={24} color="green" />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => excluirItem(item.id)}
-                  style={{ marginLeft: 10 }}
-                >
-                  <AntDesign name="delete" size={24} color="red" />
-                </TouchableOpacity>
-                {selectedTab.id === 'setores' && (
-                  <>
-                    <TouchableOpacity
-                      onPress={() =>
-                        navigation.navigate('SetorDetailsScreen', {
-                          setorId: item.id,
-                          setorNome: item.nome,
-                        })
-                      }
-                      style={{ marginLeft: 10 }}
-                    >
-                      <AntDesign name="dashboard" size={24} color="blue" />
-                    </TouchableOpacity>
-                    <Text style={{ color: theme.colors.text }}> Dashboard</Text>
-                  </>
-                )}
-              </View>
-            </View>
-          );
-        }}
-      />
+  const SetorItem = ({ item }: { item: any }) => {
+    const edicao = editando[item.id] || item;
+    return (
+      <View style={[styles.resultadoItem, { backgroundColor: theme.colors.surface, borderColor: theme.colors.outline }]}>
+        <Text style={[styles.resultadoTitulo, { color: theme.colors.primary }]}>ID: {item.id}</Text>
+        <Text style={[styles.labelPequena, { color: theme.colors.text }]}>Nome</Text>
+        <TextInput
+          style={[styles.editInput, { backgroundColor: theme.colors.background, color: theme.colors.text, borderColor: theme.colors.outline }]}
+          value={edicao.nome}
+          onChangeText={(text) => setEditando(prev => ({ ...prev, [item.id]: { ...edicao, nome: text } }))}
+          placeholder="Nome"
+          placeholderTextColor={theme.colors.onSurface}
+        />
+        <Text style={[styles.labelPequena, { color: theme.colors.text }]}>Capacidade</Text>
+        <TextInput
+          style={[styles.editInput, { backgroundColor: theme.colors.background, color: theme.colors.text, borderColor: theme.colors.outline }]}
+          value={String(edicao.tamanho ?? '')}
+          keyboardType="numeric"
+          onChangeText={(text) => setEditando(prev => ({ ...prev, [item.id]: { ...edicao, tamanho: parseInt(text) || 0 } }))}
+          placeholder="Capacidade"
+          placeholderTextColor={theme.colors.onSurface}
+        />
+        <View style={styles.actions}>
+          <TouchableOpacity onPress={() => atualizarItem(edicao)}>
+            <AntDesign name="checkcircle" size={24} color="green" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => excluirItem(item.id)} style={{ marginLeft: 10 }}>
+            <AntDesign name="delete" size={24} color="red" />
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('SetorDetailsScreen', { setorId: item.id, setorNome: item.nome })}
+            style={{ marginLeft: 10 }}
+          >
+            <AntDesign name="dashboard" size={24} color="blue" />
+          </TouchableOpacity>
+          <Text style={{ color: theme.colors.text }}> Dashboard</Text>
+        </View>
+      </View>
     );
   };
 
   return (
     <Provider>
       <HeaderReduzida />
-      <View
-        style={[styles.container, { backgroundColor: theme.colors.background }]}
-      >
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.voltarBtn}
-        >
+      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.voltarBtn}>
           <Icon name="arrow-back" size={28} color={theme.colors.primary} />
         </TouchableOpacity>
 
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Text style={[styles.label, { color: theme.colors.text }]}>
-            Pesquise Motos ou Setores Registrados.
-          </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
+          <Text style={[styles.label, { color: theme.colors.text }]}>Pesquise Motos ou Setores Registrados.</Text>
           <Menu
             visible={dropdownVisible}
             onDismiss={() => setDropdownVisible(false)}
             anchor={
               <TouchableOpacity
                 onPress={() => setDropdownVisible(true)}
-                style={[
-                  styles.dropdown,
-                  { backgroundColor: theme.colors.surface },
-                ]}
+                style={[styles.dropdown, { backgroundColor: theme.colors.surface }]}
               >
-                <Text
-                  style={[styles.dropdownText, { color: theme.colors.primary }]}
-                >
-                  {selectedTab.label}
-                </Text>
+                <Text style={[styles.dropdownText, { color: theme.colors.primary }]}>{selectedTab.label}</Text>
                 <Icon name="chevron-down" size={20} color={theme.colors.text} />
               </TouchableOpacity>
             }
           >
-            {categoryOptions.map((option) => (
-              <Menu.Item
-                key={option.id}
-                onPress={() => {
-                  setSelectedTab(option);
-                  setDropdownVisible(false);
-                }}
-                title={option.label}
-              />
+            {categoryOptions.map(option => (
+              <Menu.Item key={option.id} onPress={() => setSelectedTab(option)} title={option.label} />
             ))}
           </Menu>
         </View>
 
-        <View style={styles.searchRow}>
-          <TextInput
-            style={[
-              styles.input,
-              {
-                backgroundColor: theme.colors.surface,
-                color: theme.colors.text,
-              },
-            ]}
-            placeholder="Pesquise aqui..."
-            placeholderTextColor={theme.colors.onSurface}
-            value={search}
-            onChangeText={setSearch}
+        <TextInput
+          style={[styles.input, { backgroundColor: theme.colors.surface, color: theme.colors.text }]}
+          placeholder="Pesquise aqui..."
+          placeholderTextColor={theme.colors.onSurface}
+          value={search}
+          onChangeText={setSearch}
+        />
+
+        {loading ? (
+          <ActivityIndicator size="large" color={theme.colors.primary} style={{ marginTop: 20 }} />
+        ) : (
+          <FlatList
+            data={filtrarResultados(selectedTab.id === 'motos' ? motos : setores)}
+            keyExtractor={item => item.id.toString()}
+            renderItem={({ item }) =>
+              selectedTab.id === 'motos' ? <MotoItem item={item} /> : <SetorItem item={item} />
+            }
           />
-          <TouchableOpacity
-            onPress={() => setFilterVisible(!filterVisible)}
-            style={[
-              styles.filterButton,
-              { backgroundColor: theme.colors.surface },
-            ]}
-          >
-            <AntDesign name="filter" size={30} color={theme.colors.text} />
-            <Text style={{ marginLeft: 5, color: theme.colors.primary }}>
-              {selectedFilter.label}
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        {filterVisible && (
-          <View
-            style={[
-              styles.filterOptions,
-              { backgroundColor: theme.colors.surface },
-            ]}
-          >
-            {relativeOptions.map((item) => (
-              <TouchableOpacity
-                key={item.id}
-                style={[styles.filterItem, { borderBottomColor: theme.colors.outline }]}
-                onPress={() => {
-                  setSelectedFilter(item);
-                  setFilterVisible(false);
-                }}
-              >
-                <Text style={{ color: theme.colors.text }}>{item.label}</Text>
-              </TouchableOpacity>
-            ))}
-          </View>
         )}
-
-        {renderResultados()}
       </View>
 
-      <Modal
-        visible={successModalVisible}
-        transparent
-        onRequestClose={() => setSuccessModalVisible(false)}
-      >
+      <Modal visible={successModalVisible} transparent onRequestClose={() => setSuccessModalVisible(false)}>
         <View style={styles.modal}>
-          <View
-            style={[styles.modalContainer, { backgroundColor: theme.colors.primary }]}
-          >
-            <Text style={styles.modalTitle}>
-              Operação realizada com sucesso!
-            </Text>
+          <View style={[styles.modalContainer, { backgroundColor: theme.colors.primary }]}>
+            <Text style={styles.modalTitle}>Operação realizada com sucesso!</Text>
           </View>
         </View>
       </Modal>
     </Provider>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     padding: 16,

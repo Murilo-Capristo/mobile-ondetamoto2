@@ -1,3 +1,4 @@
+import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import IconFont from 'react-native-vector-icons/Fontisto';
 import MCI from 'react-native-vector-icons/MaterialCommunityIcons';

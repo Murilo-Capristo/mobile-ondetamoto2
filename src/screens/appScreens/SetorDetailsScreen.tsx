@@ -5,6 +5,7 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import HeaderReduzida from '../templates/HeaderReduzida';
@@ -15,13 +16,12 @@ import { connectMotoMqtt, disconnectMotoMqtt } from '../../services/mqttService'
 export default function SetorDetailsScreen() {
   const navigation = useNavigation();
   const route = useRoute();
-  const { setorId, setorNome } = route.params as {
-    setorId: string;
-    setorNome: string;
-  };
+  const { setorId, setorNome } = route.params as { setorId: string; setorNome: string };
   const { theme } = useThemeContext();
 
   const [messages, setMessages] = useState<{ tag: string; status: 'entrando' | 'saindo' }[]>([]);
+  const [loading, setLoading] = useState(true);
+
   const payloadGlobal = useRef<any>(null);
   const statusMotos = useRef<{ [tag: string]: 'entrando' | 'saindo' }>({});
   const clientRef = useRef<any>(null);
@@ -38,9 +38,11 @@ export default function SetorDetailsScreen() {
         statusMotos.current[tag] = novoStatus;
 
         setMessages((oldMsgs) => [...oldMsgs, { tag, status: novoStatus }]);
+        if (loading) setLoading(false); // primeira mensagem recebida -> remove loading
       },
       (err) => {
         console.error('Erro MQTT:', err);
+        if (loading) setLoading(false); // caso dê erro, também remove loading
       },
     );
 
@@ -71,28 +73,34 @@ export default function SetorDetailsScreen() {
           Leituras RFID Recebidas:
         </Text>
 
-        <ScrollView style={styles.scroll}>
-          {messages.map((msg, index) => (
-            <View
-              key={index}
-              style={[
-                styles.messageBox,
-                { backgroundColor: theme.colors.surface, borderColor: theme.colors.outline },
-              ]}
-            >
-              <Text style={[styles.messageText, { color: theme.colors.text }]}>
-                Tag: {msg.tag}{' '}
-                {msg.status === 'entrando' ? 'Entrando no Setor' : 'Saindo do Setor'}{' '}
-                {payloadGlobal.current?.setor}
-              </Text>
-            </View>
-          ))}
-        </ScrollView>
+        {loading ? (
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 50 }}>
+            <ActivityIndicator size="large" color={theme.colors.primary} />
+            <Text style={{ color: theme.colors.text, marginTop: 10 }}>Conectando ao MQTT...</Text>
+          </View>
+        ) : (
+          <ScrollView style={styles.scroll}>
+            {messages.map((msg, index) => (
+              <View
+                key={index}
+                style={[
+                  styles.messageBox,
+                  { backgroundColor: theme.colors.surface, borderColor: theme.colors.outline },
+                ]}
+              >
+                <Text style={[styles.messageText, { color: theme.colors.text }]}>
+                  Tag: {msg.tag}{' '}
+                  {msg.status === 'entrando' ? 'Entrando no Setor' : 'Saindo do Setor'}{' '}
+                  {payloadGlobal.current?.setor}
+                </Text>
+              </View>
+            ))}
+          </ScrollView>
+        )}
       </View>
     </>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
