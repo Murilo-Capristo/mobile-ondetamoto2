@@ -7,7 +7,7 @@ import { useThemeContext } from '../../context/ThemeContext';
 
 export default function SubmitScreen() {
   const navigation = useNavigation();
-  const { theme } = useThemeContext(); 
+  const { theme } = useThemeContext();
 
   const featureCards = [
     {

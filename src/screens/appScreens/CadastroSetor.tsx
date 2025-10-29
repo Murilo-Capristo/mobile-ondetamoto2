@@ -12,6 +12,7 @@ import { useState } from 'react';
 import IconIon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import { useThemeContext } from '../../context/ThemeContext';
+import { createSetor } from '../../services/setorService';
 
 export default function CadastroSetor() {
   const navigation = useNavigation();
@@ -24,32 +25,14 @@ export default function CadastroSetor() {
 
   const handleCadastro = async () => {
     try {
-      const response = await fetch('http://191.235.235.207:5294/api/setor', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          id: 0,
-          nome: nome,
-          tamanho: parseInt(tamanho, 10), // transforma string em número
-        }),
-      });
-
-      if (response.ok) {
-        setModalVisible(true);
-        setTimeout(() => {
-          setModalVisible(false);
-          navigation.popToTop();
-        }, 2000);
-      } else {
-        const errorText = await response.text();
-        console.error('Erro no cadastro:', errorText);
-        alert('Erro ao cadastrar setor!');
-      }
+      await createSetor({ nome, tamanho: parseInt(tamanho, 10) });
+      setModalVisible(true);
+      setTimeout(() => {
+        setModalVisible(false);
+        navigation.popToTop();
+      }, 2000);
     } catch (err) {
-      console.error('Erro na requisição:', err);
-      alert('Falha de conexão com o servidor!');
+      alert('Erro ao cadastrar setor!');
     }
   };
 
@@ -128,7 +111,7 @@ export default function CadastroSetor() {
             <View
               style={[
                 styles.modalContainer,
-                { backgroundColor: theme.colors.sucesso }, 
+                { backgroundColor: theme.colors.sucesso },
               ]}
             >
               <Text style={styles.modalTitle}>Cadastro Bem-Sucedido!</Text>

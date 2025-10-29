@@ -3,72 +3,40 @@ import HeaderReduzida from '../templates/HeaderReduzida';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useEffect, useState, useRef } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { Client, Message } from 'paho-mqtt';
 import { useThemeContext } from '../../context/ThemeContext';
+import {
+  connectMotoMqtt,
+  disconnectMotoMqtt,
+} from '../../services/motoMqttService';
 
 export default function CadastroMoto() {
   const navigation = useNavigation();
   const { theme } = useThemeContext();
 
-  const [detectedMotos, setDetectedMotos] = useState<
-    { tag: string; setor: string }[]
-  >([]);
+  const [detectedMotos, setDetectedMotos] = useState([]);
   const [isDetecting, setIsDetecting] = useState(false);
-
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const clientRef = useRef<Client | null>(null);
+  const timeoutRef = useRef(null);
+  const clientRef = useRef(null);
 
   useEffect(() => {
-    const client = new Client(
-      '104.41.50.188',
-      8080,
-      '/mqtt',
-      'clientId-' + Math.random().toString(16).substr(2, 8),
-    );
-
-    client.connect({
-      userName: 'admin',
-      password: 'otm-password-VM#',
-      useSSL: false,
-      onSuccess: () => {
-        console.log('MQTT conectado');
-        client.subscribe('rfid-moto/leituras');
-      },
-      onFailure: (err) => {
-        console.log('Erro conexão MQTT:', err);
-      },
+    // Conecta ao MQTT e escuta mensagens
+    const client = connectMotoMqtt((payload) => {
+      setDetectedMotos((oldMotos) => {
+        const existe = oldMotos.some((m) => m.tag === payload.moto);
+        if (!existe) {
+          return [
+            { tag: payload.moto, setor: payload.setor },
+            ...oldMotos,
+          ].slice(0, 3);
+        }
+        return oldMotos;
+      });
     });
-
-    client.onMessageArrived = (message: Message) => {
-      try {
-        // { setor: "1", moto: "1234" }
-        const payload = JSON.parse(message.payloadString); 
-
-        setDetectedMotos((oldMotos) => {
-          const existe = oldMotos.some((m) => m.tag === payload.moto);
-          if (!existe) {
-            return [
-              { tag: payload.moto, setor: payload.setor },
-              ...oldMotos,
-            ].slice(0, 3);
-          }
-          return oldMotos;
-        });
-      } catch (e) {
-        console.error('Erro ao parsear mensagem MQTT:', e);
-      }
-    };
-
-    client.onConnectionLost = (responseObject) => {
-      if (responseObject.errorCode !== 0) {
-        console.log('Conexão perdida: ' + responseObject.errorMessage);
-      }
-    };
 
     clientRef.current = client;
 
     return () => {
-      if (client.isConnected()) client.disconnect();
+      disconnectMotoMqtt(clientRef.current);
     };
   }, []);
 
@@ -92,9 +60,7 @@ export default function CadastroMoto() {
   useEffect(() => {
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      if (clientRef.current && clientRef.current.isConnected()) {
-        clientRef.current.disconnect();
-      }
+      disconnectMotoMqtt(clientRef.current);
     };
   }, []);
 
@@ -231,10 +197,5 @@ const styles = StyleSheet.create({
   },
   title: { marginTop: 20, alignItems: 'center', justifyContent: 'center' },
   titleText: { fontSize: 28, fontWeight: 'bold' },
-  icon: {
-    position: 'absolute',
-    top: 0,
-    right: 3,
-    fontSize: 35,
-  },
+  icon: { position: 'absolute', top: 0, right: 3, fontSize: 35 },
 });

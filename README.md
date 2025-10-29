@@ -71,6 +71,7 @@ src/
 │       └── HeaderTemplate.tsx
 └── theme.ts
 ```
+
 ### 🔹 Outros
 
 - RFID tags (ainda não simuláveis no app)
@@ -85,6 +86,5 @@ src/
 - 👤 Login por nome de usuário
 - 📊 Listar e avaliar setores
 - 🔐 Segurança com Firebase
-
 
 ---

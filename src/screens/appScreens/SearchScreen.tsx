@@ -16,6 +16,9 @@ import HeaderReduzida from '../templates/HeaderReduzida';
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { RootStackParamList } from '../../navigation/RootNavigator';
 import { useThemeContext } from '../../context/ThemeContext';
+import { getMotos, updateMoto, deleteMoto } from '../../services/motoService';
+import { getSetores, updateSetor, deleteSetor } from '../../services/setorService';
+
 
 type SearchScreenRouteProp = RouteProp<RootStackParamList, 'SearchScreen'>;
 
@@ -74,12 +77,10 @@ export default function SearchScreen() {
       try {
         setLoading(true);
         if (selectedTab.id === 'motos') {
-          const res = await fetch('http://191.235.235.207:5294/api/Moto');
-          const data = await res.json();
+          const data = await getMotos();
           setMotos(data);
         } else {
-          const res = await fetch('http://191.235.235.207:5294/api/Setor');
-          const data = await res.json();
+          const data = await getSetores();
           setSetores(data);
         }
       } catch (err) {
@@ -88,7 +89,6 @@ export default function SearchScreen() {
         setLoading(false);
       }
     };
-
     fetchData();
   }, [selectedTab]);
 
@@ -112,27 +112,16 @@ export default function SearchScreen() {
   };
 
   const atualizarItem = async (item: any) => {
-    const url =
-      selectedTab.id === 'motos'
-        ? `http://191.235.235.207:5294/api/moto/${item.id}`
-        : `http://191.235.235.207:5294/api/setor/${item.id}`;
-
     try {
-      await fetch(url, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(item),
-      });
-
-      const res = await fetch(
-        selectedTab.id === 'motos'
-          ? 'http://191.235.235.207:5294/api/Moto'
-          : 'http://191.235.235.207:5294/api/Setor',
-      );
-      const data = await res.json();
-      selectedTab.id === 'motos' ? setMotos(data) : setSetores(data);
+      if (selectedTab.id === 'motos') {
+        await updateMoto(item.id, item);
+        const data = await getMotos();
+        setMotos(data);
+      } else {
+        await updateSetor(item.id, item);
+        const data = await getSetores();
+        setSetores(data);
+      }
 
       setEditando((prev) => {
         const novo = { ...prev };
@@ -145,30 +134,23 @@ export default function SearchScreen() {
     }
   };
 
-  const excluirItem = (id: number) => {
-    Alert.alert('Confirmação', 'Deseja realmente excluir este item?', [
-      { text: 'Cancelar', style: 'cancel' },
+const excluirItem = (id: number) => {
+  Alert.alert('Confirmação', 'Deseja realmente excluir este item?', [
+    { text: 'Cancelar', style: 'cancel' },
       {
         text: 'Excluir',
         style: 'destructive',
         onPress: async () => {
           try {
-            const url =
-              selectedTab.id === 'motos'
-                ? `http://191.235.235.207:5294/api/moto/${id}`
-                : `http://191.235.235.207:5294/api/setor/${id}`;
-
-            await fetch(url, {
-              method: 'DELETE',
-            });
-
-            const res = await fetch(
-              selectedTab.id === 'motos'
-                ? 'http://191.235.235.207:5294/api/Moto'
-                : 'http://191.235.235.207:5294/api/Setor',
-            );
-            const data = await res.json();
-            selectedTab.id === 'motos' ? setMotos(data) : setSetores(data);
+            if (selectedTab.id === 'motos') {
+              await deleteMoto(id);
+              const data = await getMotos();
+              setMotos(data);
+            } else {
+              await deleteSetor(id);
+              const data = await getSetores();
+              setSetores(data);
+            }
             showSuccessModal();
           } catch (err) {
             console.error('Erro ao excluir:', err);

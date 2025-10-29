@@ -7,63 +7,57 @@ import { TextInput } from 'react-native-gesture-handler';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import IconIon from 'react-native-vector-icons/Ionicons';
 import { useThemeContext } from '../../context/ThemeContext';
+import { createMoto } from '../../services/motoService';
+import { getSetores } from '../../services/setorService';
 
 export default function FormMoto() {
   const [isModalVisible, setModalVisible] = useState(false);
   const [setores, setSetores] = useState<{ id: number; nome: string }[]>([]);
   const route = useRoute();
-  const { tagId } = route.params as { tagId: string };
-  const { setor } = route.params as { setor: string };
-  console.log('Route params:', route.params);
+  const { tagId, setor } = route.params as { tagId: string; setor?: string };
   const navigation = useNavigation();
   const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [dropdownSetorVisible, setDropdownSetorVisible] = useState(false);
   const [selectedTipo, setSelectedTipo] = useState<string | null>(null);
   const [selectedSetor, setSelectedSetor] = useState<number | null>(
     setor ? Number(setor) : null,
   );
-  const [dropdownSetorVisible, setDropdownSetorVisible] = useState(false);
   const [placa, setPlaca] = useState('');
   const { theme } = useThemeContext();
 
   useEffect(() => {
-    fetch('http://191.235.235.207:5294/api/setor')
-      .then((res) => res.json())
-      .then((data) => setSetores(data))
-      .catch((err) => console.error('Erro ao carregar setores:', err));
+    const loadSetores = async () => {
+      try {
+        const data = await getSetores();
+        setSetores(data);
+      } catch (err) {
+        console.error('Erro ao carregar setores:', err);
+      }
+    };
+    loadSetores();
   }, []);
 
-  useEffect(() => {
-    if (setores.length > 0 && setor) {
-      const setorNum = Number(setor);
-      const setorExiste = setores.some((s) => s.id === setorNum);
-      if (setorExiste) setSelectedSetor(setorNum);
-    }
-  }, [setores, setor]);
-
   const handleCadastro = async () => {
-    try {
-      const response = await fetch('http://191.235.235.207:5294/api/moto', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          id: 0,
-          nome: selectedTipo,
-          tag: tagId,
-          placa: placa,
-        }),
-      });
+    if (!selectedTipo || !placa || !selectedSetor) {
+      alert('Preencha todos os campos antes de cadastrar.');
+      return;
+    }
 
-      if (!response.ok) throw new Error('Erro ao cadastrar moto');
+    try {
+      await createMoto({
+        nome: selectedTipo,
+        tag: tagId,
+        placa: placa,
+        setorId: selectedSetor, // se a API aceitar
+      });
 
       setModalVisible(true);
       setTimeout(() => {
         setModalVisible(false);
         navigation.popToTop();
       }, 2000);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
       alert('Erro ao cadastrar moto');
     }
   };
@@ -78,6 +72,7 @@ export default function FormMoto() {
     <Provider theme={theme}>
       <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
         <HeaderReduzida />
+
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.voltarBtn}
@@ -116,8 +111,11 @@ export default function FormMoto() {
                   <Text
                     style={[
                       styles.dropdownText,
-                      { color: theme.colors.outline },
-                      selectedTipo && { color: theme.colors.primary },
+                      {
+                        color: selectedTipo
+                          ? theme.colors.primary
+                          : theme.colors.outline,
+                      },
                     ]}
                   >
                     {selectedTipo || 'Tipo'}
@@ -137,8 +135,8 @@ export default function FormMoto() {
                     setSelectedTipo(option);
                     setDropdownVisible(false);
                   }}
-                  titleStyle={{ color: theme.colors.primary }}
                   title={option}
+                  titleStyle={{ color: theme.colors.primary }}
                 />
               ))}
             </Menu>
@@ -158,13 +156,15 @@ export default function FormMoto() {
                   <Text
                     style={[
                       styles.dropdownText,
-                      { color: theme.colors.outline },
-                      selectedSetor && { color: theme.colors.primary },
+                      {
+                        color: selectedSetor
+                          ? theme.colors.primary
+                          : theme.colors.outline,
+                      },
                     ]}
                   >
                     {selectedSetor
-                      ? setores.find((s) => s.id === selectedSetor)?.nome ||
-                        `Setor ${selectedSetor}`
+                      ? setores.find((s) => s.id === selectedSetor)?.nome
                       : 'Setor'}
                   </Text>
                   <Icon
@@ -175,15 +175,15 @@ export default function FormMoto() {
                 </TouchableOpacity>
               }
             >
-              {setores.map((setor) => (
+              {setores.map((s) => (
                 <Menu.Item
-                  key={setor.id}
+                  key={s.id}
                   onPress={() => {
-                    setSelectedSetor(setor.id);
+                    setSelectedSetor(s.id);
                     setDropdownSetorVisible(false);
                   }}
+                  title={s.nome}
                   titleStyle={{ color: theme.colors.primary }}
-                  title={setor.nome}
                 />
               ))}
             </Menu>
@@ -225,8 +225,7 @@ export default function FormMoto() {
           <Text style={[styles.dadosTexto, { color: theme.colors.onSurface }]}>
             Setor:{' '}
             {selectedSetor
-              ? setores.find((s) => s.id === selectedSetor)?.nome ||
-                `${selectedSetor}`
+              ? setores.find((s) => s.id === selectedSetor)?.nome
               : '-'}
           </Text>
 
@@ -275,17 +274,8 @@ const styles = StyleSheet.create({
     width: '100%',
     alignItems: 'center',
   },
-  voltarBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    top: 20,
-    left: 20,
-  },
-  cadasText: {
-    color: '#fff',
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
+  voltarBtn: { flexDirection: 'row', alignItems: 'center', top: 20, left: 20 },
+  cadasText: { color: '#fff', fontSize: 20, fontWeight: 'bold' },
   containerBotao: {
     alignItems: 'center',
     justifyContent: 'center',
@@ -301,44 +291,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderRadius: 8,
   },
-  dropdownText: {
-    fontSize: 16,
-    fontWeight: '300',
-  },
-  dadosContainer: {
-    paddingHorizontal: 20,
-    marginTop: 10,
-  },
-  dadosTitulo: {
-    fontWeight: 'bold',
-    fontSize: 16,
-    marginBottom: 5,
-  },
-  dadosTexto: {
-    fontSize: 14,
-    marginBottom: 2,
-  },
+  dropdownText: { fontSize: 16, fontWeight: '300' },
+  dadosContainer: { paddingHorizontal: 20, marginTop: 10 },
+  dadosTitulo: { fontWeight: 'bold', fontSize: 16, marginBottom: 5 },
+  dadosTexto: { fontSize: 14, marginBottom: 2 },
   limparBtn: {
     marginTop: 10,
     borderRadius: 10,
     padding: 10,
     alignItems: 'center',
   },
-  limparText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  tag: {
-    padding: 10,
-    borderRadius: 5,
-    marginBottom: 20,
-    marginTop: 20,
-  },
-  textTag: {
-    fontSize: 32,
-    fontWeight: '700',
-    textAlign: 'center',
-  },
+  limparText: { color: '#fff', fontWeight: 'bold' },
+  tag: { padding: 10, borderRadius: 5, marginBottom: 20, marginTop: 20 },
+  textTag: { fontSize: 32, fontWeight: '700', textAlign: 'center' },
   drawer: {
     padding: 20,
     borderRadius: 5,
@@ -367,9 +332,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 50,
   },
-  modalTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#fff',
-  },
+  modalTitle: { fontSize: 16, fontWeight: 'bold', color: '#fff' },
 });
