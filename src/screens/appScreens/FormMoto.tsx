@@ -9,6 +9,13 @@ import IconIon from 'react-native-vector-icons/Ionicons';
 import { useThemeContext } from '../../context/ThemeContext';
 import { createMoto } from '../../services/motoService';
 import { getSetores } from '../../services/setorService';
+import {
+  SafeAreaView,
+  SafeAreaProvider,
+  SafeAreaInsetsContext,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
+
 
 export default function FormMoto() {
   const [isModalVisible, setModalVisible] = useState(false);
@@ -73,6 +80,8 @@ export default function FormMoto() {
   };
 
   return (
+
+    <SafeAreaView style={{flex: 1}}>
     <Provider theme={theme}>
       <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
         <HeaderReduzida />
@@ -259,6 +268,7 @@ export default function FormMoto() {
         </Modal>
       </View>
     </Provider>
+    </SafeAreaView>
   );
 }
 

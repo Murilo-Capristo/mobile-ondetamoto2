@@ -8,7 +8,14 @@ import { useThemeContext } from '../../context/ThemeContext';
 import {
   connectMotoMqtt,
   disconnectMotoMqtt,
-} from '../../services/motoMqttService';
+} from '../../services/mqttService';
+import {
+  SafeAreaView,
+  SafeAreaProvider,
+  SafeAreaInsetsContext,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
+
 
 export default function CadastroMoto() {
   const navigation = useNavigation();
@@ -65,6 +72,8 @@ export default function CadastroMoto() {
   }, []);
 
   return (
+
+    <SafeAreaView style={{flex:1}}>
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <HeaderReduzida />
 
@@ -134,6 +143,7 @@ export default function CadastroMoto() {
         </View>
       )}
     </View>
+    </SafeAreaView>
   );
 }
 

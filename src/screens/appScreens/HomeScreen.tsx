@@ -14,6 +14,13 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../navigation/RootNavigator';
 import { useThemeContext } from '../../context/ThemeContext';
+import {
+  SafeAreaView,
+  SafeAreaProvider,
+  SafeAreaInsetsContext,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
+
 
 const { width } = Dimensions.get('window');
 const cardWidth = width / 2 - 40;
@@ -61,6 +68,7 @@ export default function HomeScreen() {
   ];
 
   return (
+    <SafeAreaView style={{flex:1}}>
     <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
       <HeaderTemplate />
       <View style={styles.subtitle}>
@@ -83,6 +91,7 @@ export default function HomeScreen() {
         ))}
       </View>
     </View>
+    </SafeAreaView>
   );
 }
 

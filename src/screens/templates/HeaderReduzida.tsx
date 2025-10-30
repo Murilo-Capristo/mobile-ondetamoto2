@@ -5,7 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { auth } from '../../config/firebase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useThemeContext } from '../../context/ThemeContext';
-import LogoutDialog from '../components/LogoutDialog';
+import LogoutDialog from '../../components/LogoutDialog';
 
 export default function HeaderReduzida() {
   const navigation = useNavigation();
@@ -21,6 +21,7 @@ export default function HeaderReduzida() {
   };
 
   return (
+    
     <View style={[styles.header, { backgroundColor: theme.colors.background }]}>
       <View style={[styles.topHeader, { backgroundColor: theme.colors.background }]}>
         <TouchableOpacity style={styles.linkProfile} onPress={() => setLogoutDialogVisible(true)}>

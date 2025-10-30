@@ -1,12 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import { auth } from '../../config/firebase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useThemeContext } from '../../context/ThemeContext'; // Importa o contexto
-import LogoutDialog from '../components/LogoutDialog';
-
+import LogoutDialog from '../../components/LogoutDialog';
 
 const roxo = '#f900cf';
 
@@ -24,6 +23,7 @@ export default function HeaderTemplate() {
   };
 
   return (
+    
     <View style={[styles.header, { backgroundColor: theme.colors.background }]}>
       <View style={styles.topHeader}>
         {/* Botão de Perfil */}

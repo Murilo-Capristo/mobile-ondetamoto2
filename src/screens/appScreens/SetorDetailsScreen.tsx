@@ -12,6 +12,13 @@ import HeaderReduzida from '../templates/HeaderReduzida';
 import IconIon from 'react-native-vector-icons/Ionicons';
 import { useThemeContext } from '../../context/ThemeContext';
 import { connectMotoMqtt, disconnectMotoMqtt } from '../../services/mqttService';
+import {
+  SafeAreaView,
+  SafeAreaProvider,
+  SafeAreaInsetsContext,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
+
 
 export default function SetorDetailsScreen() {
   const navigation = useNavigation();
@@ -52,7 +59,7 @@ export default function SetorDetailsScreen() {
   }, []);
 
   return (
-    <>
+    <SafeAreaView style={{flex:1}}>
       <HeaderReduzida />
       <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.voltarBtn}>
@@ -98,7 +105,7 @@ export default function SetorDetailsScreen() {
           </ScrollView>
         )}
       </View>
-    </>
+    </SafeAreaView>
   );
 }
 

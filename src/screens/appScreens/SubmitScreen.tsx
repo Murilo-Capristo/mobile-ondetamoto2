@@ -5,6 +5,12 @@ import MCI from 'react-native-vector-icons/MaterialCommunityIcons';
 import HeaderReduzida from '../templates/HeaderReduzida';
 import { useNavigation } from '@react-navigation/native';
 import { useThemeContext } from '../../context/ThemeContext';
+import {
+  SafeAreaView,
+  SafeAreaProvider,
+  SafeAreaInsetsContext,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 
 export default function SubmitScreen() {
   const navigation = useNavigation();
@@ -26,6 +32,7 @@ export default function SubmitScreen() {
   ];
 
   return (
+    <SafeAreaView style={{flex:1}}>
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
@@ -52,6 +59,7 @@ export default function SubmitScreen() {
         ))}
       </View>
     </View>
+    </SafeAreaView>
   );
 }
 

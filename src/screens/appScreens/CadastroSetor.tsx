@@ -15,6 +15,13 @@ import IconIon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import { useThemeContext } from '../../context/ThemeContext';
 import { createSetor } from '../../services/setorService';
+import {
+  SafeAreaView,
+  SafeAreaProvider,
+  SafeAreaInsetsContext,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
+
 
 export default function CadastroSetor() {
   const navigation = useNavigation();
@@ -42,6 +49,8 @@ export default function CadastroSetor() {
   };
 
   return (
+
+    <SafeAreaView style={{flex: 1}}>
     <Provider theme={theme}>
       <View style={{ flex: 1, backgroundColor: theme.colors.surface }}>
         <HeaderReduzida />
@@ -127,6 +136,7 @@ export default function CadastroSetor() {
         </Modal>
       </View>
     </Provider>
+    </SafeAreaView>
   );
 }
 

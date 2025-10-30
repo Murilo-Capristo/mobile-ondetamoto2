@@ -8,6 +8,13 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import { useThemeContext } from '../../context/ThemeContext';
 import { getMotos, updateMoto, deleteMoto } from '../../services/motoService';
 import { getSetores, updateSetor, deleteSetor } from '../../services/setorService';
+import {
+  SafeAreaView,
+  SafeAreaProvider,
+  SafeAreaInsetsContext,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
+
 
 const categoryOptions = [
   { id: 'motos', label: 'Motos' },
@@ -180,7 +187,9 @@ export default function SearchScreen() {
   };
 
   return (
-    <Provider>
+  <SafeAreaView style={{flex: 1}}>
+
+    <Provider >
       <HeaderReduzida />
       <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.voltarBtn}>
@@ -237,6 +246,7 @@ export default function SearchScreen() {
         </View>
       </Modal>
     </Provider>
+    </SafeAreaView>
   );
 }
 const styles = StyleSheet.create({
