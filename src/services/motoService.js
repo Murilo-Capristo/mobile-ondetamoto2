@@ -1,3 +1,4 @@
+import { useAuth } from "../context/UserContext";
 const BASE_URL = 'http://191.235.235.207:5294/api/Moto';
 
 export async function getMotos() {

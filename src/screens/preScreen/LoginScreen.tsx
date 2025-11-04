@@ -7,18 +7,15 @@ import {
   Image,
   StyleSheet,
   TouchableOpacity,
-  Alert,
 } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Ionicons';
+import Modal from 'react-native-modal';
 import { RootStackParamList } from '../../navigation/RootNavigator';
 import { useState, useEffect } from 'react';
-import { auth } from '../../config/firebase';
-import {
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  updateProfile,
-} from 'firebase/auth';
+import { login, register } from '../../services/authService';
+import React from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const roxo = '#f900cf';
 const roxo_escuro = '#9F0095';
@@ -32,54 +29,102 @@ export default function AuthScreen() {
   const navigation = useNavigation<AuthScreenNavigationProp>();
 
   const [isLogin, setIsLogin] = useState(true);
-
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [senha, setSenha] = useState('');
+  const [senhaConfirm, setSenhaConfirm] = useState('');
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [showSenha, setShowSenha] = useState(false);
+
+  const [successModalVisible, setSuccessModalVisible] = useState(false);
+  const [errorModalVisible, setErrorModalVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const role = 'ADMIN'; // fixo conforme você pediu
 
   useEffect(() => {
-    setIsButtonDisabled(!(email.trim() && password.trim()));
-  }, [email, password]);
+    setIsButtonDisabled(!(email.trim() && senha.trim()));
+  }, [email, senha]);
 
-  const onLoginPress = async () => {
+  const handleLogin = async () => {
+    setLoading(true);
+
     try {
-      const response = await signInWithEmailAndPassword(auth, email, password);
-      const user = response.user;
-      console.log('Login realizado com sucesso:', user.uid);
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'HomeScreen' }],
-      });
-    } catch (error) {
-      Alert.alert(
-        'Ops!',
-        'Não foi possível fazer login. Verifique suas credenciais e tente novamente.',
-      );
-    }
-  };
+      // 1 - Requisição
+      const token = await login(email, senha);
+      console.log('Token recebido:', token);
 
-  const onRegisterPress = async () => {
-    if (!name || !email || !password) {
-      Alert.alert('Atenção!', 'Por favor, preencha todos os campos.');
+    
+      // 2 - Validação de Token
+      if (!token || token.trim() === '') {
+        throw new Error('Token inválido. Verifique suas credenciais.');
+      }
+
+      // 3 - Salva token e email no Async
+      await AsyncStorage.setItem('token', token);
+      await AsyncStorage.setItem('user', JSON.stringify({ email, token }));
+
+      // 4️ - Exibe modal de sucesso
+      setSuccessModalVisible(true);
+
+      // 5️ -  Redireciona para Home após delay
+      setTimeout(() => {
+        setSuccessModalVisible(false);
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'HomeScreen' }],
+        });
+      }, 1500);
+
+    } catch (err: any) {
+      console.error('Erro no login:', err);
+
+    // 6️ -  Exibe modal de erro personalizado
+    setErrorMessage(err.message || 'Erro ao realizar login.');
+    setErrorModalVisible(true);
+
+    // Fecha o modal após 3 segundos
+    setTimeout(() => setErrorModalVisible(false), 3000);
+
+  } finally {
+    // 7️ -  Finaliza o carregamento
+    setLoading(false);
+  }
+};
+
+  const handleRegister = async () => {
+    if (!email || !senha || !senhaConfirm) {
+      setErrorMessage('Por favor, preencha todos os campos.');
+      setErrorModalVisible(true);
+      setTimeout(() => setErrorModalVisible(false), 3000);
       return;
     }
+
+    if (senha !== senhaConfirm) {
+      setErrorMessage('As senhas não coincidem.');
+      setErrorModalVisible(true);
+      setTimeout(() => setErrorModalVisible(false), 3000);
+      return;
+    }
+
+    setLoading(true);
     try {
-      const response = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password,
-      );
-      const user = response.user;
+      const data = await register(email, senha, role);
+      console.log('Cadastro realizado:', data);
 
-      await updateProfile(user, { displayName: name });
-
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'HomeScreen' }],
-      });
-    } catch (error: any) {
-      Alert.alert('Problemas ao cadastrar!', error.message);
+      setSuccessModalVisible(true);
+      setTimeout(() => {
+        setSuccessModalVisible(false);
+        setIsLogin(true); // volta para tela de login
+      }, 2000);
+    } catch (err: any) {
+      console.error('Erro no cadastro:', err);
+      setErrorMessage(err.message || 'Erro ao cadastrar usuário.');
+      setErrorModalVisible(true);
+      setTimeout(() => setErrorModalVisible(false), 3000);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -100,18 +145,6 @@ export default function AuthScreen() {
 
       {/* Formulário */}
       <View style={styles.formulario}>
-        {!isLogin && (
-          <View style={styles.inputContainer}>
-            <Icon name="person" size={20} color={'#fff'} />
-            <TextInput
-              placeholder="Nome"
-              placeholderTextColor="#ccc"
-              style={styles.input}
-              value={name}
-              onChangeText={setName}
-            />
-          </View>
-        )}
 
         <View style={styles.inputContainer}>
           <Icon name="mail-outline" size={20} color={'#fff'} />
@@ -131,11 +164,32 @@ export default function AuthScreen() {
             placeholder="Senha"
             placeholderTextColor="#ccc"
             style={styles.input}
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
+            value={senha}
+            onChangeText={setSenha}
+            secureTextEntry={!showSenha}
           />
+          <TouchableOpacity onPress={() => setShowSenha(!showSenha)}>
+            <Icon
+              name={showSenha ? 'eye-outline' : 'eye-off-outline'}
+              size={20}
+              color="#fff"
+            />
+          </TouchableOpacity>
         </View>
+
+        {!isLogin && (
+          <View style={styles.inputContainer}>
+            <Icon name="lock-closed" size={20} color={'#fff'} />
+            <TextInput
+              placeholder="Confirmar Senha"
+              placeholderTextColor="#ccc"
+              style={styles.input}
+              value={senhaConfirm}
+              onChangeText={setSenhaConfirm}
+              secureTextEntry={!showSenha}
+            />
+          </View>
+        )}
       </View>
 
       {/* Botão */}
@@ -145,8 +199,8 @@ export default function AuthScreen() {
             styles.button,
             { backgroundColor: isButtonDisabled ? '#ccc' : '#fff' },
           ]}
-          onPress={isLogin ? onLoginPress : onRegisterPress}
-          disabled={isButtonDisabled}
+          onPress={isLogin ? handleLogin : handleRegister}
+          disabled={isButtonDisabled || loading}
         >
           <Text style={styles.textButton}>
             {isLogin ? 'Entrar' : 'Cadastrar'}
@@ -164,6 +218,34 @@ export default function AuthScreen() {
           </Text>
         </TouchableOpacity>
       </View>
+
+      {/* Modal de sucesso */}
+      <Modal
+        isVisible={successModalVisible}
+        animationIn="slideInDown"
+        animationOut="slideOutUp"
+        backdropOpacity={0}
+        style={styles.modal}
+      >
+        <View style={styles.modalContainerSuccess}>
+          <Text style={styles.modalTitle}>
+            {isLogin ? 'Login realizado!' : 'Cadastro bem-sucedido!'}
+          </Text>
+        </View>
+      </Modal>
+
+      {/* Modal de erro */}
+      <Modal
+        isVisible={errorModalVisible}
+        animationIn="slideInDown"
+        animationOut="slideOutUp"
+        backdropOpacity={0}
+        style={styles.modal}
+      >
+        <View style={styles.modalContainerError}>
+          <Text style={styles.modalTitle}>{errorMessage}</Text>
+        </View>
+      </Modal>
     </LinearGradient>
   );
 }
@@ -219,5 +301,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 20,
     width: '80%',
+  },
+  modal: {
+    justifyContent: 'flex-start',
+    margin: 0,
+  },
+  modalContainerSuccess: {
+    backgroundColor: '#4CAF50',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 50,
+  },
+  modalContainerError: {
+    backgroundColor: '#FF4C4C',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 50,
+  },
+  modalTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#fff',
   },
 });
