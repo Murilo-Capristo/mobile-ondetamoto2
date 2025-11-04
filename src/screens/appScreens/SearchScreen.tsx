@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, FlatList, Modal, ActivityIndicator } from 'react-native';
 import { Menu, Provider } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -77,16 +77,38 @@ export default function SearchScreen() {
       else await updateSetor(item.id, item);
 
       await fetchData();
-      setEditando(prev => {
-        const novo = { ...prev };
-        delete novo[item.id];
-        showSuccessModal();
-        return novo;
-      });
+      showSuccessModal(); // Apenas mostre o modal
+
     } catch (err) {
       console.error('Erro ao atualizar:', err);
     }
   };
+
+  
+
+  const renderItem = useCallback(({ item }) => {
+    if (selectedTab.id === 'motos') {
+      return (
+        <MotoItem 
+          item={item} 
+          onUpdate={atualizarItem} 
+          onDelete={excluirItem} 
+          theme={theme} 
+        />
+      );
+    }
+    return (
+      <SetorItem
+        item={item}
+        onUpdate={atualizarItem}
+        onDelete={excluirItem}
+        onNavigate={(setorId, setorNome) => 
+          navigation.navigate('SetorDetailsScreen', { setorId, setorNome })
+        }
+        theme={theme}
+      />
+    );
+  }, [selectedTab.id, theme, navigation]);
 
   const excluirItem = (id: number) => {
     Alert.alert('Confirmação', 'Deseja realmente excluir este item?', [
@@ -119,75 +141,11 @@ export default function SearchScreen() {
     );
   };
 
-  const MotoItem = ({ item }: { item: any }) => {
-    const edicao = editando[item.id] || item;
-    return (
-      <View style={[styles.resultadoItem, { backgroundColor: theme.colors.surface, borderColor: theme.colors.outline }]}>
-        <Text style={[styles.resultadoTitulo, { color: theme.colors.primary }]}>ID: {item.id}</Text>
-        {['tag', 'marca', 'placa'].map((campo) => (
-          <React.Fragment key={campo}>
-            <Text style={[styles.labelPequena, { color: theme.colors.text }]}>{campo.toUpperCase()}</Text>
-            <TextInput
-              style={[styles.editInput, { backgroundColor: theme.colors.background, color: theme.colors.text, borderColor: theme.colors.outline }]}
-              value={edicao[campo]}
-              onChangeText={(text) => setEditando(prev => ({ ...prev, [item.id]: { ...edicao, [campo]: text } }))}
-              placeholder={campo.toUpperCase()}
-              placeholderTextColor={theme.colors.onSurface}
-            />
-          </React.Fragment>
-        ))}
-        <View style={styles.actions}>
-          <TouchableOpacity onPress={() => atualizarItem(edicao)}>
-            <AntDesign name="checkcircle" size={24} color="green" />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => excluirItem(item.id)} style={{ marginLeft: 10 }}>
-            <AntDesign name="delete" size={24} color="red" />
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
-  };
-
-  const SetorItem = ({ item }: { item: any }) => {
-    const edicao = editando[item.id] || item;
-    return (
-      <View style={[styles.resultadoItem, { backgroundColor: theme.colors.surface, borderColor: theme.colors.outline }]}>
-        <Text style={[styles.resultadoTitulo, { color: theme.colors.primary }]}>ID: {item.id}</Text>
-        <Text style={[styles.labelPequena, { color: theme.colors.text }]}>Nome</Text>
-        <TextInput
-          style={[styles.editInput, { backgroundColor: theme.colors.background, color: theme.colors.text, borderColor: theme.colors.outline }]}
-          value={edicao.nome}
-          onChangeText={(text) => setEditando(prev => ({ ...prev, [item.id]: { ...edicao, nome: text } }))}
-          placeholder="Nome"
-          placeholderTextColor={theme.colors.onSurface}
-        />
-        <Text style={[styles.labelPequena, { color: theme.colors.text }]}>Capacidade</Text>
-        <TextInput
-          style={[styles.editInput, { backgroundColor: theme.colors.background, color: theme.colors.text, borderColor: theme.colors.outline }]}
-          value={String(edicao.tamanho ?? '')}
-          keyboardType="numeric"
-          onChangeText={(text) => setEditando(prev => ({ ...prev, [item.id]: { ...edicao, tamanho: parseInt(text) || 0 } }))}
-          placeholder="Capacidade"
-          placeholderTextColor={theme.colors.onSurface}
-        />
-        <View style={styles.actions}>
-          <TouchableOpacity onPress={() => atualizarItem(edicao)}>
-            <AntDesign name="checkcircle" size={24} color="green" />
-          </TouchableOpacity>
-          <TouchableOpacity onPress={() => excluirItem(item.id)} style={{ marginLeft: 10 }}>
-            <AntDesign name="delete" size={24} color="red" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('SetorDetailsScreen', { setorId: item.id, setorNome: item.nome })}
-            style={{ marginLeft: 10 }}
-          >
-            <AntDesign name="dashboard" size={24} color="blue" />
-          </TouchableOpacity>
-          <Text style={{ color: theme.colors.text }}> Dashboard</Text>
-        </View>
-      </View>
-    );
-  };
+  const dadosFiltrados = useMemo(
+    () => filtrarResultados(selectedTab.id === 'motos' ? motos : setores),
+    [search, motos, setores, selectedTab.id]
+  );
+  
 
   return (
 <SafeAreaView style={{ flex: 1 }} edges={['top', 'left', 'right']}>
@@ -247,12 +205,16 @@ export default function SearchScreen() {
       </View>
     ) : (
       <FlatList
-        data={filtrarResultados(selectedTab.id === 'motos' ? motos : setores)}
-        keyExtractor={item => item.id.toString()}
-        renderItem={({ item }) =>
-          selectedTab.id === 'motos' ? <MotoItem item={item} /> : <SetorItem item={item} />
-        }
-      />
+          data={dadosFiltrados} 
+          keyExtractor={item => item.id.toString()}
+          renderItem={renderItem} 
+          
+          // Otimizações:
+          windowSize={5}
+          initialNumToRender={7}
+          maxToRenderPerBatch={10}
+          removeClippedSubviews={true}
+        />
     )}
   </>
 )}
@@ -270,6 +232,100 @@ export default function SearchScreen() {
     </SafeAreaView>
   );
 }
+
+
+const MotoItem = React.memo(({ item, onUpdate, onDelete, theme }) => {
+  // 1. O estado de edição agora é LOCAL
+  const [edicao, setEdicao] = useState(item);
+
+  const handleUpdate = () => onUpdate(edicao);
+  const handleDelete = () => onDelete(item.id);
+
+  // 2. Atualiza o estado local
+  const handleChange = (campo, text) => {
+    setEdicao(prev => ({ ...prev, [campo]: text }));
+  };
+
+  return (
+    <View style={[styles.resultadoItem, { backgroundColor: theme.colors.surface, borderColor: theme.colors.outline }]}>
+      <Text style={[styles.resultadoTitulo, { color: theme.colors.primary }]}>ID: {item.id}</Text>
+      {['tag', 'marca', 'placa'].map((campo) => (
+        <React.Fragment key={campo}>
+          <Text style={[styles.labelPequena, { color: theme.colors.text }]}>{campo.toUpperCase()}</Text>
+          <TextInput
+            style={[styles.editInput, { backgroundColor: theme.colors.background, color: theme.colors.text, borderColor: theme.colors.outline }]}
+            value={edicao[campo] || ''} // Lê do estado local
+            onChangeText={(text) => handleChange(campo, text)} // Atualiza o estado local
+            placeholder={campo.toUpperCase()}
+            placeholderTextColor={theme.colors.onSurface}
+          />
+        </React.Fragment>
+      ))}
+      <View style={styles.actions}>
+        <TouchableOpacity onPress={handleUpdate}>
+          <AntDesign name="checkcircle" size={24} color="green" />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleDelete} style={{ marginLeft: 10 }}>
+          <AntDesign name="delete" size={24} color="red" />
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+});
+
+const SetorItem = React.memo(({ item, onUpdate, onDelete, onNavigate, theme }) => {
+  // 1. O estado de edição também é LOCAL
+  const [edicao, setEdicao] = useState(item);
+
+  const handleUpdate = () => onUpdate(edicao);
+  const handleDelete = () => onDelete(item.id);
+  const handleNavigate = () => onNavigate(item.id, edicao.nome);
+
+  // 2. Funções locais para atualizar o estado
+  const handleChange = (campo, text) => {
+    setEdicao(prev => ({ ...prev, [campo]: text }));
+  };
+  const handleNumericChange = (campo, text) => {
+    setEdicao(prev => ({ ...prev, [campo]: parseInt(text, 10) || 0 }));
+  };
+
+  return (
+    <View style={[styles.resultadoItem, { backgroundColor: theme.colors.surface, borderColor: theme.colors.outline }]}>
+      <Text style={[styles.resultadoTitulo, { color: theme.colors.primary }]}>ID: {item.id}</Text>
+      <Text style={[styles.labelPequena, { color: theme.colors.text }]}>Nome</Text>
+      <TextInput
+        style={[styles.editInput, { backgroundColor: theme.colors.background, color: theme.colors.text, borderColor: theme.colors.outline }]}
+        value={edicao.nome || ''}
+        onChangeText={(text) => handleChange('nome', text)}
+        placeholder="Nome"
+        placeholderTextColor={theme.colors.onSurface}
+      />
+      <Text style={[styles.labelPequena, { color: theme.colors.text }]}>Capacidade</Text>
+      <TextInput
+        style={[styles.editInput, { backgroundColor: theme.colors.background, color: theme.colors.text, borderColor: theme.colors.outline }]}
+        value={String(edicao.tamanho ?? '')}
+        keyboardType="numeric"
+        onChangeText={(text) => handleNumericChange('tamanho', text)}
+        placeholder="Capacidade"
+        placeholderTextColor={theme.colors.onSurface}
+      />
+      <View style={styles.actions}>
+        <TouchableOpacity onPress={handleUpdate}>
+          <AntDesign name="checkcircle" size={24} color="green" />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleDelete} style={{ marginLeft: 10 }}>
+          <AntDesign name="delete" size={24} color="red" />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={handleNavigate} style={{ marginLeft: 10 }}>
+          <AntDesign name="dashboard" size={24} color="blue" />
+        </TouchableOpacity>
+        <Text style={{ color: theme.colors.text }}> Dashboard</Text>
+      </View>
+    </View>
+  );
+});
+
+
 const styles = StyleSheet.create({
   container: {
     padding: 16,
