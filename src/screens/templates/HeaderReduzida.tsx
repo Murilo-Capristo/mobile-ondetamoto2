@@ -27,7 +27,7 @@ export default function HeaderReduzida() {
         <TouchableOpacity style={styles.linkProfile} onPress={() => setLogoutDialogVisible(true)}>
           <Icon name="person-circle-outline" size={30} color={theme.colors.text} />
           <Text style={[styles.TextProfile, { color: theme.colors.text }]}>
-            {auth.currentUser?.displayName || 'Usuário'}
+            {auth.currentUser?.displayName || 'Logout'}
           </Text>
         </TouchableOpacity>
 

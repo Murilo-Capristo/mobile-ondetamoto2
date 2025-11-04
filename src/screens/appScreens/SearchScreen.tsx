@@ -49,21 +49,22 @@ export default function SearchScreen() {
   }, [successModalVisible]);
 
   const fetchData = async () => {
-    try {
-      setLoading(true);
-      if (selectedTab.id === 'motos') {
-        const data = await getMotos(0);
-        setMotos(data);
-      } else {
-        const data = await getSetores(1);
-        setSetores(data);
-      }
-    } catch (err) {
-      console.error('Erro ao buscar dados:', err);
-    } finally {
-      setLoading(false);
+  try {
+    setLoading(true);
+    if (selectedTab.id === 'motos') {
+      const data = await getMotos(0);
+      setMotos(data.content || []); 
+      console.log(data.content);
+    } else {
+      const data = await getSetores();
+      setSetores(data);
     }
-  };
+  } catch (err) {
+    console.error('Erro ao buscar dados:', err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   useEffect(() => {
     fetchData();
@@ -123,7 +124,7 @@ export default function SearchScreen() {
     return (
       <View style={[styles.resultadoItem, { backgroundColor: theme.colors.surface, borderColor: theme.colors.outline }]}>
         <Text style={[styles.resultadoTitulo, { color: theme.colors.primary }]}>ID: {item.id}</Text>
-        {['tag', 'nome', 'placa'].map((campo) => (
+        {['tag', 'marca', 'placa'].map((campo) => (
           <React.Fragment key={campo}>
             <Text style={[styles.labelPequena, { color: theme.colors.text }]}>{campo.toUpperCase()}</Text>
             <TextInput
@@ -198,27 +199,12 @@ export default function SearchScreen() {
           <Icon name="arrow-back" size={28} color={theme.colors.primary} />
         </TouchableOpacity>
 
-        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
-          <Text style={[styles.label, { color: theme.colors.text }]}>Pesquise Motos ou Setores Registrados.</Text>
-          <Menu
-            visible={dropdownVisible}
-            onDismiss={() => setDropdownVisible(false)}
-            anchor={
-              <TouchableOpacity
-                onPress={() => setDropdownVisible(true)}
-                style={[styles.dropdown, { backgroundColor: theme.colors.surface }]}
-              >
-                <Text style={[styles.dropdownText, { color: theme.colors.primary }]}>{selectedTab.label}</Text>
-                <Icon name="chevron-down" size={20} color={theme.colors.text} />
-              </TouchableOpacity>
-            }
-          >
-            {categoryOptions.map(option => (
-              <Menu.Item key={option.id} onPress={() => setSelectedTab(option)} title={option.label} />
-            ))}
-          </Menu>
-        </View>
+        <Text style={[styles.label, { color: theme.colors.text, marginBottom: 10, marginTop: 10 }]}>
+        Pesquise Motos ou Setores Registrados.
+      </Text>
 
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10 }}>
+        
         <TextInput
           style={[styles.input, { backgroundColor: theme.colors.surface, color: theme.colors.text }]}
           placeholder="Pesquise aqui..."
@@ -226,6 +212,27 @@ export default function SearchScreen() {
           value={search}
           onChangeText={setSearch}
         />
+
+        <Menu
+          visible={dropdownVisible}
+          onDismiss={() => setDropdownVisible(false)}
+          anchor={
+            <TouchableOpacity
+              onPress={() => setDropdownVisible(true)}
+              style={[styles.dropdown, { backgroundColor: theme.colors.surface, marginLeft: 10 }]} 
+            >
+              <Text style={[styles.dropdownText, { color: theme.colors.primary }]}>{selectedTab.label}</Text>
+              <Icon name="chevron-down" size={20} color={theme.colors.text} />
+            </TouchableOpacity>
+          }
+        >
+          {categoryOptions.map(option => (
+            <Menu.Item key={option.id} onPress={() => setSelectedTab(option)} title={option.label} />
+          ))}
+        </Menu>
+      </View>
+
+        
 
         {loading ? (
   <ActivityIndicator size="large" color={theme.colors.primary} style={{ marginTop: 20 }} />

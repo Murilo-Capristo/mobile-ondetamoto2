@@ -39,7 +39,8 @@ export default function HeaderTemplate() {
           <Text
             style={[styles.textProfile, { color: theme.colors.onBackground }]}
           >
-            {user?.email.split('@')[0] || 'Usuário'}
+            {/*{user?.email.split('@')[0] || 'Logout'}*/}
+            {'Logout'}
           </Text>
         </TouchableOpacity>
 

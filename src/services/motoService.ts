@@ -5,9 +5,10 @@ export function useMotoService() {
   const { user } = useAuth(); // pega o token do contexto
   const URL = `${BASE_URL}/api/motos`;
 
-  const getMotos = async (pageNumber: number, replace = false) => {
+  const getMotos = async (pageNumber: number) => {
     try {
       console.log('Chamando URL:', `${BASE_URL}/api/motos`);
+      console.log(user)
       console.log("Token atual:", user?.token);
 
 
