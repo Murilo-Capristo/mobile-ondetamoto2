@@ -7,7 +7,7 @@ import { TextInput } from 'react-native-gesture-handler';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import IconIon from 'react-native-vector-icons/Ionicons';
 import { useThemeContext } from '../../context/ThemeContext';
-import { createMoto } from '../../services/motoService';
+import { useMotoService } from '../../services/motoService';
 import { getSetores } from '../../services/setorService';
 import {
   SafeAreaView,
@@ -32,6 +32,7 @@ export default function FormMoto() {
   const [placa, setPlaca] = useState('');
   const [loading, setLoading] = useState(false);
   const { theme } = useThemeContext();
+  const { createMoto } = useMotoService();
 
   useEffect(() => {
     const loadSetores = async () => {
@@ -81,7 +82,7 @@ export default function FormMoto() {
 
   return (
 
-    <SafeAreaView style={{flex: 1}}>
+<SafeAreaView style={{ flex: 1 }} edges={['top', 'left', 'right']}>
     <Provider theme={theme}>
       <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
         <HeaderReduzida />

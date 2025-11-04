@@ -6,7 +6,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import HeaderReduzida from '../templates/HeaderReduzida';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useThemeContext } from '../../context/ThemeContext';
-import { getMotos, updateMoto, deleteMoto } from '../../services/motoService';
+import { useMotoService } from '../../services/motoService';
 import { getSetores, updateSetor, deleteSetor } from '../../services/setorService';
 import {
   SafeAreaView,
@@ -22,6 +22,8 @@ const categoryOptions = [
 ];
 
 export default function SearchScreen() {
+  const { getMotos, updateMoto, deleteMoto } = useMotoService();
+
   const { theme } = useThemeContext();
   const navigation = useNavigation();
   const route = useRoute();
@@ -50,10 +52,10 @@ export default function SearchScreen() {
     try {
       setLoading(true);
       if (selectedTab.id === 'motos') {
-        const data = await getMotos();
+        const data = await getMotos(0);
         setMotos(data);
       } else {
-        const data = await getSetores();
+        const data = await getSetores(1);
         setSetores(data);
       }
     } catch (err) {
@@ -187,7 +189,7 @@ export default function SearchScreen() {
   };
 
   return (
-  <SafeAreaView style={{flex: 1}}>
+<SafeAreaView style={{ flex: 1 }} edges={['top', 'left', 'right']}>
 
     <Provider >
       <HeaderReduzida />
@@ -226,16 +228,28 @@ export default function SearchScreen() {
         />
 
         {loading ? (
-          <ActivityIndicator size="large" color={theme.colors.primary} style={{ marginTop: 20 }} />
-        ) : (
-          <FlatList
-            data={filtrarResultados(selectedTab.id === 'motos' ? motos : setores)}
-            keyExtractor={item => item.id.toString()}
-            renderItem={({ item }) =>
-              selectedTab.id === 'motos' ? <MotoItem item={item} /> : <SetorItem item={item} />
-            }
-          />
-        )}
+  <ActivityIndicator size="large" color={theme.colors.primary} style={{ marginTop: 20 }} />
+) : (
+  <>
+    {filtrarResultados(selectedTab.id === 'motos' ? motos : setores).length === 0 ? (
+      <View style={styles.emptyContainer}>
+        <Icon name="search-outline" size={50} color={theme.colors.onSurface} />
+        <Text style={[styles.emptyText, { color: theme.colors.onSurface }]}>
+           {selectedTab.id === 'motos' ? 'Nenhuma moto encontrada' : 'Nenhum setor encontrado'}
+        </Text>
+      </View>
+    ) : (
+      <FlatList
+        data={filtrarResultados(selectedTab.id === 'motos' ? motos : setores)}
+        keyExtractor={item => item.id.toString()}
+        renderItem={({ item }) =>
+          selectedTab.id === 'motos' ? <MotoItem item={item} /> : <SetorItem item={item} />
+        }
+      />
+    )}
+  </>
+)}
+
       </View>
 
       <Modal visible={successModalVisible} transparent onRequestClose={() => setSuccessModalVisible(false)}>
@@ -262,6 +276,19 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  emptyContainer: {
+  flex: 1,
+  alignItems: 'center',
+  justifyContent: 'center',
+  marginTop: 40,
+},
+emptyText: {
+  fontSize: 16,
+  marginTop: 10,
+  textAlign: 'center',
+  opacity: 0.7,
+},
+
   input: {
     flex: 1,
     borderRadius: 8,

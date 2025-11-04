@@ -6,6 +6,9 @@ import { auth } from '../../config/firebase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useThemeContext } from '../../context/ThemeContext'; // Importa o contexto
 import LogoutDialog from '../../components/LogoutDialog';
+import { useAuth } from '../../context/UserContext';
+
+const { user } = useAuth();
 
 const roxo = '#f900cf';
 
@@ -36,7 +39,7 @@ export default function HeaderTemplate() {
           <Text
             style={[styles.textProfile, { color: theme.colors.onBackground }]}
           >
-            {auth.currentUser?.displayName || 'Usuário'}
+            {user?.email.split('@')[0] || 'Usuário'}
           </Text>
         </TouchableOpacity>
 
@@ -75,7 +78,7 @@ export default function HeaderTemplate() {
 const styles = StyleSheet.create({
   header: {
     borderBottomColor: roxo,
-    borderBottomWidth: 20,
+    borderBottomWidth: 10,
   },
   topHeader: {
     flexDirection: 'row',

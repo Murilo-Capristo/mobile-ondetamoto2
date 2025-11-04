@@ -14,13 +14,10 @@ type AuthContextType = {
 };
 
 //Criando contexto vazio com valores padrão
-const AuthContext = createContext<AuthContextType>({
-  user: null,
-  setUser: () => {},
-});
+const AuthContext = createContext<AuthContextType | null>(null);
 
-//Hook para acessar o contexto
-export const useAuth = () => useContext(AuthContext);
+
+
 
 //Provedor de autenticação
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -38,7 +35,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   //Atualiza o estado e salva o usuário + token localmente
   const setUser = async (newUser: User) => {
     await AsyncStorage.setItem('user', JSON.stringify(newUser));
-    await AsyncStorage.setItem('token', newUser.token);
     setUserState(newUser);
   };
 
@@ -47,4 +43,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       {children}
     </AuthContext.Provider>
   );
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth deve ser usado dentro de um AuthProvider');
+  }
+  return context;
 };

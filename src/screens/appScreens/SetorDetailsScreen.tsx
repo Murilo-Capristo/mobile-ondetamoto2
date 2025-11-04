@@ -59,7 +59,7 @@ export default function SetorDetailsScreen() {
   }, []);
 
   return (
-    <SafeAreaView style={{flex:1}}>
+<SafeAreaView style={{ flex: 1 }} edges={['top', 'left', 'right']}>
       <HeaderReduzida />
       <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.voltarBtn}>

@@ -16,6 +16,10 @@ import { useState, useEffect } from 'react';
 import { login, register } from '../../services/authService';
 import React from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { ActivityIndicator } from 'react-native-paper';
+import { KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { useAuth } from '../../context/UserContext';
+
 
 const roxo = '#f900cf';
 const roxo_escuro = '#9F0095';
@@ -26,10 +30,11 @@ type AuthScreenNavigationProp = NativeStackNavigationProp<
 >;
 
 export default function AuthScreen() {
+  const { setUser } = useAuth(); // importa do contexto
+
   const navigation = useNavigation<AuthScreenNavigationProp>();
 
   const [isLogin, setIsLogin] = useState(true);
-  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [senhaConfirm, setSenhaConfirm] = useState('');
@@ -62,8 +67,8 @@ export default function AuthScreen() {
       }
 
       // 3 - Salva token e email no Async
-      await AsyncStorage.setItem('token', token);
-      await AsyncStorage.setItem('user', JSON.stringify({ email, token }));
+      const newUser = { email, token };
+      await setUser(newUser);
 
       // 4️ - Exibe modal de sucesso
       setSuccessModalVisible(true);
@@ -129,125 +134,142 @@ export default function AuthScreen() {
   };
 
   return (
-    <LinearGradient colors={[roxo, roxo_escuro]} style={styles.container}>
-      {/* Logo */}
-      <View style={styles.logoContainer}>
-        <Image
-          source={require('../../../assets/Vector.png')}
-          style={styles.logo}
-          resizeMode="contain"
-        />
-      </View>
-
-      <Text style={styles.title}>
-        {isLogin ? 'Bem-vindo de volta' : 'Crie sua conta'}
-      </Text>
-
-      {/* Formulário */}
-      <View style={styles.formulario}>
-
-        <View style={styles.inputContainer}>
-          <Icon name="mail-outline" size={20} color={'#fff'} />
-          <TextInput
-            placeholder="Email"
-            placeholderTextColor="#ccc"
-            style={styles.input}
-            value={email}
-            onChangeText={setEmail}
-            autoCapitalize="none"
+  <LinearGradient colors={[roxo, roxo_escuro]} style={styles.container}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={{ flex: 1, width: '100%' }}
+    >
+      <ScrollView
+        contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          paddingBottom: 20,
+        }}
+        keyboardShouldPersistTaps="handled"
+      >
+        {/* Logo */}
+        <View style={styles.logoContainer}>
+          <Image
+            source={require('../../../assets/Vector.png')}
+            style={styles.logo}
+            resizeMode="contain"
           />
         </View>
 
-        <View style={styles.inputContainer}>
-          <Icon name="lock-closed" size={20} color={'#fff'} />
-          <TextInput
-            placeholder="Senha"
-            placeholderTextColor="#ccc"
-            style={styles.input}
-            value={senha}
-            onChangeText={setSenha}
-            secureTextEntry={!showSenha}
-          />
-          <TouchableOpacity onPress={() => setShowSenha(!showSenha)}>
-            <Icon
-              name={showSenha ? 'eye-outline' : 'eye-off-outline'}
-              size={20}
-              color="#fff"
+        <Text style={styles.title}>
+          {isLogin ? 'Bem-vindo de volta' : 'Crie sua conta'}
+        </Text>
+
+        {/* Formulário */}
+        <View style={styles.formulario}>
+          <View style={styles.inputContainer}>
+            <Icon name="mail-outline" size={20} color={'#fff'} />
+            <TextInput
+              placeholder="Email"
+              placeholderTextColor="#ccc"
+              style={styles.input}
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
             />
-          </TouchableOpacity>
-        </View>
+          </View>
 
-        {!isLogin && (
           <View style={styles.inputContainer}>
             <Icon name="lock-closed" size={20} color={'#fff'} />
             <TextInput
-              placeholder="Confirmar Senha"
+              placeholder="Senha"
               placeholderTextColor="#ccc"
               style={styles.input}
-              value={senhaConfirm}
-              onChangeText={setSenhaConfirm}
+              value={senha}
+              onChangeText={setSenha}
               secureTextEntry={!showSenha}
             />
+            <TouchableOpacity onPress={() => setShowSenha(!showSenha)}>
+              <Icon
+                name={showSenha ? 'eye-outline' : 'eye-off-outline'}
+                size={20}
+                color="#fff"
+              />
+            </TouchableOpacity>
           </View>
-        )}
-      </View>
 
-      {/* Botão */}
-      <View style={{ width: '100%', alignItems: 'center' }}>
-        <TouchableOpacity
-          style={[
-            styles.button,
-            { backgroundColor: isButtonDisabled ? '#ccc' : '#fff' },
-          ]}
-          onPress={isLogin ? handleLogin : handleRegister}
-          disabled={isButtonDisabled || loading}
-        >
-          <Text style={styles.textButton}>
-            {isLogin ? 'Entrar' : 'Cadastrar'}
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={{ marginBottom: 40, alignItems: 'center' }}
-          onPress={() => setIsLogin(!isLogin)}
-        >
-          <Text style={{ color: '#fff', fontSize: 16, fontWeight: '300' }}>
-            {isLogin
-              ? 'Não possui uma conta? Crie aqui'
-              : 'Já possui conta? Entrar'}
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Modal de sucesso */}
-      <Modal
-        isVisible={successModalVisible}
-        animationIn="slideInDown"
-        animationOut="slideOutUp"
-        backdropOpacity={0}
-        style={styles.modal}
-      >
-        <View style={styles.modalContainerSuccess}>
-          <Text style={styles.modalTitle}>
-            {isLogin ? 'Login realizado!' : 'Cadastro bem-sucedido!'}
-          </Text>
+          {!isLogin && (
+            <View style={styles.inputContainer}>
+              <Icon name="lock-closed" size={20} color={'#fff'} />
+              <TextInput
+                placeholder="Confirmar Senha"
+                placeholderTextColor="#ccc"
+                style={styles.input}
+                value={senhaConfirm}
+                onChangeText={setSenhaConfirm}
+                secureTextEntry={!showSenha}
+              />
+            </View>
+          )}
         </View>
-      </Modal>
 
-      {/* Modal de erro */}
-      <Modal
-        isVisible={errorModalVisible}
-        animationIn="slideInDown"
-        animationOut="slideOutUp"
-        backdropOpacity={0}
-        style={styles.modal}
-      >
-        <View style={styles.modalContainerError}>
-          <Text style={styles.modalTitle}>{errorMessage}</Text>
+        {/* Botão */}
+        <View style={{ width: '100%', alignItems: 'center' }}>
+          <TouchableOpacity
+            style={[
+              styles.button,
+              { backgroundColor: isButtonDisabled ? '#ccc' : '#fff' },
+            ]}
+            onPress={isLogin ? handleLogin : handleRegister}
+            disabled={isButtonDisabled || loading}
+          >
+            {loading ? (
+              <ActivityIndicator size="small" color={roxo_escuro} />
+            ) : (
+              <Text style={styles.textButton}>
+                {isLogin ? 'Entrar' : 'Cadastrar'}
+              </Text>
+            )}
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={{ marginBottom: 40, alignItems: 'center' }}
+            onPress={() => setIsLogin(!isLogin)}
+          >
+            <Text style={{ color: '#fff', fontSize: 16, fontWeight: '300' }}>
+              {isLogin
+                ? 'Não possui uma conta? Crie aqui'
+                : 'Já possui conta? Entrar'}
+            </Text>
+          </TouchableOpacity>
         </View>
-      </Modal>
-    </LinearGradient>
-  );
+      </ScrollView>
+    </KeyboardAvoidingView>
+
+    {/* Modais */}
+    <Modal
+      isVisible={successModalVisible}
+      animationIn="slideInDown"
+      animationOut="slideOutUp"
+      backdropOpacity={0}
+      style={styles.modal}
+    >
+      <View style={styles.modalContainerSuccess}>
+        <Text style={styles.modalTitle}>
+          {isLogin ? 'Login realizado!' : 'Cadastro bem-sucedido!'}
+        </Text>
+      </View>
+    </Modal>
+
+    <Modal
+      isVisible={errorModalVisible}
+      animationIn="slideInDown"
+      animationOut="slideOutUp"
+      backdropOpacity={0}
+      style={styles.modal}
+    >
+      <View style={styles.modalContainerError}>
+        <Text style={styles.modalTitle}>{errorMessage}</Text>
+      </View>
+    </Modal>
+  </LinearGradient>
+);
 }
 
 const styles = StyleSheet.create({
@@ -326,3 +348,5 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
 });
+
+

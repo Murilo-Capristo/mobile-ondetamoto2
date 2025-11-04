@@ -10,7 +10,8 @@ export async function login(email: string, senha: string) {
         });
         
         const text = await response.text();
-        
+        console.log(text)
+
         //Se retornar Html, o login falha
         if (text.startsWith('<!DOCTYPE html') || text.includes('<html')) {
             throw new Error('O login falhou. Verifique as credenciais.');
