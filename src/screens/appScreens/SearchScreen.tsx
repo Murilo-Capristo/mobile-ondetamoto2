@@ -14,6 +14,9 @@ import {
   SafeAreaInsetsContext,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
+import { useAuth } from '../../context/UserContext';
+
+const { user } = useAuth();
 
 
 const categoryOptions = [
@@ -52,7 +55,10 @@ export default function SearchScreen() {
   try {
     setLoading(true);
     if (selectedTab.id === 'motos') {
+
       const data = await getMotos(0);
+      
+      
       setMotos(data.content || []); 
       console.log(data.content);
     } else {

@@ -1,5 +1,5 @@
 {
-  "_comment": "Para rodar o Prettier: npx prettier --write \"**/*.{js,ts,jsx,tsx,json,css,scss,md}\"",
+  "_comment": "Para rodar o Prettier: npx prettier --write \"**/*.{js,ts,jsx,tsx,json,css,scss,md}\"   ",
   "semi": true,
   "singleQuote": true,
   "trailingComma": "all",

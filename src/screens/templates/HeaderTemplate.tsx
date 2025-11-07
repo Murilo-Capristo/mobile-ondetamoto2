@@ -2,17 +2,18 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
-import { auth } from '../../config/firebase';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useThemeContext } from '../../context/ThemeContext'; // Importa o contexto
 import LogoutDialog from '../../components/LogoutDialog';
 import { useAuth } from '../../context/UserContext';
 
-const { user } = useAuth();
+
 
 const roxo = '#f900cf';
 
 export default function HeaderTemplate() {
+  const { user } = useAuth();
   const navigation = useNavigation();
   const { theme, toggleTheme, isDark } = useThemeContext(); // Acesso ao tema
   const [logoutDialogVisible, setLogoutDialogVisible] = useState(false);
@@ -39,8 +40,9 @@ export default function HeaderTemplate() {
           <Text
             style={[styles.textProfile, { color: theme.colors.onBackground }]}
           >
-            {/*{user?.email.split('@')[0] || 'Logout'}*/}
-            {'Logout'}
+            {user?.email
+            ? user.email.split('@')[0].charAt(0).toUpperCase() + user.email.split('@')[0].slice(1).toLowerCase()
+            : 'Logout'}
           </Text>
         </TouchableOpacity>
 

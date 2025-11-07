@@ -1,19 +1,27 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
-import { auth } from '../../config/firebase';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useThemeContext } from '../../context/ThemeContext';
 import LogoutDialog from '../../components/LogoutDialog';
+import { useAuth } from '../../context/UserContext';
+
+
 
 export default function HeaderReduzida() {
+  const { user } = useAuth();
+
   const navigation = useNavigation();
   const { toggleTheme, isDark, theme } = useThemeContext();
   const [logoutDialogVisible, setLogoutDialogVisible] = useState(false);
 
   const handleLogout = async () => {
+    
+
+  
     await AsyncStorage.removeItem('usuario');
+    
     navigation.reset({
       index: 0,
       routes: [{ name: 'Login' }],
@@ -22,12 +30,15 @@ export default function HeaderReduzida() {
 
   return (
     
+    
     <View style={[styles.header, { backgroundColor: theme.colors.background }]}>
       <View style={[styles.topHeader, { backgroundColor: theme.colors.background }]}>
         <TouchableOpacity style={styles.linkProfile} onPress={() => setLogoutDialogVisible(true)}>
           <Icon name="person-circle-outline" size={30} color={theme.colors.text} />
           <Text style={[styles.TextProfile, { color: theme.colors.text }]}>
-            {auth.currentUser?.displayName || 'Logout'}
+            {user?.email
+            ? user.email.split('@')[0].charAt(0).toUpperCase() + user.email.split('@')[0].slice(1).toLowerCase()
+            : 'Logout'}
           </Text>
         </TouchableOpacity>
 

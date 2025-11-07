@@ -8,7 +8,7 @@ export function useMotoService() {
   const getMotos = async (pageNumber: number) => {
     try {
       console.log('Chamando URL:', `${BASE_URL}/api/motos`);
-      console.log(user)
+      console.log("Usuário: ", user)
       console.log("Token atual:", user?.token);
 
 
