@@ -151,9 +151,11 @@ export default function SearchScreen() {
       <Provider>
         <HeaderReduzida />
         <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.voltarBtn}>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.voltarBtn}>
             <Icon name="arrow-back" size={28} color={theme.colors.primary} />
           </TouchableOpacity>
+
+          
 
           <Text style={[styles.label, { color: theme.colors.text, marginBottom: 10, marginTop: 10 }]}>
             Pesquise Motos ou Setores Registrados.
@@ -381,13 +383,14 @@ const SetorItem = React.memo(({ item, onUpdate, onDelete, onNavigate, theme }) =
 });
 
 const styles = StyleSheet.create({
-  container: { padding: 16, flex: 1 },
+  container: { padding: 16, flex: 1, },
   label: { fontSize: 14, marginBottom: 10 },
   voltarBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     position: 'absolute',
     left: 20,
+
   },
   dropdown: {
     padding: 10,

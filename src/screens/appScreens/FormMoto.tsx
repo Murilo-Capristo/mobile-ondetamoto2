@@ -8,7 +8,7 @@ import { useNavigation, useRoute } from '@react-navigation/native';
 import IconIon from 'react-native-vector-icons/Ionicons';
 import { useThemeContext } from '../../context/ThemeContext';
 import { useMotoService } from '../../services/motoService';
-import { getSetores } from '../../services/setorService';
+import { useSetorService } from '../../services/setorService';
 import {
   SafeAreaView,
   SafeAreaProvider,
@@ -33,11 +33,12 @@ export default function FormMoto() {
   const [loading, setLoading] = useState(false);
   const { theme } = useThemeContext();
   const { createMoto } = useMotoService();
+  const { getSetores} = useSetorService();
 
   useEffect(() => {
     const loadSetores = async () => {
       try {
-        const data = await getSetores();
+        const data = await getSetores(0);
         setSetores(data);
       } catch (err) {
         console.error('Erro ao carregar setores:', err);

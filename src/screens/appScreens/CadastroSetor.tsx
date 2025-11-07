@@ -14,7 +14,7 @@ import { useState } from 'react';
 import IconIon from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 import { useThemeContext } from '../../context/ThemeContext';
-import { createSetor } from '../../services/setorService';
+import { useSetorService } from '../../services/setorService';
 import {
   SafeAreaView,
   SafeAreaProvider,
@@ -31,6 +31,7 @@ export default function CadastroSetor() {
 
   const [nome, setNome] = useState('');
   const [tamanho, setTamanho] = useState('');
+  const {createSetor} = useSetorService();
 
   const handleCadastro = async () => {
     setLoading(true);
