@@ -7,7 +7,7 @@ import HeaderReduzida from '../templates/HeaderReduzida';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useThemeContext } from '../../context/ThemeContext';
 import { useMotoService } from '../../services/motoService';
-import { getSetores, updateSetor, deleteSetor } from '../../services/setorService';
+import { useSetorService } from '../../services/setorService';
 import {
   SafeAreaView,
   SafeAreaProvider,
@@ -26,6 +26,7 @@ const categoryOptions = [
 
 export default function SearchScreen() {
   const { getMotos, updateMoto, deleteMoto } = useMotoService();
+  const {getSetores, updateSetor, deleteSetor} = useSetorService();
 
   const { theme } = useThemeContext();
   const navigation = useNavigation();
@@ -62,7 +63,7 @@ export default function SearchScreen() {
       setMotos(data.content || []); 
       console.log(data.content);
     } else {
-      const data = await getSetores();
+      const data = await getSetores(0);
       setSetores(data);
     }
   } catch (err) {
