@@ -78,7 +78,8 @@ const styles = StyleSheet.create({
   },
   header: {
     borderBottomColor: '#f900cf',
-    borderBottomWidth: 20,
+    borderBottomWidth: 10,
+    
   },
   TextProfile: {
     fontSize: 17,

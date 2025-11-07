@@ -184,6 +184,12 @@ export default function AuthScreen() {
               value={senha}
               onChangeText={setSenha}
               secureTextEntry={!showSenha}
+              returnKeyType="done"
+              onSubmitEditing={() => {
+                if (isLogin && !isButtonDisabled && !loading) {
+                  handleLogin();
+                }
+              }}
             />
             <TouchableOpacity onPress={() => setShowSenha(!showSenha)}>
               <Icon

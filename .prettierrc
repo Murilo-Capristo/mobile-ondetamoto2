@@ -1,10 +1,13 @@
 {
   "_comment": "Para rodar o Prettier: npx prettier --write \"**/*.{js,ts,jsx,tsx,json,css,scss,md}\"   ",
+  "printWidth": 100,
+  "tabWidth": 2,
+  "useTabs": false,
   "semi": true,
   "singleQuote": true,
-  "trailingComma": "all",
-  "printWidth": 80,
-  "tabWidth": 2,
+  "trailingComma": "es5",
   "bracketSpacing": true,
-  "arrowParens": "always"
+  "arrowParens": "avoid",
+  "jsxSingleQuote": false,
+  "endOfLine": "lf"
 }
