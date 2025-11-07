@@ -147,7 +147,7 @@ export default function SearchScreen() {
   );
 
   return (
-    <SafeAreaView style={{ flex: 1, paddingTop: 10 }} edges={['top', 'left', 'right']}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }} edges={['top', 'left', 'right']}>
       <Provider>
         <HeaderReduzida />
         <View style={[styles.container, { backgroundColor: theme.colors.background }]}>

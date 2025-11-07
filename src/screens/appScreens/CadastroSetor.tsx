@@ -50,7 +50,7 @@ export default function CadastroSetor() {
 
   return (
 
-<SafeAreaView style={{ flex: 1 }} edges={['top', 'left', 'right']}>
+<SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background  }} edges={['top', 'left', 'right']}>
     <Provider theme={theme}>
       <View style={{ flex: 1, backgroundColor: theme.colors.surface }}>
         <HeaderReduzida />

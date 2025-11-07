@@ -32,7 +32,7 @@ export default function SubmitScreen() {
   ];
 
   return (
-<SafeAreaView style={{ flex: 1 }} edges={['top', 'left', 'right']}>
+<SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background  }} edges={['top', 'left', 'right']}>
     <View
       style={[styles.container, { backgroundColor: theme.colors.background }]}
     >
