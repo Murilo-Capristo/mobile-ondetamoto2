@@ -1,16 +1,14 @@
 import { useAuth } from '../context/UserContext';
 import { BASE_URL } from '../config/constants';
 
-
-export function useSetorService(){
+export function useSetorService() {
   const { user } = useAuth(); // pega o token do contexto
   const URL = `${BASE_URL}/api/setores`;
 
-
-  async function getSetores(pageNumber: number) {
+  const getSetores = async (pageNumber: number) => {
     try {
       const res = await fetch(`${URL}?page=${pageNumber}`, {
-        method: "GET",
+        method: 'GET',
         headers: {
           Authorization: `Bearer ${user?.token}`,
           'Content-Type': 'application/json',
@@ -22,11 +20,11 @@ export function useSetorService(){
       console.error('Erro ao buscar setores:', err);
       throw err;
     }
-  }
+  };
 
- async function updateSetor(id: number, data: any) {
+  const updateSetor = async (id: number, data: any) => {
     try {
-      await fetch(`${URL}/${id}`, {
+      const response = await fetch(`${URL}/${id}`, {
         method: 'PUT',
         headers: {
           Authorization: `Bearer ${user?.token}`,
@@ -34,13 +32,22 @@ export function useSetorService(){
         },
         body: JSON.stringify(data),
       });
+      if (!response.ok) {
+        const text = await response.text();
+        if (text.startsWith('<!DOCTYPE html') || text.includes('<html')) {
+          throw new Error('O login falhou. Verifique as credenciais.');
+        }
+        throw new Error(text || 'Erro ao cadastrar setor');
+      }
+
+      return;
     } catch (err) {
-      console.error('Erro ao atualizar setor:', err);
+      console.error('Erro na API de setores:', err);
       throw err;
     }
-  }
+  };
 
- async function deleteSetor(id: number) {
+  const deleteSetor = async (id: number) => {
     try {
       await fetch(`${URL}/${id}`, {
         method: 'DELETE',
@@ -52,9 +59,9 @@ export function useSetorService(){
       console.error('Erro ao excluir setor:', err);
       throw err;
     }
-  }
+  };
 
- async function createSetor(data: any) {
+  const createSetor = async (data: any) => {
     try {
       const response = await fetch(URL, {
         method: 'POST',
@@ -62,20 +69,23 @@ export function useSetorService(){
           Authorization: `Bearer ${user?.token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ id: 0, ...data }),
+        body: JSON.stringify({ ...data }),
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || 'Erro ao cadastrar setor');
+        const text = await response.text();
+        if (text.startsWith('<!DOCTYPE html') || text.includes('<html')) {
+          throw new Error('O login falhou. Verifique as credenciais.');
+        }
+        throw new Error(text || 'Erro ao cadastrar setor');
       }
 
-      return await response.json();
+      return;
     } catch (err) {
       console.error('Erro na API de setores:', err);
       throw err;
     }
-  }
+  };
 
-  return {createSetor, deleteSetor, updateSetor, getSetores}
+  return { createSetor, deleteSetor, updateSetor, getSetores };
 }

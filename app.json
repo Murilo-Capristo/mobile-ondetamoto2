@@ -16,10 +16,7 @@
       "supportsTablet": true
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/logo-preenchida.png",
-        "backgroundColor": "#ffffff"
-      }
+      "icon": "./assets/logo-preenchida.png"
     },
     "web": {
       "favicon": "./assets/favicon.png"
