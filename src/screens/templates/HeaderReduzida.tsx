@@ -6,6 +6,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useThemeContext } from '../../context/ThemeContext';
 import LogoutDialog from '../../components/LogoutDialog';
 import { useAuth } from '../../context/UserContext';
+import i18n from "../../i18n/i88n";
+import { useLanguage } from '../../context/LanguageContext';
 
 
 
@@ -15,11 +17,10 @@ export default function HeaderReduzida() {
   const navigation = useNavigation();
   const { toggleTheme, isDark, theme } = useThemeContext();
   const [logoutDialogVisible, setLogoutDialogVisible] = useState(false);
-
-  const handleLogout = async () => {
-    
+  const { language, setLanguage } = useLanguage();
 
   
+  const handleLogout = async () => {
     await AsyncStorage.removeItem('usuario');
     
     navigation.reset({
@@ -27,6 +28,14 @@ export default function HeaderReduzida() {
       routes: [{ name: 'Login' }],
     });
   };
+
+  const toggleLanguage = async () => {
+    const newLang = language === 'pt' ? 'es' : 'pt';
+    setLanguage(newLang);              // Atualiza o contexto global
+    i18n.changeLanguage(newLang);      // Atualiza o i18n
+    await AsyncStorage.setItem('language', newLang); // Salva preferência
+  };
+
 
   return (
     
@@ -49,6 +58,7 @@ export default function HeaderReduzida() {
           />
         </View>
 
+        {/* Botão de alternância de tema */}
         <TouchableOpacity
           onPress={toggleTheme}
           style={{ position: 'absolute', right: 20, top: 30 }}
@@ -56,6 +66,15 @@ export default function HeaderReduzida() {
           <Icon name={isDark ? 'sunny-outline' : 'moon-outline'} size={24} color={theme.colors.onBackground} />
         </TouchableOpacity>
       </View>
+
+
+        {/* Botão de idioma */}
+        <TouchableOpacity style={styles.languageToggle} onPress={toggleLanguage}>
+          <Text style={{ color: theme.colors.onBackground, fontWeight: 'bold' }}>
+            {language.toUpperCase()}
+          </Text>
+        </TouchableOpacity>
+
 
       {/* Componente do dialog */}
       <LogoutDialog
@@ -92,6 +111,14 @@ const styles = StyleSheet.create({
     height: 50,
     left: 20,
     top: 30,
+  },
+      languageToggle: {
+    position: 'absolute',
+    right: 70,
+    top: 33,
+    backgroundColor: "#7e7e7e",
+    padding: 2,
+    borderRadius: 12
   },
   logo: {
     width: 120,

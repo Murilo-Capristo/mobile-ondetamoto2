@@ -5,13 +5,16 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { PaperProvider } from 'react-native-paper';
 import { ThemeProvider, useThemeContext } from './src/context/ThemeContext';
 import { AuthProvider } from './src/context/UserContext';
+import { LanguageProvider } from './src/context/LanguageContext';
 import "./src/i18n/i88n"
 export default function App() {
   return (
     <AuthProvider>
+      <LanguageProvider>
       <ThemeProvider>
         <MainApp />
       </ThemeProvider>
+      </LanguageProvider>
     </AuthProvider>
   );
 }

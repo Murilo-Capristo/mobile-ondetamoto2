@@ -7,6 +7,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useThemeContext } from '../../context/ThemeContext'; // Importa o contexto
 import LogoutDialog from '../../components/LogoutDialog';
 import { useAuth } from '../../context/UserContext';
+import i18n from "../../i18n/i88n";
+import { useLanguage } from '../../context/LanguageContext';
 
 
 
@@ -17,6 +19,9 @@ export default function HeaderTemplate() {
   const navigation = useNavigation();
   const { theme, toggleTheme, isDark } = useThemeContext(); // Acesso ao tema
   const [logoutDialogVisible, setLogoutDialogVisible] = useState(false);
+  const { language, setLanguage } = useLanguage();
+
+
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem('usuario');
@@ -25,6 +30,14 @@ export default function HeaderTemplate() {
       routes: [{ name: 'Login' }],
     });
   };
+
+  const toggleLanguage = async () => {
+    const newLang = language === 'pt' ? 'es' : 'pt';
+    setLanguage(newLang);              // Atualiza o contexto global
+    i18n.changeLanguage(newLang);      // Atualiza o i18n
+    await AsyncStorage.setItem('language', newLang); // Salva preferência
+  };
+
 
   return (
     
@@ -54,6 +67,14 @@ export default function HeaderTemplate() {
             color={theme.colors.onBackground}
           />
         </TouchableOpacity>
+
+        {/* Botão de idioma */}
+        <TouchableOpacity style={styles.languageToggle} onPress={toggleLanguage}>
+          <Text style={{ color: theme.colors.onBackground, fontWeight: 'bold' }}>
+            {language.toUpperCase()}
+          </Text>
+        </TouchableOpacity>
+
 
         {/* Logo */}
         <Image
@@ -97,6 +118,14 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginBottom: 30,
     textAlign: 'center',
+  },
+    languageToggle: {
+    position: 'absolute',
+    right: 70,
+    top: 33,
+    backgroundColor: "#7e7e7e",
+    padding: 2,
+    borderRadius: 12
   },
   textTitle: {
     fontSize: 20,
