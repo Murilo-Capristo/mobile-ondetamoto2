@@ -38,29 +38,33 @@ export default function SetorDetailsScreen() {
   const clientRef = useRef<any>(null);
 
   useEffect(() => {
-    // Conecta ao MQTT usando o service
-    clientRef.current = connectMotoMqtt(
-      (payload) => {
-        payloadGlobal.current = payload;
-        const tag = payload.moto;
+  clientRef.current = connectMotoMqtt(
+    (payload) => {
+      console.log(payload)
+      if (payload.setor !== setorId.toString()) return;
 
-        const novoStatus =
-          statusMotos.current[tag] === 'entrando' ? 'saindo' : 'entrando';
-        statusMotos.current[tag] = novoStatus;
+      payloadGlobal.current = payload;
+      const tag = payload.moto;
 
-        setMessages((oldMsgs) => [...oldMsgs, { tag, status: novoStatus }]);
-        if (loading) setLoading(false); // primeira mensagem recebida -> remove loading
-      },
-      (err) => {
-        console.error('Erro MQTT:', err);
-        if (loading) setLoading(false); // caso dê erro, também remove loading
-      },
-    );
+      const novoStatus =
+        statusMotos.current[tag] === 'entrando' ? 'saindo' : 'entrando';
 
-    return () => {
-      disconnectMotoMqtt(clientRef.current);
-    };
-  }, []);
+      statusMotos.current[tag] = novoStatus;
+
+      setMessages((oldMsgs) => [...oldMsgs, { tag, status: novoStatus }]);
+      if (loading) setLoading(false);
+    },
+    (err) => {
+      console.error('Erro MQTT:', err);
+      if (loading) setLoading(false);
+    }
+  );
+
+  return () => {
+    disconnectMotoMqtt(clientRef.current);
+  };
+}, [setorId]);
+
 
   return (
 <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background  }} edges={['top', 'left', 'right']}>
