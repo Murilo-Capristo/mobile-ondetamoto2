@@ -15,8 +15,12 @@ import { useNavigation } from '@react-navigation/native';
 import { useThemeContext } from '../../context/ThemeContext';
 import { useSetorService } from '../../services/setorService';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next'; 
 
 export default function CadastroSetor() {
+      const { t } = useTranslation(); 
+  
+
   const navigation = useNavigation();
   const [isModalVisible, setModalVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -32,7 +36,8 @@ export default function CadastroSetor() {
 
   const handleCadastro = async () => {
     if (!nome || !tamanho || !tipo) {
-      alert('Preencha todos os campos!');
+    alert(t('cadastroSetor.fillAll'));
+
       return;
     }
 
@@ -50,7 +55,7 @@ export default function CadastroSetor() {
         navigation.popToTop();
       }, 2000);
     } catch (err) {
-      alert('Erro ao cadastrar setor!');
+    alert(t('cadastroSetor.error'));
     } finally {
       setLoading(false);
     }
@@ -82,7 +87,7 @@ export default function CadastroSetor() {
           >
             <View style={styles.tag}>
               <Text style={[styles.textTag, { color: theme.colors.primary }]}>
-                Cadastro de Setor
+                {t('cadastroSetor.title')}
               </Text>
             </View>
 
@@ -90,7 +95,7 @@ export default function CadastroSetor() {
             <View style={[styles.inputWrapper, { borderBottomColor: theme.colors.outline }]}>
               <TextInput
                 style={[styles.input, { color: theme.colors.onSurface }]}
-                placeholder="Nome personalizado"
+                placeholder={t('cadastroSetor.name')}
                 placeholderTextColor={theme.colors.outline}
                 value={nome}
                 onChangeText={setNome}
@@ -102,7 +107,7 @@ export default function CadastroSetor() {
             <View style={[styles.inputWrapper, { borderBottomColor: theme.colors.outline }]}>
               <TextInput
                 style={[styles.input, { color: theme.colors.onSurface }]}
-                placeholder="Tamanho Máximo Suportado (ex.: 100)"
+                placeholder={t('cadastroSetor.size')}
                 placeholderTextColor={theme.colors.outline}
                 keyboardType="numeric"
                 value={tamanho}
@@ -129,7 +134,7 @@ export default function CadastroSetor() {
                         color: tipo ? theme.colors.onSurface : theme.colors.outline,
                       }}
                     >
-                      {tipo || 'Selecione o tipo do setor'}
+                      {tipo || t('cadastroSetor.selectType')}
                     </Text>
                     <IconIon
                       name="chevron-down"
@@ -162,7 +167,8 @@ export default function CadastroSetor() {
               {loading ? (
                 <ActivityIndicator size="small" color="#fff" />
               ) : (
-                <Text style={styles.cadasText}>Cadastrar</Text>
+                <Text style={styles.cadasText}>{t('cadastroSetor.button')}
+</Text>
               )}
             </TouchableOpacity>
           </View>
@@ -179,7 +185,8 @@ export default function CadastroSetor() {
                   { backgroundColor: theme.colors.success },
                 ]}
               >
-                <Text style={styles.modalTitle}>Cadastro Bem-Sucedido!</Text>
+                <Text style={styles.modalTitle}>{t('cadastroSetor.success')}
+</Text>
               </View>
             </View>
           </Modal>

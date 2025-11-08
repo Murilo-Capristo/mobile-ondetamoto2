@@ -5,19 +5,18 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useEffect, useState, useRef } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { useThemeContext } from '../../context/ThemeContext';
-import {
-  connectMotoMqtt,
-  disconnectMotoMqtt,
-} from '../../services/mqttService';
+import { connectMotoMqtt, disconnectMotoMqtt } from '../../services/mqttService';
 import {
   SafeAreaView,
   SafeAreaProvider,
   SafeAreaInsetsContext,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
-
+import { useTranslation } from 'react-i18next';
 
 export default function CadastroMoto() {
+  const { t } = useTranslation();
+
   const navigation = useNavigation();
   const { theme } = useThemeContext();
 
@@ -27,14 +26,11 @@ export default function CadastroMoto() {
   const clientRef = useRef(null);
 
   useEffect(() => {
-    const client = connectMotoMqtt((payload) => {
-      setDetectedMotos((oldMotos) => {
-        const existe = oldMotos.some((m) => m.tag === payload.moto);
+    const client = connectMotoMqtt(payload => {
+      setDetectedMotos(oldMotos => {
+        const existe = oldMotos.some(m => m.tag === payload.moto);
         if (!existe) {
-          return [
-            { tag: payload.moto, setor: payload.setor },
-            ...oldMotos,
-          ].slice(0, 3);
+          return [{ tag: payload.moto, setor: payload.setor }, ...oldMotos].slice(0, 3);
         }
         return oldMotos;
       });
@@ -53,7 +49,7 @@ export default function CadastroMoto() {
 
     timeoutRef.current = setTimeout(() => {
       setLoading(false);
-      alert('Nenhuma moto detectada em 1 minuto. Tente novamente.');
+      alert(t('cadastroMoto.noMotoDetected'));
     }, 60000);
   };
 
@@ -72,77 +68,77 @@ export default function CadastroMoto() {
   }, []);
 
   return (
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: theme.colors.background }}
+      edges={['top', 'left', 'right']}
+    >
+      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+        <HeaderReduzida />
 
-<SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background  }} edges={['top', 'left', 'right']}>
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <HeaderReduzida />
+        <View style={styles.title}>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.voltarBtn}>
+            <Icon name="arrow-back" size={28} color={theme.colors.secondary} />
+          </TouchableOpacity>
+          <Text style={[styles.titleText, { color: theme.colors.text }]}>{t('cadastroMoto.title')}
+</Text>
+        </View>
 
-      <View style={styles.title}>
         <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.voltarBtn}
+          style={[styles.detectarMoto, { backgroundColor: '#e4e3e3', borderColor: 'green' }]}
+          onPress={handleMoto}
+          disabled={loading}
         >
-          <Icon name="arrow-back" size={28} color={theme.colors.secondary} />
+          {loading ? (
+            <ActivityIndicator size="large" color="green" />
+          ) : (
+            <>
+              <Icon name="wifi-tethering" style={[styles.icon, { color: 'green' }]} />
+              <Text style={[styles.detecText, { color: 'black' }]}>{t('cadastroMoto.detectar')}</Text>
+            </>
+          )}
         </TouchableOpacity>
-        <Text style={[styles.titleText, { color: theme.colors.text }]}>
-          Cadastro de Moto
-        </Text>
-      </View>
 
-      <TouchableOpacity
-        style={[styles.detectarMoto, { backgroundColor: '#e4e3e3', borderColor: 'green' }]}
-        onPress={handleMoto}
-        disabled={loading}
-      >
-        {loading ? (
-          <ActivityIndicator size="large" color="green" />
-        ) : (
-          <>
-            <Icon name="wifi-tethering" style={[styles.icon, { color: 'green' }]} />
-            <Text style={[styles.detecText, { color: 'black' }]}>
-              Detectar Motocicleta
-            </Text>
-          </>
+        {loading && (
+          <View style={[styles.boxBuscando, { backgroundColor: theme.colors.surface }]}>
+            <View style={styles.buscando}>
+              <Text style={[styles.titlebuscando, { color: theme.colors.onSurface }]}>
+                {t('cadastroMoto.searching')}
+              </Text>
+              <ActivityIndicator
+                size="large"
+                color={theme.colors.primary}
+                style={{ marginTop: 20 }}
+              />
+            </View>
+          </View>
         )}
-      </TouchableOpacity>
 
-      {loading && (
-        <View style={[styles.boxBuscando, { backgroundColor: theme.colors.surface }]}>
-          <View style={styles.buscando}>
-            <Text style={[styles.titlebuscando, { color: theme.colors.onSurface }]}>
-              Buscando...
-            </Text>
-            <ActivityIndicator size="large" color={theme.colors.primary} style={{ marginTop: 20 }} />
+        {!loading && detectedMotos.length > 0 && (
+          <View style={[styles.boxBuscando, { backgroundColor: theme.colors.surface }]}>
+            <View style={styles.buscando}>
+              <Text style={[styles.titlebuscando, { color: theme.colors.onSurface }]}>
+                {t('cadastroMoto.detected')}
+              </Text>
+              {detectedMotos.map((moto, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.motos}
+                  onPress={() =>
+                    navigation.navigate('FormMoto', {
+                      tagId: moto.tag,
+                      setor: moto.setor,
+                    })
+                  }
+                >
+                  <Text style={[styles.textMotos, { color: theme.colors.text }]}>
+                    {t('cadastroMoto.motoLabel')}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
           </View>
-        </View>
-      )}
-
-      {!loading && detectedMotos.length > 0 && (
-        <View style={[styles.boxBuscando, { backgroundColor: theme.colors.surface }]}>
-          <View style={styles.buscando}>
-            <Text style={[styles.titlebuscando, { color: theme.colors.onSurface }]}>
-              Motos Detectadas:
-            </Text>
-            {detectedMotos.map((moto, index) => (
-              <TouchableOpacity
-                key={index}
-                style={styles.motos}
-                onPress={() =>
-                  navigation.navigate('FormMoto', {
-                    tagId: moto.tag,
-                    setor: moto.setor,
-                  })
-                }
-              >
-                <Text style={[styles.textMotos, { color: theme.colors.text }]}>
-                  {`Tag - ${moto.tag} | Setor - ${moto.setor}`}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-      )}
-    </View>
+        )}
+      </View>
     </SafeAreaView>
   );
 }

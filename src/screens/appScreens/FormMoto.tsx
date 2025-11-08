@@ -15,9 +15,12 @@ import {
   SafeAreaInsetsContext,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 
 export default function FormMoto() {
+    const { t } = useTranslation();
+  
   const [isModalVisible, setModalVisible] = useState(false);
   const [setores, setSetores] = useState<{ id: number; nome: string }[]>([]);
   const route = useRoute();
@@ -49,7 +52,7 @@ export default function FormMoto() {
 
   const handleCadastro = async () => {
     if (!selectedTipo || !placa || !selectedSetor) {
-      alert('Preencha todos os campos antes de cadastrar.');
+      alert(t('formMoto.fillAll'));
       return;
     }
 
@@ -69,7 +72,7 @@ export default function FormMoto() {
       }, 2000);
     } catch (err) {
       console.error(err);
-      alert('Erro ao cadastrar moto');
+      alert(t('formMoto.error'));
     } finally {
       setLoading(false);
     }
@@ -133,7 +136,7 @@ export default function FormMoto() {
                       },
                     ]}
                   >
-                    {selectedTipo || 'Tipo'}
+                    {selectedTipo || t('formMoto.tipo')}
                   </Text>
                   <Icon
                     name="chevron-down"
@@ -180,7 +183,7 @@ export default function FormMoto() {
                   >
                     {selectedSetor
                       ? setores.find((s) => s.id === selectedSetor)?.nome
-                      : 'Setor'}
+                      : t('formMoto.setor')}
                   </Text>
                   <Icon
                     name="chevron-down"
@@ -206,7 +209,7 @@ export default function FormMoto() {
 
           <TextInput
             style={[styles.placa, { borderBottomColor: theme.colors.outline, color: '#f900cf' }]}
-            placeholder="Placa"
+            placeholder={t('formMoto.placaLabel')}
             placeholderTextColor={theme.colors.outline}
             value={placa}
             onChangeText={setPlaca}
@@ -223,7 +226,7 @@ export default function FormMoto() {
             {loading ? (
               <ActivityIndicator size="small" color="#fff" />
             ) : (
-              <Text style={styles.cadasText}>Cadastrar</Text>
+              <Text style={styles.cadasText}>{t('formMoto.cadastrar')}</Text>
             )}
           </TouchableOpacity>
         </View>
@@ -231,16 +234,16 @@ export default function FormMoto() {
         {/* Dados preenchidos */}
         <View style={styles.dadosContainer}>
           <Text style={[styles.dadosTitulo, { color: theme.colors.primary }]}>
-            Dados preenchidos:
+            {t('formMoto.dataFilled')}
           </Text>
           <Text style={[styles.dadosTexto, { color: theme.colors.onSurface }]}>
-            Placa: {placa || '-'}
+            {t('formMoto.placaLabel')} {placa || '-'}
           </Text>
           <Text style={[styles.dadosTexto, { color: theme.colors.onSurface }]}>
-            Tipo: {selectedTipo || '-'}
+            {t('formMoto.tipoLabel')} {selectedTipo || '-'}
           </Text>
           <Text style={[styles.dadosTexto, { color: theme.colors.onSurface }]}>
-            Setor:{' '}
+            {t('formMoto.setorLabel')}{' '}
             {selectedSetor
               ? setores.find((s) => s.id === selectedSetor)?.nome
               : '-'}
@@ -250,7 +253,7 @@ export default function FormMoto() {
             style={[styles.limparBtn, { backgroundColor: theme.colors.error }]}
             onPress={handleLimpar}
           >
-            <Text style={styles.limparText}>Limpar</Text>
+            <Text style={styles.limparText}>{t('formMoto.clear')}</Text>
           </TouchableOpacity>
         </View>
 
@@ -264,7 +267,7 @@ export default function FormMoto() {
             <View
               style={[styles.modalContainer, { backgroundColor: theme.colors.success }]}
             >
-              <Text style={styles.modalTitle}>Cadastro Bem-Sucedido!</Text>
+              <Text style={styles.modalTitle}>{t('formMoto.success')}</Text>
             </View>
           </View>
         </Modal>

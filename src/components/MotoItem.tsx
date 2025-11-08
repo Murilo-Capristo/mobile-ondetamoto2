@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import { useTranslation } from 'react-i18next';
 
 interface MotoItemProps {
   item: any;
@@ -11,7 +12,7 @@ interface MotoItemProps {
 
 const MotoItem = React.memo(({ item, onUpdate, onDelete, theme }: MotoItemProps) => {
   const [edicao, setEdicao] = useState(item);
-
+    const { t } = useTranslation();
   const handleUpdate = () => onUpdate(edicao);
   const handleDelete = () => onDelete(item.id);
   const handleChange = (campo: string, text: string) => setEdicao(prev => ({ ...prev, [campo]: text }));
@@ -26,26 +27,26 @@ const MotoItem = React.memo(({ item, onUpdate, onDelete, theme }: MotoItemProps)
       <Text style={[styles.resultadoTitulo, { color: theme.colors.primary }]}>ID: {item.id}</Text>
 
       {['tag', 'marca', 'placa'].map(campo => (
-        <React.Fragment key={campo}>
-          <Text style={[styles.labelPequena, { color: theme.colors.text }]}>
-            {campo.toUpperCase()}
-          </Text>
-          <TextInput
-            style={[
-              styles.editInput,
-              {
-                backgroundColor: theme.colors.background,
-                color: theme.colors.text,
-                borderColor: theme.colors.outline,
-              },
-            ]}
-            value={edicao[campo] || ''}
-            onChangeText={text => handleChange(campo, text)}
-            placeholder={campo.toUpperCase()}
-            placeholderTextColor={theme.colors.onSurface}
-          />
-        </React.Fragment>
-      ))}
+  <React.Fragment key={campo}>
+    <Text style={[styles.labelPequena, { color: theme.colors.text }]}>
+      {t(`motoItem.labels.${campo}`)} {/* "TAG", "MARCA", "PLACA" */}
+    </Text>
+    <TextInput
+      style={[
+        styles.editInput,
+        {
+          backgroundColor: theme.colors.background,
+          color: theme.colors.text,
+          borderColor: theme.colors.outline,
+        },
+      ]}
+      value={edicao[campo] || ''}
+      onChangeText={text => handleChange(campo, text)}
+      placeholder={t(`motoItem.placeholders.${campo}`)} // "TAG", "MARCA", "PLACA"
+      placeholderTextColor={theme.colors.onSurface}
+    />
+  </React.Fragment>
+))}
 
       <View style={styles.actions}>
         <TouchableOpacity onPress={handleUpdate}>

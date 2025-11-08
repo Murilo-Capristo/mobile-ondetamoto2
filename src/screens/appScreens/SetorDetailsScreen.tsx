@@ -18,6 +18,8 @@ import {
   SafeAreaInsetsContext,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
+
 
 
 export default function SetorDetailsScreen() {
@@ -25,6 +27,8 @@ export default function SetorDetailsScreen() {
   const route = useRoute();
   const { setorId, setorNome } = route.params as { setorId: string; setorNome: string };
   const { theme } = useThemeContext();
+  const { t } = useTranslation();
+
 
   const [messages, setMessages] = useState<{ tag: string; status: 'entrando' | 'saindo' }[]>([]);
   const [loading, setLoading] = useState(true);
@@ -67,23 +71,25 @@ export default function SetorDetailsScreen() {
         </TouchableOpacity>
 
         <Text style={[styles.title1, { backgroundColor: theme.colors.primary, color: theme.colors.onPrimary }]}>
-          Logs de Entrada e Saída do Setor
+          {t('setorDetails.logsTitle')} {/* "Logs de Entrada e Saída do Setor" */}
         </Text>
 
         <Text style={[styles.title, { color: theme.colors.primary }]}>
-          Id: <Text style={{ color: theme.colors.secondary }}>{setorId}</Text>{' '}
+          {t('setorDetails.id')}: <Text style={{ color: theme.colors.secondary }}>{setorId}</Text>{' '}
           {'  '}
-          Nome: <Text style={{ color: theme.colors.secondary }}>{setorNome}</Text>
+          {t('setorDetails.name')}: <Text style={{ color: theme.colors.secondary }}>{setorNome}</Text>
         </Text>
 
         <Text style={[styles.subtitle, { color: theme.colors.text }]}>
-          Leituras RFID Recebidas:
+          {t('setorDetails.rfidReadings')} {/* "Leituras RFID Recebidas:" */}
         </Text>
 
         {loading ? (
           <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', marginTop: 50 }}>
             <ActivityIndicator size="large" color={theme.colors.primary} />
-            <Text style={{ color: theme.colors.text, marginTop: 10 }}>Conectando ao MQTT...</Text>
+            <Text style={{ color: theme.colors.text, marginTop: 10 }}>
+              {t('setorDetails.connectingMqtt')} {/* "Conectando ao MQTT..." */}
+            </Text>          
           </View>
         ) : (
           <ScrollView style={styles.scroll}>
@@ -96,9 +102,9 @@ export default function SetorDetailsScreen() {
                 ]}
               >
                 <Text style={[styles.messageText, { color: theme.colors.text }]}>
-                  Tag: {msg.tag}{' '}
-                  {msg.status === 'entrando' ? 'Entrando no Setor' : 'Saindo do Setor'}{' '}
-                  {payloadGlobal.current?.setor}
+                  {t('setorDetails.tag')}: {msg.tag}{' '}
+                  {msg.status === 'entrando' ? t('setorDetails.entering') : t('setorDetails.leaving')} {/* "Entrando no Setor" / "Saindo do Setor" */}
+                  {' '} {payloadGlobal.current?.setor}
                 </Text>
               </View>
             ))}

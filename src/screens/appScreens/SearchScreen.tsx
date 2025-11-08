@@ -22,6 +22,7 @@ import { useMotoService } from '../../services/motoService';
 import { useSetorService } from '../../services/setorService';
 import MotoItem from '../../components/MotoItem';
 import SetorItem from '../../components/SetorItem';
+import { useTranslation } from 'react-i18next';
 
 const categoryOptions = [
   { id: 'motos', label: 'Motos' },
@@ -29,6 +30,8 @@ const categoryOptions = [
 ];
 
 export default function SearchScreen() {
+      const { t } = useTranslation();
+  
   const { theme } = useThemeContext();
   const navigation = useNavigation();
   const route = useRoute();
@@ -102,16 +105,16 @@ export default function SearchScreen() {
       showSuccessModal();
     } catch (err) {
       console.error('Erro ao atualizar:', err);
-      Alert.alert('Erro', 'Falha ao atualizar setor.');
+      Alert.alert(t('searchScreen.errorTitle'), t('searchScreen.errorUpdate'));
     }
   };
 
 
   const excluirItem = (id: number) => {
-    Alert.alert('Confirmação', 'Deseja realmente excluir este item?', [
-      { text: 'Cancelar', style: 'cancel' },
+    Alert.alert(t('searchScreen.confirmTitle'), t('searchScreen.confirmDelete'), [
+      { text: t('searchScreen.cancel'), style: 'cancel' },
       {
-        text: 'Excluir',
+        text: t('searchScreen.delete'),
         style: 'destructive',
         onPress: async () => {
           try {
@@ -168,7 +171,7 @@ export default function SearchScreen() {
           </TouchableOpacity>
 
           <Text style={[styles.label, { color: theme.colors.text }]}>
-            Pesquise Motos ou Setores Registrados.
+            {t('searchScreen.searchPlaceholder')}
           </Text>
 
           {/* Filtro */}
@@ -202,7 +205,7 @@ export default function SearchScreen() {
             <View style={styles.emptyContainer}>
               <Icon name="search-outline" size={50} color={theme.colors.onSurface} />
               <Text style={[styles.emptyText, { color: theme.colors.onSurface }]}>
-                Nenhum {selectedTab.label.toLowerCase()} encontrado.
+                {t('searchScreen.noItems')} {selectedTab.label.toLowerCase()} {t('searchScreen.found')}
               </Text>
             </View>
           ) : (
@@ -218,7 +221,7 @@ export default function SearchScreen() {
         <Modal visible={successModalVisible} transparent>
           <View style={styles.modal}>
             <View style={[styles.modalContainer, { backgroundColor: theme.colors.primary }]}>
-              <Text style={styles.modalTitle}>Operação realizada com sucesso!</Text>
+              <Text style={styles.modalTitle}>{t('searchScreen.successModal')}</Text>
             </View>
           </View>
         </Modal>

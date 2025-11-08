@@ -8,8 +8,12 @@ import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { Provider } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useThemeContext } from '../../context/ThemeContext';
+import { useTranslation } from 'react-i18next'; 
+
 
 export default function NotificationScreen() {
+    const { t } = useTranslation(); 
+    
   const { theme } = useThemeContext();
   const navigation = useNavigation();
 
@@ -41,7 +45,7 @@ export default function NotificationScreen() {
       const { status } = await Notifications.requestPermissionsAsync();
       setPermissionGranted(status === 'granted');
       if (status !== 'granted') {
-        Alert.alert('Permissão negada', 'Ative as notificações para continuar.');
+        Alert.alert(t('notifications.permissionDenied'), t('notifications.enableNotifications'));
       }
     })();
 
@@ -90,23 +94,23 @@ export default function NotificationScreen() {
   };
 
   const scheduleDateNotification = async (date: Date) => {
-    if (!permissionGranted) return Alert.alert('Sem permissão', 'Habilite as notificações para continuar.');
+    if (!permissionGranted) return Alert.alert(t('notifications.permissionDenied'), t('notifications.enableNotifications'));
 
     const messages = [
       {
-        title: '🏍️ Hora de revisar!',
-        subtitle: 'Verifique novas motos e setores',
-        body: 'Pode haver novas motos para cadastrar ou setores que precisam de atenção!',
+        title: t('notifications.reminderTitle1'),
+        subtitle: t('notifications.reminderSubtitle1'),
+        body: t('notifications.reminderBody1'),
       },
       {
-        title: '📋 Lembrete de cadastro',
-        subtitle: 'Organize suas motos e setores',
-        body: 'Dê uma olhadinha — pode ser o momento ideal pra atualizar tudo!',
+        title: t('notifications.reminderTitle2'),
+        subtitle: t('notifications.reminderSubtitle2'),
+        body: t('notifications.reminderBody2'),
       },
       {
-        title: '🚀 Bora manter tudo em ordem?',
-        subtitle: 'Motos e setores esperando por você!',
-        body: 'Confira se há algo novo para cadastrar no app!',
+        title: t('notifications.reminderTitle3'),
+        subtitle: t('notifications.reminderSubtitle3'),
+        body: t('notifications.reminderBody3'),
       },
     ];
 
@@ -122,7 +126,7 @@ export default function NotificationScreen() {
       trigger: { type: 'date', date },
     });
 
-    Alert.alert('Notificação agendada!', `Ela será exibida em ${date.toLocaleString()}`);
+    Alert.alert(t('notifications.notificationScheduled'), t('notifications.notificationScheduledAt', { date: date.toLocaleString() }));
   };
 
   return (
@@ -130,26 +134,24 @@ export default function NotificationScreen() {
       <Provider>
         <HeaderReduzida />
         <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-          
-
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.voltarBtn}>
             <Icon name="arrow-back" size={28} color={theme.colors.primary} />
           </TouchableOpacity>
 
           <View style={[styles.card, { backgroundColor: theme.colors.surface, borderColor: theme.colors.outline }]}>
             <Text style={[styles.title, { color: theme.colors.primary }]}>
-              Agora você não vai mais esquecer de cadastrar setores e motos!
+              {t('notifications.title')}
             </Text>
 
             <Text style={[styles.subtitle, { color: theme.colors.onSurface }]}>
-              Escolha o dia e horário para receber um lembrete personalizado.
+              {t('notifications.subtitle')}
             </Text>
 
             <TouchableOpacity
               style={[styles.button, { backgroundColor: theme.colors.primary }]}
               onPress={showAndroidDateTimePicker}
             >
-              <Text style={styles.buttonText}>Agendar Notificação</Text>
+              <Text style={styles.buttonText}>{t('notifications.scheduleButton', 'Agendar Notificação')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -170,7 +172,8 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   title: { fontSize: 22, fontWeight: '700', textAlign: 'center' },
-  subtitle: { fontSize: 16, textAlign: 'center', opacity: 0.8 },
+  subtitle: { fontSize: 18, textAlign: 'center', opacity: 0.8 },
+
   button: {
     paddingVertical: 12,
     paddingHorizontal: 40,

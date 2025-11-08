@@ -1,10 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
-import { Button, Dimensions } from 'react-native';
+import { Dimensions, StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../navigation/RootNavigator';
+import { useTranslation } from 'react-i18next';
 
 const roxo = '#f900cf';
 const roxo_escuro = '#9F0095';
@@ -19,6 +19,7 @@ type LandingScreenNavigationProp = NativeStackNavigationProp<
 
 export default function Landing() {
   const navigation = useNavigation<LandingScreenNavigationProp>();
+  const { t } = useTranslation();
 
   return (
     <LinearGradient colors={[roxo, roxo_escuro]} style={styles.container}>
@@ -39,17 +40,17 @@ export default function Landing() {
           style={styles.button}
           onPress={() => navigation.push('Login')}
         >
-          <Text style={styles.buttonText}>Login</Text>
+          <Text style={styles.buttonText}>{t('landing.login')}</Text>
         </TouchableOpacity>
 
-        <Text style={styles.text}>Novo por aqui?</Text>
+        <Text style={styles.text}>{t('landing.newHere')}</Text>
 
         <TouchableOpacity
           style={styles.buttonCadastro}
           onPress={() => navigation.push('PreCadastro')}
         >
           <Text style={{ color: '#000000', fontSize: fontSizeText }}>
-            Conecte Já
+            {t('landing.connectNow')}
           </Text>
         </TouchableOpacity>
 
@@ -57,8 +58,8 @@ export default function Landing() {
       </View>
 
       <View style={styles.footer}>
-        <Text>Todos os direitos reservados aos criadores.</Text>
-        <Text>github.com/ondetamoto</Text>
+        <Text>{t('landing.rights')}</Text>
+        <Text>{t('landing.github')}</Text>
       </View>
     </LinearGradient>
   );

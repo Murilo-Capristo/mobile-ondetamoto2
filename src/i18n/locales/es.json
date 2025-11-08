@@ -1,0 +1,157 @@
+{
+    "landing": {
+        "login": "Iniciar sesión",
+        "newHere": "¿Nuevo por aquí?",
+        "connectNow": "Conéctate ya",
+        "rights": "Todos los derechos reservados a los creadores.",
+        "github": "github.com/ondetamoto"
+    },
+    "auth": {
+        "welcomeBack": "Bienvenido de nuevo",
+        "createAccount": "Crea tu cuenta",
+        "email": "Correo electrónico",
+        "password": "Contraseña",
+        "confirmPassword": "Confirmar contraseña",
+        "login": "Entrar",
+        "register": "Registrar",
+        "noAccount": "¿No tienes una cuenta? Crea una aquí",
+        "hasAccount": "¿Ya tienes cuenta? Entrar",
+        "loginSuccess": "¡Inicio de sesión realizado!",
+        "invalidToken": "Token inválido",
+        "loginError": "Error de inicio de sesión",
+        "fillAll": "¡Necesitas completar todos los campos para continuar!",
+        "passwordMismatch": "¡Las contraseñas no coinciden!",
+        "registerError": "Error al registrar al usuario"
+    },
+    "preCadastro": {
+        "features": [
+            "Organiza y monitorea motos, sectores y accesos en un solo lugar.",
+            "Plataforma digital para el registro, seguimiento y gestión de motocicletas.",
+            "Ahorra tiempo y aumenta el control con tecnología fácil de usar."
+        ],
+        "title": "Simplifica la gestión de tu garaje con la tecnología más avanzada",
+        "newHere": "¿Nuevo por aquí?",
+        "connectNow": "Conéctate ya"
+    },
+    "cadastroMoto": {
+        "title": "Registro de Moto",
+        "detectar": "Detectar Motocicleta",
+        "searching": "Buscando...",
+        "detected": "Motos detectadas:",
+        "motoLabel": "Tag - ${moto.tag} | Sector - ${moto.setor}",
+        "noMotoDetected": "No se detectó ninguna moto en 1 minuto. Intenta nuevamente."
+    },
+    "cadastroSetor": {
+        "title": "Registro de Sector",
+        "fillAll": "¡Completa todos los campos!",
+        "error": "Error al registrar el sector!",
+        "name": "Nombre personalizado",
+        "size": "Tamaño máximo soportado (ej.: 100)",
+        "selectType": "Selecciona el tipo de sector",
+        "button": "Registrar",
+        "success": "¡Registro exitoso!"
+    },
+    "formMoto": {
+        "tipo": "Tipo",
+        "setor": "Sector",
+        "placa": "Placa",
+        "cadastrar": "Registrar",
+        "dataFilled": "Datos ingresados:",
+        "placaLabel": "Placa:",
+        "tipoLabel": "Tipo:",
+        "setorLabel": "Sector:",
+        "clear": "Limpiar",
+        "error": "Error al registrar la moto",
+        "success": "¡Registro exitoso!",
+        "fillAll": "Completa todos los campos antes de registrar."
+    },
+    "home": {
+        "subtitle": "Garaje 100% digital",
+        "motos": "Motos",
+        "addMoto": "Registrar Moto",
+        "setores": "Sectores",
+        "addSetor": "Registrar Sector",
+        "reminders": "Recordatorios",
+        "new": "¡Nuevo!"
+    },
+    "notifications": {
+        "title": "¡Ahora no olvidarás registrar sectores y motos!",
+        "markAll": "Marcar todas como leídas",
+        "alertTemp": "Alerta de temperatura",
+        "tempMessage": "¡La temperatura está por encima del límite seguro!",
+        "alertHumidity": "Alerta de humedad",
+        "humidityMessage": "¡La humedad ha caído por debajo del esperado!",
+        "empty": "No se encontraron notificaciones.",
+        "reminderTitle1": "🏍️ ¡Hora de revisar!",
+        "reminderSubtitle1": "Verifica nuevas motos y sectores",
+        "reminderBody1": "Puede haber nuevas motos para registrar o sectores que necesitan atención!",
+        "reminderTitle2": "📋 Recordatorio de registro",
+        "reminderSubtitle2": "Organiza tus motos y sectores",
+        "reminderBody2": "Echa un vistazo — puede ser el momento ideal para actualizar todo!",
+        "reminderTitle3": "🚀 ¡Vamos a mantener todo en orden!",
+        "reminderSubtitle3": "¡Motos y sectores esperándote!",
+        "reminderBody3": "Revisa si hay algo nuevo para registrar en la app!",
+        "permissionDenied": "Sin permiso para notificaciones",
+        "enableNotifications": "Habilita las notificaciones para continuar.",
+        "notificationScheduled": "¡Notificación programada!",
+        "notificationScheduledAt": "Se mostrará en {{date}}",
+        "subtitle": "Elige el día y la hora para recibir un recordatorio personalizado.",
+
+    },
+    "searchScreen": {
+        "confirmTitle": "Confirmación",
+        "confirmDelete": "¿Deseas eliminar realmente este elemento?",
+        "cancel": "Cancelar",
+        "delete": "Eliminar",
+        "errorTitle": "Error",
+        "errorUpdate": "Fallo al actualizar el sector.",
+        "errorDelete": "Fallo al eliminar el elemento.",
+        "searchPlaceholder": "Busca Motos o Sectores Registrados.",
+        "noItems": "Ninguno(a)",
+        "found": "encontrado(a).",
+        "successModal": "¡Operación realizada con éxito!"
+    },
+    "setorDetails": {
+        "logsTitle": "Registros de Entrada y Salida del Sector",
+        "id": "Id",
+        "name": "Nombre",
+        "rfidReadings": "Lecturas RFID recibidas:",
+        "connectingMqtt": "Conectando al MQTT...",
+        "tag": "Tag",
+        "entering": "Entrando al Sector",
+        "leaving": "Saliendo del Sector"
+    },
+    "submitScreen": {
+        "title": "¿Qué deseas registrar?",
+        "cards": {
+            "motos": "Motos",
+            "setores": "Sectores"
+        }
+    },
+    "setorItem": {
+        "labels": {
+            "nome": "Nombre",
+            "capacidade": "Capacidad",
+            "tipo": "Tipo"
+        },
+        "placeholders": {
+            "nome": "Nombre",
+            "capacidade": "Capacidad"
+        },
+        "buttons": {
+            "dashboard": "Panel"
+        }
+    },
+    "motoItem": {
+        "labels": {
+            "tag": "TAG",
+            "marca": "MARCA",
+            "placa": "PLACA"
+        },
+        "placeholders": {
+            "tag": "TAG",
+            "marca": "MARCA",
+            "placa": "PLACA"
+        }
+    }
+}

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import { useTranslation } from 'react-i18next';
 
 interface SetorItemProps {
   item: any;
@@ -12,6 +13,7 @@ interface SetorItemProps {
 
 const SetorItem = ({ item, onUpdate, onDelete, onNavigate, theme }: SetorItemProps) => {
   const [edicao, setEdicao] = useState(item);
+  const { t } = useTranslation();
 
   useEffect(() => setEdicao(item), [item]);
 
@@ -31,42 +33,44 @@ const SetorItem = ({ item, onUpdate, onDelete, onNavigate, theme }: SetorItemPro
         { backgroundColor: theme.colors.surface, borderColor: theme.colors.outline },
       ]}
     >
-      <Text style={[styles.titulo, { color: theme.colors.primary }]}>
-        ID: {item.id}
-      </Text>
+      <Text style={[styles.titulo, { color: theme.colors.primary }]}>ID: {item.id}</Text>
 
       {/* Nome */}
-      <Text style={[styles.label, { color: theme.colors.text }]}>Nome</Text>
+      <Text style={[styles.label, { color: theme.colors.text }]}>
+        {t('setorItem.labels.nome')} {/* "Nome" */}
+      </Text>
       <TextInput
         style={[styles.input, { color: theme.colors.text, borderColor: theme.colors.outline }]}
         value={edicao.nome || ''}
         onChangeText={text => handleChange('nome', text)}
-        placeholder="Nome"
+        placeholder={t('setorItem.placeholders.nome')} // "Nome"
         placeholderTextColor={theme.colors.onSurface}
       />
 
       {/* Capacidade */}
-      <Text style={[styles.label, { color: theme.colors.text }]}>Capacidade</Text>
+      <Text style={[styles.label, { color: theme.colors.text }]}>
+        {t('setorItem.labels.capacidade')} {/* "Capacidade" */}
+      </Text>
       <TextInput
         style={[styles.input, { color: theme.colors.text, borderColor: theme.colors.outline }]}
         value={String(edicao.tamanho ?? '')}
         keyboardType="numeric"
         onChangeText={text => handleChange('tamanho', parseInt(text) || 0)}
-        placeholder="Capacidade"
+        placeholder={t('setorItem.placeholders.capacidade')} // "Capacidade"
         placeholderTextColor={theme.colors.onSurface}
       />
 
       {/* Tipo (somente leitura) */}
-      <Text style={[styles.label, { color: theme.colors.text }]}>Tipo</Text>
+      <Text style={[styles.label, { color: theme.colors.text }]}>
+        {t('setorItem.labels.tipo')} {/* "Tipo" */}
+      </Text>
       <View
         style={[
           styles.tipoBox,
           { borderColor: theme.colors.outline, backgroundColor: theme.colors.background },
         ]}
       >
-        <Text style={{ color: theme.colors.text }}>
-          {edicao.tipo || '—'}
-        </Text>
+        <Text style={{ color: theme.colors.text }}>{edicao.tipo || '—'}</Text>
       </View>
 
       {/* Botões */}
@@ -84,7 +88,10 @@ const SetorItem = ({ item, onUpdate, onDelete, onNavigate, theme }: SetorItemPro
           style={{ marginLeft: 10, flexDirection: 'row', alignItems: 'center' }}
         >
           <AntDesign name="dashboard" size={24} color="blue" />
-          <Text style={{ color: theme.colors.text, marginLeft: 4 }}>Dashboard</Text>
+          <Text style={{ color: theme.colors.text, marginLeft: 4 }}>
+            {' '}
+            {t('setorItem.buttons.dashboard')} {/* "Dashboard" */}
+          </Text>
         </TouchableOpacity>
       </View>
     </View>

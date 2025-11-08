@@ -5,7 +5,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { PaperProvider } from 'react-native-paper';
 import { ThemeProvider, useThemeContext } from './src/context/ThemeContext';
 import { AuthProvider } from './src/context/UserContext';
-
+import "./src/i18n/i88n"
 export default function App() {
   return (
     <AuthProvider>

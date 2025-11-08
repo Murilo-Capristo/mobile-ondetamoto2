@@ -11,21 +11,22 @@ import {
   SafeAreaInsetsContext,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
+import { useTranslation } from 'react-i18next';
 
 export default function SubmitScreen() {
   const navigation = useNavigation();
   const { theme } = useThemeContext();
+  const { t } = useTranslation();
+
 
   const featureCards = [
     {
-      title: 'Motos',
+      title: t('submitScreen.cards.motos'), // "Motos"
       navegacao: 'CadastroMoto',
-      icon: (
-        <IconFont name="motorcycle" size={50} color={theme.colors.primary} />
-      ),
+      icon: <IconFont name="motorcycle" size={50} color={theme.colors.primary} />,
     },
     {
-      title: 'Setores',
+      title: t('submitScreen.cards.setores'), // "Setores"
       navegacao: 'CadastroSetor',
       icon: <MCI name="garage" size={50} color={theme.colors.primary} />,
     },
@@ -40,7 +41,7 @@ export default function SubmitScreen() {
 
       <View style={styles.title}>
         <Text style={[styles.text, { color: theme.colors.onBackground }]}>
-          O que deseja Cadastrar?
+            {t('submitScreen.title')} {/* "O que deseja Cadastrar?" */}
         </Text>
       </View>
 
