@@ -11,6 +11,8 @@ import CadastroMoto from '../screens/appScreens/CadastroMoto';
 import CadastroSetor from '../screens/appScreens/CadastroSetor';
 import FormMoto from '../screens/appScreens/FormMoto';
 import SetorDetailsScreen from '../screens/appScreens/SetorDetailsScreen';
+import NotificationScreen from '../screens/appScreens/NotificationScreen';
+
 import Splash from '../screens/Splash';
 
 export type RootStackParamList = {
@@ -25,6 +27,7 @@ export type RootStackParamList = {
   CadastroSetor: undefined;
   FormMoto: undefined;
   SetorDetailsScreen: undefined;
+  NotificationScreen: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -61,6 +64,11 @@ export default function RootNavigator() {
         <Stack.Screen
           name="SubmitScreen"
           component={SubmitScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="NotificationScreen"
+          component={NotificationScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

@@ -60,10 +60,10 @@ export default function HomeScreen() {
     },
     {
       new: true,
-      title: 'Cadastrar Setor',
-      navigation: 'CadastroSetor',
-      param: 'setores',
-      icon: <Feather name="plus-square" size={50} color={theme.colors.primary} />,
+      title: 'Lembretes',
+      navigation: 'NotificationScreen',
+      param: 'notifications',
+      icon: <Feather name="bell" size={50} color={theme.colors.primary} />,
     },
 
   ];

@@ -28,7 +28,7 @@ export default function CadastroSetor() {
   const [menuVisible, setMenuVisible] = useState(false);
   const { createSetor } = useSetorService();
   const idEstabelecimento = 1;
-  const tiposSetor = ['MANUTENÇÃO', 'EM TRANSITO', 'ANALISE', 'PINTURA'];
+  const tiposSetor = ['MANUTENCAO', 'USAVEIS', 'QUEBRADAS'];
 
   const handleCadastro = async () => {
     if (!nome || !tamanho || !tipo) {
