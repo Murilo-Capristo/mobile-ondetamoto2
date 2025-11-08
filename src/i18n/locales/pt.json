@@ -38,7 +38,7 @@
         "detectar": "Detectar Motocicleta",
         "searching": "Buscando...",
         "detected": "Motos Detectadas:",
-        "motoLabel": "Tag - ${moto.tag} | Setor - ${moto.setor}",
+        "motoExists": "Moto já existente!",
         "noMotoDetected": "Nenhuma moto detectada em 1 minuto. Tente novamente."
     },
     "cadastroSetor": {

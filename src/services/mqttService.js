@@ -31,6 +31,7 @@ export function connectMotoMqtt(onMessageCallback, onErrorCallback) {
   client.onMessageArrived = (message) => {
     try {
       const payload = JSON.parse(message.payloadString);
+      console.log('Mensagem recebida do MQTT:', payload);
       onMessageCallback(payload);
     } catch (e) {
       console.error('Erro ao parsear mensagem MQTT:', e);

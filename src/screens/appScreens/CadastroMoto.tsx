@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import HeaderReduzida from '../templates/HeaderReduzida';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useEffect, useState, useRef } from 'react';
@@ -13,8 +13,12 @@ import {
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
+import { useMotoService } from '../../services/motoService';
+
 
 export default function CadastroMoto() {
+  const { getMotoByTag } = useMotoService();
+
   const { t } = useTranslation();
 
   const navigation = useNavigation();
@@ -66,6 +70,24 @@ export default function CadastroMoto() {
       disconnectMotoMqtt(clientRef.current);
     };
   }, []);
+
+  const handleMotoPress = async (tag, setor) => {
+  try {
+    const res = await getMotoByTag(tag);
+
+    if (res.content.length > 0) {
+      console.log('Moto existe:', res.content[0]);
+
+      Alert.alert(t('cadastroMoto.motoExists'))
+    } else {
+      console.log('Moto não existe, cadastrar nova');
+
+      navigation.navigate('FormMoto', { tagId: tag, setor });
+    }
+  } catch (err) {
+    console.error('Erro ao verificar moto:', err);
+  }
+};
 
   return (
     <SafeAreaView
@@ -120,21 +142,17 @@ export default function CadastroMoto() {
                 {t('cadastroMoto.detected')}
               </Text>
               {detectedMotos.map((moto, index) => (
-                <TouchableOpacity
-                  key={index}
-                  style={styles.motos}
-                  onPress={() =>
-                    navigation.navigate('FormMoto', {
-                      tagId: moto.tag,
-                      setor: moto.setor,
-                    })
-                  }
-                >
-                  <Text style={[styles.textMotos, { color: theme.colors.text }]}>
-                    {t('cadastroMoto.motoLabel')}
-                  </Text>
-                </TouchableOpacity>
-              ))}
+              <TouchableOpacity
+                key={index}
+                style={styles.motos}
+                onPress={() => handleMotoPress(moto.tag, moto.setor)} // <-- aqui
+              >
+                <Text style={[styles.textMotos, { color: theme.colors.text }]}>
+                  {`Tag - ${moto.tag} | Setor - ${moto.setor}`}
+                </Text>
+              </TouchableOpacity>
+            ))}
+
             </View>
           </View>
         )}

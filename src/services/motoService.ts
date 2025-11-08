@@ -28,6 +28,24 @@ export function useMotoService() {
     }
   };
 
+  const getMotoByTag = async (tag: string) => {
+    try {
+      const res = await fetch(`${URL}/by-tag?tag=${tag}&page=0`, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!res.ok) throw new Error('Erro ao buscar moto por tag');
+      return await res.json(); // retorna o objeto content e demais dados
+    } catch (err) {
+      console.error(`Erro ao buscar moto com tag ${tag}:`, err);
+      throw err;
+    }
+  };
+
 
   const updateMoto = async (id: number, data: any) => {
     try {
@@ -82,5 +100,5 @@ export function useMotoService() {
     }
   };
 
-  return { getMotos, createMoto, updateMoto, deleteMoto };
+  return { getMotos,getMotoByTag, createMoto, updateMoto, deleteMoto };
 }
