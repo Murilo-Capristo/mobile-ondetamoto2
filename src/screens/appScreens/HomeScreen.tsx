@@ -5,6 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Dimensions,
+  ScrollView,
 } from 'react-native';
 import IconFont from 'react-native-vector-icons/Fontisto';
 import MCI from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -14,13 +15,7 @@ import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../navigation/RootNavigator';
 import { useThemeContext } from '../../context/ThemeContext';
-import {
-  SafeAreaView,
-  SafeAreaProvider,
-  SafeAreaInsetsContext,
-  useSafeAreaInsets,
-} from 'react-native-safe-area-context';
-
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const { width } = Dimensions.get('window');
 const cardWidth = width / 2 - 40;
@@ -32,77 +27,95 @@ type HomeScreenNavigationProp = NativeStackNavigationProp<
 
 export default function HomeScreen() {
   const navigation = useNavigation<HomeScreenNavigationProp>();
-  const { theme } = useThemeContext(); // pega o tema atual
+  const { theme } = useThemeContext();
 
   const featureCards = [
     {
+      new: false,
       title: 'Motos',
-      navegacao: 'SearchScreen',
+      navigation: 'SearchScreen',
       param: 'motos',
-      icon: (
-        <IconFont name="motorcycle" size={50} color={theme.colors.primary} />
-      ),
+      icon: <IconFont name="motorcycle" size={50} color={theme.colors.primary} />,
     },
     {
+      new: false,
       title: 'Cadastrar Moto',
-      navegacao: 'CadastroMoto',
+      navigation: 'CadastroMoto',
       param: 'motos',
-      icon: (
-        <Feather name="plus-square" size={50} color={theme.colors.primary} />
-      ),
+      icon: <Feather name="plus-square" size={50} color={theme.colors.primary} />,
     },
     {
+      new: false,
       title: 'Setores',
-      navegacao: 'SearchScreen',
+      navigation: 'SearchScreen',
       param: 'setores',
       icon: <MCI name="garage" size={50} color={theme.colors.primary} />,
     },
     {
+      new: false,
       title: 'Cadastrar Setor',
-      navegacao: 'CadastroSetor',
+      navigation: 'CadastroSetor',
       param: 'setores',
-      icon: (
-        <Feather name="plus-square" size={50} color={theme.colors.primary} />
-      ),
+      icon: <Feather name="plus-square" size={50} color={theme.colors.primary} />,
     },
+    {
+      new: true,
+      title: 'Cadastrar Setor',
+      navigation: 'CadastroSetor',
+      param: 'setores',
+      icon: <Feather name="plus-square" size={50} color={theme.colors.primary} />,
+    },
+
   ];
 
   return (
-<SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background  }} edges={['top', 'left', 'right']}>
-    <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <HeaderTemplate />
-      <View style={styles.subtitle}>
-        <Text style={{ color: theme.colors.text }}>Garagem 100% digital</Text>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: theme.colors.background }}
+      edges={['top', 'left', 'right']}
+    >
+      <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+        <HeaderTemplate />
+        <View style={styles.subtitle}>
+          <Text style={{ color: theme.colors.text }}>Garagem 100% digital</Text>
+        </View>
+
+        {/* ScrollView para permitir rolagem */}
+        <ScrollView contentContainerStyle={styles.scrollContent}>
+          <View style={styles.container}>
+            {featureCards.map((card, index) => (
+              <TouchableOpacity
+                key={index}
+                style={[styles.card, { backgroundColor: theme.colors.surface }]}
+                onPress={() => navigation.navigate(card.navigation, { param: card.param })}
+              >
+                                {/* Selo "Novo" */}
+                {card.new && (
+                  <View style={styles.newBadge}>
+                    <Text style={styles.newText}>Novo!</Text>
+                  </View>
+                )}
+                <View style={styles.iconContainer}>{card.icon}</View>
+                <Text style={[styles.cardTitle, { color: theme.colors.text }]}>
+                  {card.title}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
       </View>
-      <View style={styles.container}>
-        {featureCards.map((card, index) => (
-          <TouchableOpacity
-            key={index}
-            style={[styles.card, { backgroundColor: theme.colors.surface }]}
-            onPress={() => {
-              navigation.navigate(card.navegacao, { param: card.param });
-            }}
-          >
-            <View style={styles.iconContainer}>{card.icon}</View>
-            <Text style={[styles.cardTitle, { color: theme.colors.text }]}>
-              {card.title}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-    </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
+  scrollContent: {
+    paddingBottom: 30,
     alignItems: 'center',
+  },
+  container: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    padding: -4,
+    justifyContent: 'center',
   },
   subtitle: {
     marginLeft: 30,
@@ -126,10 +139,26 @@ const styles = StyleSheet.create({
   iconContainer: {
     height: 60,
     justifyContent: 'center',
+    alignItems: 'center',
   },
   cardTitle: {
     marginTop: 10,
     fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+    newBadge: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    backgroundColor: '#e53935', // vermelho destaque
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 8,
+  },
+  newText: {
+    color: 'white',
+    fontSize: 12,
     fontWeight: 'bold',
   },
 });
