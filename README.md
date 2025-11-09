@@ -21,6 +21,16 @@
 
 ---
 
+## 📲 Download do App
+
+Baixe e instale o app **OndeTáMoto** no seu dispositivo Android utilizando o QR Code ou o link direto abaixo:
+
+![QR Code para Download](./assets/qrCode.jpg)
+
+🔗 [Link para o App no Expo](https://expo.dev/accounts/murilocapristo/projects/ondetamoto/builds/b35723ed-d1c7-4aff-b7a5-aadc381c06b6)
+
+---
+
 ## 📱 Sobre o Projeto
 
 O **OndeTáMoto** é uma solução web e mobile integrada, que permite identificar ou registrar motocicletas por meio de **tags RFID** e um **leitor Bluetooth externo**, sem necessidade de hardware fixo na moto.
@@ -45,31 +55,59 @@ O **OndeTáMoto** é uma solução web e mobile integrada, que permite identific
 
 ```plaintext
 src/
-├── config/
-│   └── firebase.ts
-├── context/
-│   └── ThemeContext.tsx
-├── navigation/
-│   ├── BottomTabsNavigator.tsx
-│   └── RootNavigator.tsx
-├── screens/
-│   ├── Splash.tsx
-│   ├── appScreens/
-│   │   ├── CadastroMoto.tsx
-│   │   ├── FormMoto.tsx
-│   │   ├── SearchScreen.tsx
-│   │   ├── SubmitScreen.tsx
-│   │   ├── CadastroSetor.tsx
-│   │   ├── HomeScreen.tsx
-│   │   └── SetorDetailsScreen.tsx
-│   ├── preScreen/
-│   │   ├── LandingScreen.tsx
-│   │   ├── LoginScreen.tsx
-│   │   └── PreCadastroScreen.tsx
-│   └── templates/
-│       ├── HeaderReduzida.tsx
-│       └── HeaderTemplate.tsx
-└── theme.ts
+│   theme.ts
+│
+├───components/
+│       LogoutDialog.js
+│       MotoItem.tsx
+│       SetorItem.tsx
+│
+├───config/
+│       constants.ts
+│
+├───context/
+│       LanguageContext.tsx
+│       ThemeContext.tsx
+│       UserContext.tsx
+│
+├───i18n/
+│   │   i88n.js
+│   │
+│   └───locales/
+│           es.json
+│           pt.json
+│
+├───navigation/
+│       BottomTabsNavigator.tsx
+│       RootNavigator.tsx
+│
+├───screens/
+│   │   Splash.tsx
+│   │
+│   ├───appScreens/
+│   │       CadastroMoto.tsx
+│   │       CadastroSetor.tsx
+│   │       FormMoto.tsx
+│   │       HomeScreen.tsx
+│   │       NotificationScreen.tsx
+│   │       SearchScreen.tsx
+│   │       SetorDetailsScreen.tsx
+│   │       SubmitScreen.tsx
+│   │
+│   ├───preScreen/
+│   │       LandingScreen.tsx
+│   │       LoginScreen.tsx
+│   │       PreCadastroScreen.tsx
+│   │
+│   └───templates/
+│           HeaderReduzida.tsx
+│           HeaderTemplate.tsx
+│
+└───services/
+        authService.ts
+        motoService.ts
+        mqttService.js
+        setorService.ts
 ```
 
 ### 🔹 Outros
