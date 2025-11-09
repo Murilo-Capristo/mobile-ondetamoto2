@@ -29,6 +29,8 @@ export default function CadastroMoto() {
   const timeoutRef = useRef(null);
   const clientRef = useRef(null);
 
+  const [loadingTag, setLoadingTag] = useState<string | null>(null);
+
   useEffect(() => {
     const client = connectMotoMqtt(payload => {
       setDetectedMotos(oldMotos => {
@@ -72,22 +74,21 @@ export default function CadastroMoto() {
   }, []);
 
   const handleMotoPress = async (tag, setor) => {
-  try {
-    const res = await getMotoByTag(tag);
+    try {
+      setLoadingTag(tag); // marca como loading
+      const res = await getMotoByTag(tag);
 
-    if (res.content.length > 0) {
-      console.log('Moto existe:', res.content[0]);
-
-      Alert.alert(t('cadastroMoto.motoExists'))
-    } else {
-      console.log('Moto não existe, cadastrar nova');
-
-      navigation.navigate('FormMoto', { tagId: tag, setor });
+      if (res.content.length > 0) {
+        Alert.alert(t('cadastroMoto.motoExists'));
+      } else {
+        navigation.navigate('FormMoto', { tagId: tag, setor });
+      }
+    } catch (err) {
+      console.error('Erro ao verificar moto:', err);
+    } finally {
+      setLoadingTag(null); // remove loading
     }
-  } catch (err) {
-    console.error('Erro ao verificar moto:', err);
-  }
-};
+  };
 
   return (
     <SafeAreaView
@@ -145,11 +146,16 @@ export default function CadastroMoto() {
               <TouchableOpacity
                 key={index}
                 style={styles.motos}
-                onPress={() => handleMotoPress(moto.tag, moto.setor)} // <-- aqui
+                onPress={() => handleMotoPress(moto.tag, moto.setor)}
+                disabled={loadingTag === moto.tag} // desabilita enquanto carrega
               >
-                <Text style={[styles.textMotos, { color: theme.colors.text }]}>
-                  {`Tag - ${moto.tag} | Setor - ${moto.setor}`}
-                </Text>
+                {loadingTag === moto.tag ? (
+                  <ActivityIndicator size="small" color={theme.colors.primary} />
+                ) : (
+                  <Text style={[styles.textMotos, { color: theme.colors.text }]}>
+                    {`Tag - ${moto.tag} | Setor - ${moto.setor}`}
+                  </Text>
+                )}
               </TouchableOpacity>
             ))}
 
