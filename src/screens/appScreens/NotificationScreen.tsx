@@ -8,12 +8,11 @@ import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import { Provider } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useThemeContext } from '../../context/ThemeContext';
-import { useTranslation } from 'react-i18next'; 
-
+import { useTranslation } from 'react-i18next';
 
 export default function NotificationScreen() {
-    const { t } = useTranslation(); 
-    
+  const { t } = useTranslation();
+
   const { theme } = useThemeContext();
   const navigation = useNavigation();
 
@@ -51,11 +50,11 @@ export default function NotificationScreen() {
 
     setupNotifications();
 
-    notificationListener.current = Notifications.addNotificationReceivedListener((notification) => {
+    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
       console.log('Notificação recebida:', notification);
     });
 
-    responseListener.current = Notifications.addNotificationResponseReceivedListener((response) => {
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
       console.log('Usuário interagiu:', response);
     });
 
@@ -94,7 +93,11 @@ export default function NotificationScreen() {
   };
 
   const scheduleDateNotification = async (date: Date) => {
-    if (!permissionGranted) return Alert.alert(t('notifications.permissionDenied'), t('notifications.enableNotifications'));
+    if (!permissionGranted)
+      return Alert.alert(
+        t('notifications.permissionDenied'),
+        t('notifications.enableNotifications')
+      );
 
     const messages = [
       {
@@ -126,11 +129,17 @@ export default function NotificationScreen() {
       trigger: { type: 'date', date },
     });
 
-    Alert.alert(t('notifications.notificationScheduled'), t('notifications.notificationScheduledAt', { date: date.toLocaleString() }));
+    Alert.alert(
+      t('notifications.notificationScheduled'),
+      t('notifications.notificationScheduledAt', { date: date.toLocaleString() })
+    );
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }} edges={['top', 'left', 'right']}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: theme.colors.background }}
+      edges={['top', 'left', 'right']}
+    >
       <Provider>
         <HeaderReduzida />
         <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
@@ -138,7 +147,12 @@ export default function NotificationScreen() {
             <Icon name="arrow-back" size={28} color={theme.colors.primary} />
           </TouchableOpacity>
 
-          <View style={[styles.card, { backgroundColor: theme.colors.surface, borderColor: theme.colors.outline }]}>
+          <View
+            style={[
+              styles.card,
+              { backgroundColor: theme.colors.surface, borderColor: theme.colors.outline },
+            ]}
+          >
             <Text style={[styles.title, { color: theme.colors.primary }]}>
               {t('notifications.title')}
             </Text>
@@ -151,7 +165,9 @@ export default function NotificationScreen() {
               style={[styles.button, { backgroundColor: theme.colors.primary }]}
               onPress={showAndroidDateTimePicker}
             >
-              <Text style={styles.buttonText}>{t('notifications.scheduleButton', 'Agendar Notificação')}</Text>
+              <Text style={styles.buttonText}>
+                {t('notifications.scheduleButton', 'Agendar Notificação')}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>

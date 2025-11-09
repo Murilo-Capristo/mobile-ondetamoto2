@@ -25,10 +25,7 @@ import { useTranslation } from 'react-i18next';
 const roxo = '#f900cf';
 const roxo_escuro = '#9F0095';
 
-type AuthScreenNavigationProp = NativeStackNavigationProp<
-  RootStackParamList,
-  'Login'
->;
+type AuthScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Login'>;
 
 export default function AuthScreen() {
   const { setUser } = useAuth();
@@ -162,17 +159,13 @@ export default function AuthScreen() {
                 onChangeText={setSenha}
                 secureTextEntry={!showSenha}
                 onSubmitEditing={() => {
-                if (isLogin && !isButtonDisabled && !loading) {
-                  handleLogin();
-                }
-              }}
+                  if (isLogin && !isButtonDisabled && !loading) {
+                    handleLogin();
+                  }
+                }}
               />
               <TouchableOpacity onPress={() => setShowSenha(!showSenha)}>
-                <Icon
-                  name={showSenha ? 'eye-outline' : 'eye-off-outline'}
-                  size={20}
-                  color="#fff"
-                />
+                <Icon name={showSenha ? 'eye-outline' : 'eye-off-outline'} size={20} color="#fff" />
               </TouchableOpacity>
             </View>
 
@@ -193,10 +186,7 @@ export default function AuthScreen() {
 
           <View style={{ width: '100%', alignItems: 'center' }}>
             <TouchableOpacity
-              style={[
-                styles.button,
-                { backgroundColor: isButtonDisabled ? '#ccc' : '#fff' },
-              ]}
+              style={[styles.button, { backgroundColor: isButtonDisabled ? '#ccc' : '#fff' }]}
               onPress={isLogin ? handleLogin : handleRegister}
               disabled={isButtonDisabled || loading}
             >

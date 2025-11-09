@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Dimensions,
-  ScrollView,
-} from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
 import IconFont from 'react-native-vector-icons/Fontisto';
 import MCI from 'react-native-vector-icons/MaterialCommunityIcons';
 import Feather from 'react-native-vector-icons/Feather';
@@ -16,20 +9,17 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../navigation/RootNavigator';
 import { useThemeContext } from '../../context/ThemeContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTranslation } from 'react-i18next'; 
+import { useTranslation } from 'react-i18next';
 
 const { width } = Dimensions.get('window');
 const cardWidth = width / 2 - 40;
 
-type HomeScreenNavigationProp = NativeStackNavigationProp<
-  RootStackParamList,
-  'HomeScreen'
->;
+type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'HomeScreen'>;
 
 export default function HomeScreen() {
   const navigation = useNavigation<HomeScreenNavigationProp>();
   const { theme } = useThemeContext();
-  const { t } = useTranslation(); 
+  const { t } = useTranslation();
 
   const featureCards = [
     {
@@ -94,9 +84,7 @@ export default function HomeScreen() {
                   </View>
                 )}
                 <View style={styles.iconContainer}>{card.icon}</View>
-                <Text style={[styles.cardTitle, { color: theme.colors.text }]}>
-                  {card.title}
-                </Text>
+                <Text style={[styles.cardTitle, { color: theme.colors.text }]}>{card.title}</Text>
               </TouchableOpacity>
             ))}
           </View>

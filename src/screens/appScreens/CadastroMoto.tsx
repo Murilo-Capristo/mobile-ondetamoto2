@@ -15,7 +15,6 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useMotoService } from '../../services/motoService';
 
-
 export default function CadastroMoto() {
   const { getMotoByTag } = useMotoService();
 
@@ -102,8 +101,9 @@ export default function CadastroMoto() {
           <TouchableOpacity onPress={() => navigation.goBack()} style={styles.voltarBtn}>
             <Icon name="arrow-back" size={28} color={theme.colors.secondary} />
           </TouchableOpacity>
-          <Text style={[styles.titleText, { color: theme.colors.text }]}>{t('cadastroMoto.title')}
-</Text>
+          <Text style={[styles.titleText, { color: theme.colors.text }]}>
+            {t('cadastroMoto.title')}
+          </Text>
         </View>
 
         <TouchableOpacity
@@ -116,7 +116,9 @@ export default function CadastroMoto() {
           ) : (
             <>
               <Icon name="wifi-tethering" style={[styles.icon, { color: 'green' }]} />
-              <Text style={[styles.detecText, { color: 'black' }]}>{t('cadastroMoto.detectar')}</Text>
+              <Text style={[styles.detecText, { color: 'black' }]}>
+                {t('cadastroMoto.detectar')}
+              </Text>
             </>
           )}
         </TouchableOpacity>
@@ -143,22 +145,21 @@ export default function CadastroMoto() {
                 {t('cadastroMoto.detected')}
               </Text>
               {detectedMotos.map((moto, index) => (
-              <TouchableOpacity
-                key={index}
-                style={styles.motos}
-                onPress={() => handleMotoPress(moto.tag, moto.setor)}
-                disabled={loadingTag === moto.tag} // desabilita enquanto carrega
-              >
-                {loadingTag === moto.tag ? (
-                  <ActivityIndicator size="small" color={theme.colors.primary} />
-                ) : (
-                  <Text style={[styles.textMotos, { color: theme.colors.text }]}>
-                    {`Tag - ${moto.tag} | Setor - ${moto.setor}`}
-                  </Text>
-                )}
-              </TouchableOpacity>
-            ))}
-
+                <TouchableOpacity
+                  key={index}
+                  style={styles.motos}
+                  onPress={() => handleMotoPress(moto.tag, moto.setor)}
+                  disabled={loadingTag === moto.tag} // desabilita enquanto carrega
+                >
+                  {loadingTag === moto.tag ? (
+                    <ActivityIndicator size="small" color={theme.colors.primary} />
+                  ) : (
+                    <Text style={[styles.textMotos, { color: theme.colors.text }]}>
+                      {`Tag - ${moto.tag} | Setor - ${moto.setor}`}
+                    </Text>
+                  )}
+                </TouchableOpacity>
+              ))}
             </View>
           </View>
         )}

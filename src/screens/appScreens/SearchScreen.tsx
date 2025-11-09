@@ -30,8 +30,8 @@ const categoryOptions = [
 ];
 
 export default function SearchScreen() {
-      const { t } = useTranslation();
-  
+  const { t } = useTranslation();
+
   const { theme } = useThemeContext();
   const navigation = useNavigation();
   const route = useRoute();
@@ -109,7 +109,6 @@ export default function SearchScreen() {
     }
   };
 
-
   const excluirItem = (id: number) => {
     Alert.alert(t('searchScreen.confirmTitle'), t('searchScreen.confirmDelete'), [
       { text: t('searchScreen.cancel'), style: 'cancel' },
@@ -133,9 +132,7 @@ export default function SearchScreen() {
   const filtrarResultados = (itens: any[]) => {
     if (!search) return itens;
     const searchLower = search.toLowerCase();
-    return itens.filter(item =>
-      Object.values(item).join(' ').toLowerCase().includes(searchLower)
-    );
+    return itens.filter(item => Object.values(item).join(' ').toLowerCase().includes(searchLower));
   };
 
   const dadosFiltrados = useMemo(
@@ -162,7 +159,10 @@ export default function SearchScreen() {
   );
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }} edges={['top', 'left', 'right']}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: theme.colors.background }}
+      edges={['top', 'left', 'right']}
+    >
       <Provider>
         <HeaderReduzida />
         <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
@@ -176,8 +176,6 @@ export default function SearchScreen() {
 
           {/* Filtro */}
           <View style={styles.searchRow}>
-
-
             <Menu
               visible={dropdownVisible}
               onDismiss={() => setDropdownVisible(false)}
@@ -194,18 +192,27 @@ export default function SearchScreen() {
               }
             >
               {categoryOptions.map(option => (
-                <Menu.Item key={option.id} onPress={() => setSelectedTab(option)} title={option.label} />
+                <Menu.Item
+                  key={option.id}
+                  onPress={() => setSelectedTab(option)}
+                  title={option.label}
+                />
               ))}
             </Menu>
           </View>
 
           {loading ? (
-            <ActivityIndicator size="large" color={theme.colors.primary} style={{ marginTop: 20 }} />
+            <ActivityIndicator
+              size="large"
+              color={theme.colors.primary}
+              style={{ marginTop: 20 }}
+            />
           ) : dadosFiltrados.length === 0 ? (
             <View style={styles.emptyContainer}>
               <Icon name="search-outline" size={50} color={theme.colors.onSurface} />
               <Text style={[styles.emptyText, { color: theme.colors.onSurface }]}>
-                {t('searchScreen.noItems')} {selectedTab.label.toLowerCase()} {t('searchScreen.found')}
+                {t('searchScreen.noItems')} {selectedTab.label.toLowerCase()}{' '}
+                {t('searchScreen.found')}
               </Text>
             </View>
           ) : (

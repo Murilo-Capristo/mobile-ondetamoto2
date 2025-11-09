@@ -12,10 +12,7 @@ const { width, height } = Dimensions.get('window');
 const fontSizeButton = 46;
 const fontSizeText = 20;
 
-type LandingScreenNavigationProp = NativeStackNavigationProp<
-  RootStackParamList,
-  'Landing'
->;
+type LandingScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Landing'>;
 
 export default function Landing() {
   const navigation = useNavigation<LandingScreenNavigationProp>();
@@ -24,22 +21,13 @@ export default function Landing() {
   return (
     <LinearGradient colors={[roxo, roxo_escuro]} style={styles.container}>
       <View style={styles.view1}>
-        <Image
-          source={require('../../../assets/Vector.png')}
-          style={styles.logo}
-        />
+        <Image source={require('../../../assets/Vector.png')} style={styles.logo} />
       </View>
 
       <View style={styles.view2}>
-        <Image
-          source={require('../../../assets/Parking-rafiki.png')}
-          style={styles.imagem}
-        />
+        <Image source={require('../../../assets/Parking-rafiki.png')} style={styles.imagem} />
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.push('Login')}
-        >
+        <TouchableOpacity style={styles.button} onPress={() => navigation.push('Login')}>
           <Text style={styles.buttonText}>{t('landing.login')}</Text>
         </TouchableOpacity>
 

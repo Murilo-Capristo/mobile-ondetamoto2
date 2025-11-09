@@ -8,12 +8,11 @@ export function useMotoService() {
   const getMotos = async (pageNumber: number) => {
     try {
       console.log('Chamando URL:', `${BASE_URL}/api/motos`);
-      console.log("Usuário: ", user)
-      console.log("Token atual:", user?.token);
-
+      console.log('Usuário: ', user);
+      console.log('Token atual:', user?.token);
 
       const res = await fetch(`${URL}?page=${pageNumber}`, {
-        method: "GET",
+        method: 'GET',
         headers: {
           Authorization: `Bearer ${user?.token}`,
           'Content-Type': 'application/json',
@@ -31,7 +30,7 @@ export function useMotoService() {
   const getMotoByTag = async (tag: string) => {
     try {
       const res = await fetch(`${URL}/by-tag?tag=${tag}&page=0`, {
-        method: "GET",
+        method: 'GET',
         headers: {
           Authorization: `Bearer ${user?.token}`,
           'Content-Type': 'application/json',
@@ -45,7 +44,6 @@ export function useMotoService() {
       throw err;
     }
   };
-
 
   const updateMoto = async (id: number, data: any) => {
     try {
@@ -76,7 +74,7 @@ export function useMotoService() {
       throw err;
     }
   };
-  
+
   const createMoto = async (data: any) => {
     try {
       const response = await fetch(URL, {
@@ -100,5 +98,5 @@ export function useMotoService() {
     }
   };
 
-  return { getMotos,getMotoByTag, createMoto, updateMoto, deleteMoto };
+  return { getMotos, getMotoByTag, createMoto, updateMoto, deleteMoto };
 }

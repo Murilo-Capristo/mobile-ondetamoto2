@@ -20,15 +20,12 @@ import {
 } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
-
-
 export default function SetorDetailsScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const { setorId, setorNome } = route.params as { setorId: string; setorNome: string };
   const { theme } = useThemeContext();
   const { t } = useTranslation();
-
 
   const [messages, setMessages] = useState<{ tag: string; status: 'entrando' | 'saindo' }[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,50 +35,57 @@ export default function SetorDetailsScreen() {
   const clientRef = useRef<any>(null);
 
   useEffect(() => {
-  clientRef.current = connectMotoMqtt(
-    (payload) => {
-      console.log(payload)
-      if (payload.setor !== setorId.toString()) return;
+    clientRef.current = connectMotoMqtt(
+      payload => {
+        console.log(payload);
+        if (payload.setor !== setorId.toString()) return;
 
-      payloadGlobal.current = payload;
-      const tag = payload.moto;
+        payloadGlobal.current = payload;
+        const tag = payload.moto;
 
-      const novoStatus =
-        statusMotos.current[tag] === 'entrando' ? 'saindo' : 'entrando';
+        const novoStatus = statusMotos.current[tag] === 'entrando' ? 'saindo' : 'entrando';
 
-      statusMotos.current[tag] = novoStatus;
+        statusMotos.current[tag] = novoStatus;
 
-      setMessages((oldMsgs) => [...oldMsgs, { tag, status: novoStatus }]);
-      if (loading) setLoading(false);
-    },
-    (err) => {
-      console.error('Erro MQTT:', err);
-      if (loading) setLoading(false);
-    }
-  );
+        setMessages(oldMsgs => [...oldMsgs, { tag, status: novoStatus }]);
+        if (loading) setLoading(false);
+      },
+      err => {
+        console.error('Erro MQTT:', err);
+        if (loading) setLoading(false);
+      }
+    );
 
-  return () => {
-    disconnectMotoMqtt(clientRef.current);
-  };
-}, [setorId]);
-
+    return () => {
+      disconnectMotoMqtt(clientRef.current);
+    };
+  }, [setorId]);
 
   return (
-<SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background  }} edges={['top', 'left', 'right']}>
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: theme.colors.background }}
+      edges={['top', 'left', 'right']}
+    >
       <HeaderReduzida />
       <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.voltarBtn}>
           <IconIon name="arrow-back" size={28} color={theme.colors.primary} />
         </TouchableOpacity>
 
-        <Text style={[styles.title1, { backgroundColor: theme.colors.primary, color: theme.colors.onPrimary }]}>
+        <Text
+          style={[
+            styles.title1,
+            { backgroundColor: theme.colors.primary, color: theme.colors.onPrimary },
+          ]}
+        >
           {t('setorDetails.logsTitle')} {/* "Logs de Entrada e Saída do Setor" */}
         </Text>
 
         <Text style={[styles.title, { color: theme.colors.primary }]}>
           {t('setorDetails.id')}: <Text style={{ color: theme.colors.secondary }}>{setorId}</Text>{' '}
           {'  '}
-          {t('setorDetails.name')}: <Text style={{ color: theme.colors.secondary }}>{setorNome}</Text>
+          {t('setorDetails.name')}:{' '}
+          <Text style={{ color: theme.colors.secondary }}>{setorNome}</Text>
         </Text>
 
         <Text style={[styles.subtitle, { color: theme.colors.text }]}>
@@ -93,7 +97,7 @@ export default function SetorDetailsScreen() {
             <ActivityIndicator size="large" color={theme.colors.primary} />
             <Text style={{ color: theme.colors.text, marginTop: 10 }}>
               {t('setorDetails.connectingMqtt')} {/* "Conectando ao MQTT..." */}
-            </Text>          
+            </Text>
           </View>
         ) : (
           <ScrollView style={styles.scroll}>
@@ -107,8 +111,10 @@ export default function SetorDetailsScreen() {
               >
                 <Text style={[styles.messageText, { color: theme.colors.text }]}>
                   {t('setorDetails.tag')}: {msg.tag}{' '}
-                  {msg.status === 'entrando' ? t('setorDetails.entering') : t('setorDetails.leaving')} {/* "Entrando no Setor" / "Saindo do Setor" */}
-                  {' '} {payloadGlobal.current?.setor}
+                  {msg.status === 'entrando'
+                    ? t('setorDetails.entering')
+                    : t('setorDetails.leaving')}{' '}
+                  {/* "Entrando no Setor" / "Saindo do Setor" */} {payloadGlobal.current?.setor}
                 </Text>
               </View>
             ))}

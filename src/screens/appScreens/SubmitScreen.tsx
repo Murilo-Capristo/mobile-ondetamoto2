@@ -18,7 +18,6 @@ export default function SubmitScreen() {
   const { theme } = useThemeContext();
   const { t } = useTranslation();
 
-
   const featureCards = [
     {
       title: t('submitScreen.cards.motos'), // "Motos"
@@ -33,33 +32,34 @@ export default function SubmitScreen() {
   ];
 
   return (
-<SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background  }} edges={['top', 'left', 'right']}>
-    <View
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: theme.colors.background }}
+      edges={['top', 'left', 'right']}
     >
-      <HeaderReduzida />
+      <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+        <HeaderReduzida />
 
-      <View style={styles.title}>
-        <Text style={[styles.text, { color: theme.colors.onBackground }]}>
+        <View style={styles.title}>
+          <Text style={[styles.text, { color: theme.colors.onBackground }]}>
             {t('submitScreen.title')} {/* "O que deseja Cadastrar?" */}
-        </Text>
-      </View>
+          </Text>
+        </View>
 
-      <View style={styles.cardContainer}>
-        {featureCards.map((card, index) => (
-          <TouchableOpacity
-            key={index}
-            style={[styles.card, { backgroundColor: theme.colors.surface }]}
-            onPress={() => navigation.navigate(card.navegacao)}
-          >
-            <View style={styles.iconContainer}>{card.icon}</View>
-            <Text style={[styles.cardTitle, { color: theme.colors.onSurface }]}>
-              {card.title}
-            </Text>
-          </TouchableOpacity>
-        ))}
+        <View style={styles.cardContainer}>
+          {featureCards.map((card, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[styles.card, { backgroundColor: theme.colors.surface }]}
+              onPress={() => navigation.navigate(card.navegacao)}
+            >
+              <View style={styles.iconContainer}>{card.icon}</View>
+              <Text style={[styles.cardTitle, { color: theme.colors.onSurface }]}>
+                {card.title}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
       </View>
-    </View>
     </SafeAreaView>
   );
 }

@@ -1,156 +1,156 @@
 {
-    "landing": {
-        "login": "Login",
-        "newHere": "Novo por aqui?",
-        "connectNow": "Conecte Já",
-        "rights": "Todos os direitos reservados aos criadores.",
-        "github": "github.com/ondetamoto"
-    },
-    "auth": {
-        "welcomeBack": "Bem-vindo de volta",
-        "createAccount": "Crie sua conta",
-        "email": "Email",
-        "password": "Senha",
-        "confirmPassword": "Confirmar Senha",
-        "login": "Entrar",
-        "register": "Cadastrar",
-        "noAccount": "Não possui uma conta? Crie aqui",
-        "hasAccount": "Já possui conta? Entrar",
-        "loginSuccess": "Login realizado!",
-        "invalidToken": "Token Inválido",
-        "loginError": "Erro de Login",
-        "fillAll": "Você precisa preencher todos os campos para continuar!",
-        "passwordMismatch": "As senhas não são iguais!",
-        "registerError": "Erro ao cadastrar o Usuário"
-    },
-    "preCadastro": {
-        "features": [
-            "Organize e monitore motos, setores e acessos em um único lugar.",
-            "Plataforma digital para cadastro, rastreio e gestão de motocicletas.",
-            "Economize tempo e aumente o controle com tecnologia fácil de usar."
-        ],
-        "title": "Simplifique a gestão de sua garagem com a tecnologia mais avançada",
-        "newHere": "Novo por aqui?",
-        "connectNow": "Conecte Já"
-    },
-    "cadastroMoto": {
-        "title": "Cadastro de Moto",
-        "detectar": "Detectar Motocicleta",
-        "searching": "Buscando...",
-        "detected": "Motos Detectadas:",
-        "motoExists": "Moto já existente!",
-        "noMotoDetected": "Nenhuma moto detectada em 1 minuto. Tente novamente."
-    },
-    "cadastroSetor": {
-        "title": "Cadastro de Setor",
-        "fillAll": "Preencha todos os campos!",
-        "error": "Erro ao cadastrar setor!",
-        "name": "Nome personalizado",
-        "size": "Tamanho Máximo Suportado (ex.: 100)",
-        "selectType": "Selecione o tipo do setor",
-        "button": "Cadastrar",
-        "success": "Cadastro Bem-Sucedido!"
-    },
-    "formMoto": {
-        "marca": "Marca",
-        "setor": "Setor",
-        "placa": "Placa",
-        "cadastrar": "Cadastrar",
-        "dataFilled": "Dados preenchidos:",
-        "placaLabel": "Placa:",
-        "marcaLabel": "Marca:",
-        "setorLabel": "Setor:",
-        "clear": "Limpar",
-        "error": "Erro ao cadastrar moto",
-        "success": "Cadastro Bem-Sucedido!",
-        "fillAll": "Preencha todos os campos antes de cadastrar."
-    },
-    "home": {
-        "subtitle": "Garagem 100% digital",
-        "motos": "Motos",
-        "addMoto": "Cadastrar Moto",
-        "setores": "Setores",
-        "addSetor": "Cadastrar Setor",
-        "reminders": "Lembretes",
-        "new": "Novo!"
-    },
-    "notifications": {
-        "title": "Agora você não vai mais esquecer de cadastrar setores e motos!",
-        "markAll": "Marcar todas como lidas",
-        "alertTemp": "Alerta de temperatura",
-        "tempMessage": "A temperatura está acima do limite seguro!",
-        "alertHumidity": "Alerta de umidade",
-        "humidityMessage": "A umidade caiu abaixo do esperado!",
-        "empty": "Nenhuma notificação encontrada.",
-        "reminderTitle1": "🏍️ Hora de revisar!",
-        "reminderSubtitle1": "Verifique novas motos e setores",
-        "reminderBody1": "Pode haver novas motos para cadastrar ou setores que precisam de atenção!",
-        "reminderTitle2": "📋 Lembrete de cadastro",
-        "reminderSubtitle2": "Organize suas motos e setores",
-        "reminderBody2": "Dê uma olhadinha — pode ser o momento ideal pra atualizar tudo!",
-        "reminderTitle3": "🚀 Bora manter tudo em ordem?",
-        "reminderSubtitle3": "Motos e setores esperando por você!",
-        "reminderBody3": "Confira se há algo novo para cadastrar no app!",
-        "permissionDenied": "Sem permissão para notificações",
-        "enableNotifications": "Habilite as notificações para continuar.",
-        "notificationScheduled": "Notificação agendada!",
-        "notificationScheduledAt": "Ela será exibida em {{date}}",
-        "subtitle": "Escolha o dia e horário para receber um lembrete personalizado.",
-    },
-    "searchScreen": {
-        "confirmTitle": "Confirmação",
-        "confirmDelete": "Deseja realmente excluir este item?",
-        "cancel": "Cancelar",
-        "delete": "Excluir",
-        "errorTitle": "Erro",
-        "errorUpdate": "Falha ao atualizar setor.",
-        "errorDelete": "Falha ao excluir o item.",
-        "searchPlaceholder": "Pesquise Motos ou Setores Registrados.",
-        "noItems": "Nenhum(a)",
-        "found": "encontrado(a).",
-        "successModal": "Operação realizada com sucesso!"
-    },
-    "setorDetails": {
-        "logsTitle": "Logs de Entrada e Saída do Setor",
-        "id": "Id",
-        "name": "Nome",
-        "rfidReadings": "Leituras RFID Recebidas:",
-        "connectingMqtt": "Conectando ao MQTT...",
-        "tag": "Tag",
-        "entering": "Entrando no Setor",
-        "leaving": "Saindo do Setor"
-    },
-    "submitScreen": {
-        "title": "O que deseja Cadastrar?",
-        "cards": {
-            "motos": "Motos",
-            "setores": "Setores"
-        }
-    },
-    "setorItem": {
-        "labels": {
-            "nome": "Nome",
-            "capacidade": "Capacidade",
-            "tipo": "Tipo"
-        },
-        "placeholders": {
-            "nome": "Nome",
-            "capacidade": "Capacidade"
-        },
-        "buttons": {
-            "dashboard": "Dashboard"
-        }
-    },
-    "motoItem": {
-        "labels": {
-            "tag": "TAG",
-            "marca": "MARCA",
-            "placa": "PLACA"
-        },
-        "placeholders": {
-            "tag": "TAG",
-            "marca": "MARCA",
-            "placa": "PLACA"
-        }
+  "landing": {
+    "login": "Login",
+    "newHere": "Novo por aqui?",
+    "connectNow": "Conecte Já",
+    "rights": "Todos os direitos reservados aos criadores.",
+    "github": "github.com/ondetamoto"
+  },
+  "auth": {
+    "welcomeBack": "Bem-vindo de volta",
+    "createAccount": "Crie sua conta",
+    "email": "Email",
+    "password": "Senha",
+    "confirmPassword": "Confirmar Senha",
+    "login": "Entrar",
+    "register": "Cadastrar",
+    "noAccount": "Não possui uma conta? Crie aqui",
+    "hasAccount": "Já possui conta? Entrar",
+    "loginSuccess": "Login realizado!",
+    "invalidToken": "Token Inválido",
+    "loginError": "Erro de Login",
+    "fillAll": "Você precisa preencher todos os campos para continuar!",
+    "passwordMismatch": "As senhas não são iguais!",
+    "registerError": "Erro ao cadastrar o Usuário"
+  },
+  "preCadastro": {
+    "features": [
+      "Organize e monitore motos, setores e acessos em um único lugar.",
+      "Plataforma digital para cadastro, rastreio e gestão de motocicletas.",
+      "Economize tempo e aumente o controle com tecnologia fácil de usar."
+    ],
+    "title": "Simplifique a gestão de sua garagem com a tecnologia mais avançada",
+    "newHere": "Novo por aqui?",
+    "connectNow": "Conecte Já"
+  },
+  "cadastroMoto": {
+    "title": "Cadastro de Moto",
+    "detectar": "Detectar Motocicleta",
+    "searching": "Buscando...",
+    "detected": "Motos Detectadas:",
+    "motoExists": "Moto já existente!",
+    "noMotoDetected": "Nenhuma moto detectada em 1 minuto. Tente novamente."
+  },
+  "cadastroSetor": {
+    "title": "Cadastro de Setor",
+    "fillAll": "Preencha todos os campos!",
+    "error": "Erro ao cadastrar setor!",
+    "name": "Nome personalizado",
+    "size": "Tamanho Máximo Suportado (ex.: 100)",
+    "selectType": "Selecione o tipo do setor",
+    "button": "Cadastrar",
+    "success": "Cadastro Bem-Sucedido!"
+  },
+  "formMoto": {
+    "marca": "Marca",
+    "setor": "Setor",
+    "placa": "Placa",
+    "cadastrar": "Cadastrar",
+    "dataFilled": "Dados preenchidos:",
+    "placaLabel": "Placa:",
+    "marcaLabel": "Marca:",
+    "setorLabel": "Setor:",
+    "clear": "Limpar",
+    "error": "Erro ao cadastrar moto",
+    "success": "Cadastro Bem-Sucedido!",
+    "fillAll": "Preencha todos os campos antes de cadastrar."
+  },
+  "home": {
+    "subtitle": "Garagem 100% digital",
+    "motos": "Motos",
+    "addMoto": "Cadastrar Moto",
+    "setores": "Setores",
+    "addSetor": "Cadastrar Setor",
+    "reminders": "Lembretes",
+    "new": "Novo!"
+  },
+  "notifications": {
+    "title": "Agora você não vai mais esquecer de cadastrar setores e motos!",
+    "markAll": "Marcar todas como lidas",
+    "alertTemp": "Alerta de temperatura",
+    "tempMessage": "A temperatura está acima do limite seguro!",
+    "alertHumidity": "Alerta de umidade",
+    "humidityMessage": "A umidade caiu abaixo do esperado!",
+    "empty": "Nenhuma notificação encontrada.",
+    "reminderTitle1": "🏍️ Hora de revisar!",
+    "reminderSubtitle1": "Verifique novas motos e setores",
+    "reminderBody1": "Pode haver novas motos para cadastrar ou setores que precisam de atenção!",
+    "reminderTitle2": "📋 Lembrete de cadastro",
+    "reminderSubtitle2": "Organize suas motos e setores",
+    "reminderBody2": "Dê uma olhadinha — pode ser o momento ideal pra atualizar tudo!",
+    "reminderTitle3": "🚀 Bora manter tudo em ordem?",
+    "reminderSubtitle3": "Motos e setores esperando por você!",
+    "reminderBody3": "Confira se há algo novo para cadastrar no app!",
+    "permissionDenied": "Sem permissão para notificações",
+    "enableNotifications": "Habilite as notificações para continuar.",
+    "notificationScheduled": "Notificação agendada!",
+    "notificationScheduledAt": "Ela será exibida em {{date}}",
+    "subtitle": "Escolha o dia e horário para receber um lembrete personalizado."
+  },
+  "searchScreen": {
+    "confirmTitle": "Confirmação",
+    "confirmDelete": "Deseja realmente excluir este item?",
+    "cancel": "Cancelar",
+    "delete": "Excluir",
+    "errorTitle": "Erro",
+    "errorUpdate": "Falha ao atualizar setor.",
+    "errorDelete": "Falha ao excluir o item.",
+    "searchPlaceholder": "Pesquise Motos ou Setores Registrados.",
+    "noItems": "Nenhum(a)",
+    "found": "encontrado(a).",
+    "successModal": "Operação realizada com sucesso!"
+  },
+  "setorDetails": {
+    "logsTitle": "Logs de Entrada e Saída do Setor",
+    "id": "Id",
+    "name": "Nome",
+    "rfidReadings": "Leituras RFID Recebidas:",
+    "connectingMqtt": "Conectando ao MQTT...",
+    "tag": "Tag",
+    "entering": "Entrando no Setor",
+    "leaving": "Saindo do Setor"
+  },
+  "submitScreen": {
+    "title": "O que deseja Cadastrar?",
+    "cards": {
+      "motos": "Motos",
+      "setores": "Setores"
     }
+  },
+  "setorItem": {
+    "labels": {
+      "nome": "Nome",
+      "capacidade": "Capacidade",
+      "tipo": "Tipo"
+    },
+    "placeholders": {
+      "nome": "Nome",
+      "capacidade": "Capacidade"
+    },
+    "buttons": {
+      "dashboard": "Dashboard"
+    }
+  },
+  "motoItem": {
+    "labels": {
+      "tag": "TAG",
+      "marca": "MARCA",
+      "placa": "PLACA"
+    },
+    "placeholders": {
+      "tag": "TAG",
+      "marca": "MARCA",
+      "placa": "PLACA"
+    }
+  }
 }

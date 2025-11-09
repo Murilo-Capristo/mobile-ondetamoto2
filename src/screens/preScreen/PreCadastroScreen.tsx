@@ -17,10 +17,7 @@ import React from 'react';
 const { width, height } = Dimensions.get('window');
 const roxo_escuro = '#9F0095';
 
-type PreCadastroScreenNavigationProp = NativeStackNavigationProp<
-  RootStackParamList,
-  'PreCadastro'
->;
+type PreCadastroScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'PreCadastro'>;
 
 export default function PreCadastro() {
   const navigation = useNavigation<PreCadastroScreenNavigationProp>();
@@ -52,10 +49,7 @@ export default function PreCadastro() {
         <Text style={styles.title}>{t('preCadastro.title')}</Text>
 
         <Text style={styles.textBelowButton}>{t('preCadastro.newHere')}</Text>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.push('Login')}
-        >
+        <TouchableOpacity style={styles.button} onPress={() => navigation.push('Login')}>
           <Text style={styles.buttonText}>{t('preCadastro.connectNow')}</Text>
         </TouchableOpacity>
       </View>

@@ -18,15 +18,12 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const theme = isDark ? darkTheme : lightTheme;
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, isDark }}>
-      {children}
-    </ThemeContext.Provider>
+    <ThemeContext.Provider value={{ theme, toggleTheme, isDark }}>{children}</ThemeContext.Provider>
   );
 };
 
 export const useThemeContext = () => {
   const context = useContext(ThemeContext);
-  if (!context)
-    throw new Error('useThemeContext deve estar dentro de ThemeProvider');
+  if (!context) throw new Error('useThemeContext deve estar dentro de ThemeProvider');
   return context;
 };

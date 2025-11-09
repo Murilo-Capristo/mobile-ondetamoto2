@@ -16,9 +16,6 @@ type AuthContextType = {
 //Criando contexto vazio com valores padrão
 const AuthContext = createContext<AuthContextType | null>(null);
 
-
-
-
 //Provedor de autenticação
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUserState] = useState<User | null>(null);
@@ -38,11 +35,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUserState(newUser);
   };
 
-  return (
-    <AuthContext.Provider value={{ user, setUser }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ user, setUser }}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {

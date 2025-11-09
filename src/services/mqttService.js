@@ -11,7 +11,7 @@ export function connectMotoMqtt(onMessageCallback, onErrorCallback) {
     MQTT_HOST,
     MQTT_PORT,
     '/mqtt',
-    'clientId-' + Math.random().toString(16).substr(2, 8),
+    'clientId-' + Math.random().toString(16).substr(2, 8)
   );
 
   client.connect({
@@ -22,13 +22,13 @@ export function connectMotoMqtt(onMessageCallback, onErrorCallback) {
       console.log('MQTT conectado');
       client.subscribe(MQTT_TOPIC);
     },
-    onFailure: (err) => {
+    onFailure: err => {
       console.error('Erro ao conectar MQTT:', err);
       if (onErrorCallback) onErrorCallback(err);
     },
   });
 
-  client.onMessageArrived = (message) => {
+  client.onMessageArrived = message => {
     try {
       const payload = JSON.parse(message.payloadString);
       console.log('Mensagem recebida do MQTT:', payload);
@@ -38,7 +38,7 @@ export function connectMotoMqtt(onMessageCallback, onErrorCallback) {
     }
   };
 
-  client.onConnectionLost = (responseObject) => {
+  client.onConnectionLost = responseObject => {
     if (responseObject.errorCode !== 0) {
       console.log('Conexão perdida: ' + responseObject.errorMessage);
     }

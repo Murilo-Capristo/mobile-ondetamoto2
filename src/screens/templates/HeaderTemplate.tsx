@@ -7,10 +7,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useThemeContext } from '../../context/ThemeContext'; // Importa o contexto
 import LogoutDialog from '../../components/LogoutDialog';
 import { useAuth } from '../../context/UserContext';
-import i18n from "../../i18n/i88n";
+import i18n from '../../i18n/i88n';
 import { useLanguage } from '../../context/LanguageContext';
-
-
 
 const roxo = '#f900cf';
 
@@ -20,8 +18,6 @@ export default function HeaderTemplate() {
   const { theme, toggleTheme, isDark } = useThemeContext(); // Acesso ao tema
   const [logoutDialogVisible, setLogoutDialogVisible] = useState(false);
   const { language, setLanguage } = useLanguage();
-
-
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem('usuario');
@@ -33,29 +29,22 @@ export default function HeaderTemplate() {
 
   const toggleLanguage = async () => {
     const newLang = language === 'pt' ? 'es' : 'pt';
-    setLanguage(newLang);              // Atualiza o contexto global
-    i18n.changeLanguage(newLang);      // Atualiza o i18n
+    setLanguage(newLang); // Atualiza o contexto global
+    i18n.changeLanguage(newLang); // Atualiza o i18n
     await AsyncStorage.setItem('language', newLang); // Salva preferência
   };
 
-
   return (
-    
     <View style={[styles.header, { backgroundColor: theme.colors.background }]}>
       <View style={styles.topHeader}>
         {/* Botão de Perfil */}
         <TouchableOpacity style={styles.linkProfile} onPress={() => setLogoutDialogVisible(true)}>
-          <Icon
-            name="person-circle-outline"
-            size={30}
-            color={theme.colors.onBackground}
-          />
-          <Text
-            style={[styles.textProfile, { color: theme.colors.onBackground }]}
-          >
+          <Icon name="person-circle-outline" size={30} color={theme.colors.onBackground} />
+          <Text style={[styles.textProfile, { color: theme.colors.onBackground }]}>
             {user?.email
-            ? user.email.split('@')[0].charAt(0).toUpperCase() + user.email.split('@')[0].slice(1).toLowerCase()
-            : 'Logout'}
+              ? user.email.split('@')[0].charAt(0).toUpperCase() +
+                user.email.split('@')[0].slice(1).toLowerCase()
+              : 'Logout'}
           </Text>
         </TouchableOpacity>
 
@@ -75,12 +64,8 @@ export default function HeaderTemplate() {
           </Text>
         </TouchableOpacity>
 
-
         {/* Logo */}
-        <Image
-          source={require('../../../assets/logo-preenchida.png')}
-          style={styles.logo}
-        />
+        <Image source={require('../../../assets/logo-preenchida.png')} style={styles.logo} />
       </View>
 
       {/* Título */}
@@ -94,7 +79,6 @@ export default function HeaderTemplate() {
         onCancel={() => setLogoutDialogVisible(false)}
         onConfirm={handleLogout}
       />
-
     </View>
   );
 }
@@ -119,13 +103,13 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     textAlign: 'center',
   },
-    languageToggle: {
+  languageToggle: {
     position: 'absolute',
     right: 70,
     top: 33,
-    backgroundColor: "#7e7e7e",
+    backgroundColor: '#7e7e7e',
     padding: 2,
-    borderRadius: 12
+    borderRadius: 12,
   },
   textTitle: {
     fontSize: 20,

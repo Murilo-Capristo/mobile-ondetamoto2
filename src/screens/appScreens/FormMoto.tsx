@@ -17,10 +17,9 @@ import {
 } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 
-
 export default function FormMoto() {
-    const { t } = useTranslation();
-  
+  const { t } = useTranslation();
+
   const [isModalVisible, setModalVisible] = useState(false);
   const [setores, setSetores] = useState<{ id: number; nome: string }[]>([]);
   const route = useRoute();
@@ -29,14 +28,12 @@ export default function FormMoto() {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [dropdownSetorVisible, setDropdownSetorVisible] = useState(false);
   const [marca, setMarca] = useState<string | null>(null);
-  const [selectedSetor, setSelectedSetor] = useState<number | null>(
-    setor ? Number(setor) : null,
-  );
+  const [selectedSetor, setSelectedSetor] = useState<number | null>(setor ? Number(setor) : null);
   const [placa, setPlaca] = useState('');
   const [loading, setLoading] = useState(false);
   const { theme } = useThemeContext();
   const { createMoto } = useMotoService();
-  const { getSetores} = useSetorService();
+  const { getSetores } = useSetorService();
 
   useEffect(() => {
     const loadSetores = async () => {
@@ -85,166 +82,155 @@ export default function FormMoto() {
   };
 
   return (
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: theme.colors.background }}
+      edges={['top', 'left', 'right']}
+    >
+      <Provider theme={theme}>
+        <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
+          <HeaderReduzida />
 
-<SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background  }} edges={['top', 'left', 'right']}>
-    <Provider theme={theme}>
-      <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
-        <HeaderReduzida />
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.voltarBtn}>
+            <IconIon name="arrow-back" size={28} color={theme.colors.primary} />
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.voltarBtn}
-        >
-          <IconIon name="arrow-back" size={28} color={theme.colors.primary} />
-        </TouchableOpacity>
+          <View
+            style={[
+              styles.container,
+              {
+                backgroundColor: theme.colors.surface,
+                borderColor: theme.colors.outline,
+              },
+            ]}
+          >
+            <View style={styles.tag}>
+              <Text style={[styles.textTag, { color: theme.colors.primary }]}>Tag {tagId}</Text>
+            </View>
 
-        <View
-          style={[
-            styles.container,
-            {
-              backgroundColor: theme.colors.surface,
-              borderColor: theme.colors.outline,
-            },
-          ]}
-        >
-          <View style={styles.tag}>
-            <Text style={[styles.textTag, { color: theme.colors.primary }]}>
-              Tag {tagId}
-            </Text>
-          </View>
-
-          {/* Input Marca */}
-          <View style={{ width: '100%', alignItems: 'center' }}>
-            <TextInput
-              style={[styles.placa, { borderBottomColor: theme.colors.outline, color: '#f900cf' }]}
-              placeholder={t('formMoto.marcaLabel')}
-              placeholderTextColor={theme.colors.outline}
-              value={marca}
-              onChangeText={setMarca}
-            />
-          </View>
-          <View style={styles.drawer}>
-            {/* Dropdown Setor */}
-            <Menu
-              visible={dropdownSetorVisible}
-              onDismiss={() => setDropdownSetorVisible(false)}
-              anchor={
-                <TouchableOpacity
-                  onPress={() => setDropdownSetorVisible(true)}
-                  style={[
-                    styles.dropdown,
-                    { borderBottomColor: theme.colors.outline },
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.dropdownText,
-                      {
-                        color: selectedSetor
-                          ? theme.colors.primary
-                          : theme.colors.outline,
-                      },
-                    ]}
+            {/* Input Marca */}
+            <View style={{ width: '100%', alignItems: 'center' }}>
+              <TextInput
+                style={[
+                  styles.placa,
+                  { borderBottomColor: theme.colors.outline, color: '#f900cf' },
+                ]}
+                placeholder={t('formMoto.marcaLabel')}
+                placeholderTextColor={theme.colors.outline}
+                value={marca}
+                onChangeText={setMarca}
+              />
+            </View>
+            <View style={styles.drawer}>
+              {/* Dropdown Setor */}
+              <Menu
+                visible={dropdownSetorVisible}
+                onDismiss={() => setDropdownSetorVisible(false)}
+                anchor={
+                  <TouchableOpacity
+                    onPress={() => setDropdownSetorVisible(true)}
+                    style={[styles.dropdown, { borderBottomColor: theme.colors.outline }]}
                   >
-                    {selectedSetor
-                      ? setores.find((s) => s.id === selectedSetor)?.nome
-                      : t('formMoto.setor')}
-                  </Text>
-                  <Icon
-                    name="chevron-down"
-                    size={20}
-                    color={theme.colors.onSurface}
+                    <Text
+                      style={[
+                        styles.dropdownText,
+                        {
+                          color: selectedSetor ? theme.colors.primary : theme.colors.outline,
+                        },
+                      ]}
+                    >
+                      {selectedSetor
+                        ? setores.find(s => s.id === selectedSetor)?.nome
+                        : t('formMoto.setor')}
+                    </Text>
+                    <Icon name="chevron-down" size={20} color={theme.colors.onSurface} />
+                  </TouchableOpacity>
+                }
+              >
+                {setores.map(s => (
+                  <Menu.Item
+                    key={s.id}
+                    onPress={() => {
+                      setSelectedSetor(s.id);
+                      setDropdownSetorVisible(false);
+                    }}
+                    title={s.nome}
+                    titleStyle={{ color: theme.colors.primary }}
                   />
-                </TouchableOpacity>
-              }
-            >
-              {setores.map((s) => (
-                <Menu.Item
-                  key={s.id}
-                  onPress={() => {
-                    setSelectedSetor(s.id);
-                    setDropdownSetorVisible(false);
-                  }}
-                  title={s.nome}
-                  titleStyle={{ color: theme.colors.primary }}
-                />
-              ))}
-            </Menu>
-          </View>
-          {/*Input Placa */}
-          <View style={{ width: '100%', alignItems: 'center' }}>
-            <TextInput
-              style={[styles.placa, { borderBottomColor: theme.colors.outline, color: '#f900cf' }]}
-              placeholder={t('formMoto.placaLabel')}
-              placeholderTextColor={theme.colors.outline}
-              value={placa}
-              onChangeText={setPlaca}
-            />
-          </View>
-        </View>
-
-        {/* Botão cadastrar */}
-        <View style={styles.containerBotao}>
-          <TouchableOpacity
-            style={[styles.cadasBtn, { backgroundColor: theme.colors.primary }]}
-            onPress={handleCadastro}
-            disabled={loading}
-          >
-            {loading ? (
-              <ActivityIndicator size="small" color="#fff" />
-            ) : (
-              <Text style={styles.cadasText}>{t('formMoto.cadastrar')}</Text>
-            )}
-          </TouchableOpacity>
-        </View>
-
-        {/* Dados preenchidos */}
-        <View style={styles.dadosContainer}>
-          <Text style={[styles.dadosTitulo, { color: theme.colors.primary }]}>
-            {t('formMoto.dataFilled')}
-          </Text>
-          <Text style={[styles.dadosTexto, { color: theme.colors.onSurface }]}>
-            {t('formMoto.placaLabel')} {placa || '-'}
-          </Text>
-          <Text style={[styles.dadosTexto, { color: theme.colors.onSurface }]}>
-            {t('formMoto.marcaLabel')} {marca || '-'}
-          </Text>
-          <Text style={[styles.dadosTexto, { color: theme.colors.onSurface }]}>
-            {t('formMoto.setorLabel')}{' '}
-            {selectedSetor
-              ? setores.find((s) => s.id === selectedSetor)?.nome
-              : '-'}
-          </Text>
-
-          <TouchableOpacity
-            style={[styles.limparBtn, { backgroundColor: theme.colors.error }]}
-            onPress={handleLimpar}
-          >
-            <Text style={styles.limparText}>{t('formMoto.clear')}</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Modal de sucesso */}
-        <Modal
-          visible={isModalVisible}
-          transparent
-          onRequestClose={() => setModalVisible(false)}
-        >
-          <View style={styles.modal}>
-            <View
-              style={[styles.modalContainer, { backgroundColor: theme.colors.success || "#4CAF50" }]}
-            >
-              <Text style={styles.modalTitle}>{t('formMoto.success')}</Text>
+                ))}
+              </Menu>
+            </View>
+            {/*Input Placa */}
+            <View style={{ width: '100%', alignItems: 'center' }}>
+              <TextInput
+                style={[
+                  styles.placa,
+                  { borderBottomColor: theme.colors.outline, color: '#f900cf' },
+                ]}
+                placeholder={t('formMoto.placaLabel')}
+                placeholderTextColor={theme.colors.outline}
+                value={placa}
+                onChangeText={setPlaca}
+              />
             </View>
           </View>
-        </Modal>
 
-      </View>
-    </Provider>
+          {/* Botão cadastrar */}
+          <View style={styles.containerBotao}>
+            <TouchableOpacity
+              style={[styles.cadasBtn, { backgroundColor: theme.colors.primary }]}
+              onPress={handleCadastro}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <Text style={styles.cadasText}>{t('formMoto.cadastrar')}</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+
+          {/* Dados preenchidos */}
+          <View style={styles.dadosContainer}>
+            <Text style={[styles.dadosTitulo, { color: theme.colors.primary }]}>
+              {t('formMoto.dataFilled')}
+            </Text>
+            <Text style={[styles.dadosTexto, { color: theme.colors.onSurface }]}>
+              {t('formMoto.placaLabel')} {placa || '-'}
+            </Text>
+            <Text style={[styles.dadosTexto, { color: theme.colors.onSurface }]}>
+              {t('formMoto.marcaLabel')} {marca || '-'}
+            </Text>
+            <Text style={[styles.dadosTexto, { color: theme.colors.onSurface }]}>
+              {t('formMoto.setorLabel')}{' '}
+              {selectedSetor ? setores.find(s => s.id === selectedSetor)?.nome : '-'}
+            </Text>
+
+            <TouchableOpacity
+              style={[styles.limparBtn, { backgroundColor: theme.colors.error }]}
+              onPress={handleLimpar}
+            >
+              <Text style={styles.limparText}>{t('formMoto.clear')}</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Modal de sucesso */}
+          <Modal visible={isModalVisible} transparent onRequestClose={() => setModalVisible(false)}>
+            <View style={styles.modal}>
+              <View
+                style={[
+                  styles.modalContainer,
+                  { backgroundColor: theme.colors.success || '#4CAF50' },
+                ]}
+              >
+                <Text style={styles.modalTitle}>{t('formMoto.success')}</Text>
+              </View>
+            </View>
+          </Modal>
+        </View>
+      </Provider>
     </SafeAreaView>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -297,14 +283,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     flexDirection: 'row',
   },
-placa: {
-  width: '85%',           
-  borderBottomWidth: 1,  
-  borderRadius: 5,
-  paddingVertical: 5,
-  paddingHorizontal: 10,
-  marginBottom: 20,
-},
+  placa: {
+    width: '85%',
+    borderBottomWidth: 1,
+    borderRadius: 5,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    marginBottom: 20,
+  },
   modal: {
     flex: 1,
     justifyContent: 'flex-start',

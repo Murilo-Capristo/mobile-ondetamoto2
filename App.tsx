@@ -1,19 +1,19 @@
 import React from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 // NÃO IMPORTE O RootNavigator AQUI EM CIMA
-// import RootNavigator from './src/navigation/RootNavigator'; 
+// import RootNavigator from './src/navigation/RootNavigator';
 import { PaperProvider } from 'react-native-paper';
 import { ThemeProvider, useThemeContext } from './src/context/ThemeContext';
 import { AuthProvider } from './src/context/UserContext';
 import { LanguageProvider } from './src/context/LanguageContext';
-import "./src/i18n/i88n"
+import './src/i18n/i88n';
 export default function App() {
   return (
     <AuthProvider>
       <LanguageProvider>
-      <ThemeProvider>
-        <MainApp />
-      </ThemeProvider>
+        <ThemeProvider>
+          <MainApp />
+        </ThemeProvider>
       </LanguageProvider>
     </AuthProvider>
   );

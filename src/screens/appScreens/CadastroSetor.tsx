@@ -15,11 +15,10 @@ import { useNavigation } from '@react-navigation/native';
 import { useThemeContext } from '../../context/ThemeContext';
 import { useSetorService } from '../../services/setorService';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTranslation } from 'react-i18next'; 
+import { useTranslation } from 'react-i18next';
 
 export default function CadastroSetor() {
-      const { t } = useTranslation(); 
-  
+  const { t } = useTranslation();
 
   const navigation = useNavigation();
   const [isModalVisible, setModalVisible] = useState(false);
@@ -36,18 +35,18 @@ export default function CadastroSetor() {
 
   const handleCadastro = async () => {
     if (!nome || !tamanho || !tipo) {
-    alert(t('cadastroSetor.fillAll'));
+      alert(t('cadastroSetor.fillAll'));
 
       return;
     }
 
     setLoading(true);
     try {
-      await createSetor({ 
+      await createSetor({
         nome,
         tamanho: tamanho.toString(),
         tipo,
-        idEstabelecimento 
+        idEstabelecimento,
       });
       setModalVisible(true);
       setTimeout(() => {
@@ -55,7 +54,7 @@ export default function CadastroSetor() {
         navigation.popToTop();
       }, 2000);
     } catch (err) {
-    alert(t('cadastroSetor.error'));
+      alert(t('cadastroSetor.error'));
     } finally {
       setLoading(false);
     }
@@ -69,10 +68,7 @@ export default function CadastroSetor() {
       <Provider theme={theme}>
         <View style={{ flex: 1, backgroundColor: theme.colors.surface }}>
           <HeaderReduzida />
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={styles.voltarBtn}
-          >
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.voltarBtn}>
             <IconIon name="arrow-back" size={28} color={theme.colors.primary} />
           </TouchableOpacity>
 
@@ -117,16 +113,22 @@ export default function CadastroSetor() {
             </View>
 
             {/* Dropdown Tipo */}
-            <View style={[styles.inputWrapper, { borderBottomColor: theme.colors.outline, borderBottomWidth: 0, paddingVertical: 8 }]}>
+            <View
+              style={[
+                styles.inputWrapper,
+                {
+                  borderBottomColor: theme.colors.outline,
+                  borderBottomWidth: 0,
+                  paddingVertical: 8,
+                },
+              ]}
+            >
               <Menu
                 visible={menuVisible}
                 onDismiss={() => setMenuVisible(false)}
                 anchor={
                   <TouchableOpacity
-                    style={[
-                      styles.dropdownButton,
-                      { borderColor: theme.colors.outline },
-                    ]}
+                    style={[styles.dropdownButton, { borderColor: theme.colors.outline }]}
                     onPress={() => setMenuVisible(true)}
                   >
                     <Text
@@ -136,15 +138,11 @@ export default function CadastroSetor() {
                     >
                       {tipo || t('cadastroSetor.selectType')}
                     </Text>
-                    <IconIon
-                      name="chevron-down"
-                      size={20}
-                      color={theme.colors.primary}
-                    />
+                    <IconIon name="chevron-down" size={20} color={theme.colors.primary} />
                   </TouchableOpacity>
                 }
               >
-                {tiposSetor.map((item) => (
+                {tiposSetor.map(item => (
                   <Menu.Item
                     key={item}
                     onPress={() => {
@@ -167,24 +165,14 @@ export default function CadastroSetor() {
               {loading ? (
                 <ActivityIndicator size="small" color="#fff" />
               ) : (
-                <Text style={styles.cadasText}>{t('cadastroSetor.button')}
-</Text>
+                <Text style={styles.cadasText}>{t('cadastroSetor.button')}</Text>
               )}
             </TouchableOpacity>
           </View>
           {/* Modal de sucesso */}
-          <Modal
-            visible={isModalVisible}
-            transparent
-            onRequestClose={() => setModalVisible(false)}
-          >
-          <View style={styles.modal}>
-              <View
-                style={[
-                  styles.modalContainer,
-                  { backgroundColor: theme.colors.success  },
-                ]}
-              >
+          <Modal visible={isModalVisible} transparent onRequestClose={() => setModalVisible(false)}>
+            <View style={styles.modal}>
+              <View style={[styles.modalContainer, { backgroundColor: theme.colors.success }]}>
                 <Text style={styles.modalTitle}>{t('cadastroSetor.success')}</Text>
               </View>
             </View>
@@ -224,13 +212,13 @@ const styles = StyleSheet.create({
   },
 
   inputWrapper: {
-    width: '85%',           
-    borderBottomWidth: 1,   
+    width: '85%',
+    borderBottomWidth: 1,
     marginBottom: 16,
     alignSelf: 'center',
   },
   input: {
-    width: '100%',          
+    width: '100%',
     paddingVertical: 8,
     fontSize: 16,
   },

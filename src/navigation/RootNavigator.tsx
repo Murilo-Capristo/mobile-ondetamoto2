@@ -35,10 +35,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export default function RootNavigator() {
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="Splash"
-        screenOptions={{ headerShown: false }}
-      >
+      <Stack.Navigator initialRouteName="Splash" screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Splash" component={Splash} />
         <Stack.Screen name="Landing" component={Landing} />
         <Stack.Screen name="PreCadastro" component={PreCadastro} />
@@ -46,10 +43,7 @@ export default function RootNavigator() {
         <Stack.Screen name="CadastroMoto" component={CadastroMoto} />
         <Stack.Screen name="CadastroSetor" component={CadastroSetor} />
         <Stack.Screen name="FormMoto" component={FormMoto} />
-        <Stack.Screen
-          name="SetorDetailsScreen"
-          component={SetorDetailsScreen}
-        />
+        <Stack.Screen name="SetorDetailsScreen" component={SetorDetailsScreen} />
 
         <Stack.Screen
           name="HomeScreen"
