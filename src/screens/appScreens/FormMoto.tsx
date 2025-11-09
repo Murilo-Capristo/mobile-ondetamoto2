@@ -28,7 +28,7 @@ export default function FormMoto() {
   const navigation = useNavigation();
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [dropdownSetorVisible, setDropdownSetorVisible] = useState(false);
-  const [selectedTipo, setSelectedTipo] = useState<string | null>(null);
+  const [marca, setMarca] = useState<string | null>(null);
   const [selectedSetor, setSelectedSetor] = useState<number | null>(
     setor ? Number(setor) : null,
   );
@@ -42,7 +42,7 @@ export default function FormMoto() {
     const loadSetores = async () => {
       try {
         const data = await getSetores(0);
-        setSetores(data);
+        setSetores(data.content || []);
       } catch (err) {
         console.error('Erro ao carregar setores:', err);
       }
@@ -51,7 +51,7 @@ export default function FormMoto() {
   }, []);
 
   const handleCadastro = async () => {
-    if (!selectedTipo || !placa || !selectedSetor) {
+    if (!marca || !placa || !selectedSetor) {
       alert(t('formMoto.fillAll'));
       return;
     }
@@ -59,10 +59,10 @@ export default function FormMoto() {
     setLoading(true);
     try {
       await createMoto({
-        nome: selectedTipo,
+        marca: marca,
         tag: tagId,
         placa: placa,
-        setorId: selectedSetor,
+        idSetores: selectedSetor,
       });
 
       setModalVisible(true);
@@ -80,7 +80,7 @@ export default function FormMoto() {
 
   const handleLimpar = () => {
     setPlaca('');
-    setSelectedTipo(null);
+    setSelectedMarca(null);
     setSelectedSetor(null);
   };
 
@@ -113,52 +113,17 @@ export default function FormMoto() {
             </Text>
           </View>
 
-          {/* Dropdown Tipo */}
+          {/* Input Marca */}
+          <View style={{ width: '100%', alignItems: 'center' }}>
+            <TextInput
+              style={[styles.placa, { borderBottomColor: theme.colors.outline, color: '#f900cf' }]}
+              placeholder={t('formMoto.marcaLabel')}
+              placeholderTextColor={theme.colors.outline}
+              value={marca}
+              onChangeText={setMarca}
+            />
+          </View>
           <View style={styles.drawer}>
-            <Menu
-              visible={dropdownVisible}
-              onDismiss={() => setDropdownVisible(false)}
-              anchor={
-                <TouchableOpacity
-                  onPress={() => setDropdownVisible(true)}
-                  style={[
-                    styles.dropdown,
-                    { borderBottomColor: theme.colors.outline },
-                  ]}
-                >
-                  <Text
-                    style={[
-                      styles.dropdownText,
-                      {
-                        color: selectedTipo
-                          ? theme.colors.primary
-                          : theme.colors.outline,
-                      },
-                    ]}
-                  >
-                    {selectedTipo || t('formMoto.tipo')}
-                  </Text>
-                  <Icon
-                    name="chevron-down"
-                    size={20}
-                    color={theme.colors.onSurface}
-                  />
-                </TouchableOpacity>
-              }
-            >
-              {['Quebrada', 'Ok'].map((option) => (
-                <Menu.Item
-                  key={option}
-                  onPress={() => {
-                    setSelectedTipo(option);
-                    setDropdownVisible(false);
-                  }}
-                  title={option}
-                  titleStyle={{ color: theme.colors.primary }}
-                />
-              ))}
-            </Menu>
-
             {/* Dropdown Setor */}
             <Menu
               visible={dropdownSetorVisible}
@@ -206,14 +171,16 @@ export default function FormMoto() {
               ))}
             </Menu>
           </View>
-
-          <TextInput
-            style={[styles.placa, { borderBottomColor: theme.colors.outline, color: '#f900cf' }]}
-            placeholder={t('formMoto.placaLabel')}
-            placeholderTextColor={theme.colors.outline}
-            value={placa}
-            onChangeText={setPlaca}
-          />
+          {/*Input Placa */}
+          <View style={{ width: '100%', alignItems: 'center' }}>
+            <TextInput
+              style={[styles.placa, { borderBottomColor: theme.colors.outline, color: '#f900cf' }]}
+              placeholder={t('formMoto.placaLabel')}
+              placeholderTextColor={theme.colors.outline}
+              value={placa}
+              onChangeText={setPlaca}
+            />
+          </View>
         </View>
 
         {/* Botão cadastrar */}
@@ -240,7 +207,7 @@ export default function FormMoto() {
             {t('formMoto.placaLabel')} {placa || '-'}
           </Text>
           <Text style={[styles.dadosTexto, { color: theme.colors.onSurface }]}>
-            {t('formMoto.tipoLabel')} {selectedTipo || '-'}
+            {t('formMoto.marcaLabel')} {marca || '-'}
           </Text>
           <Text style={[styles.dadosTexto, { color: theme.colors.onSurface }]}>
             {t('formMoto.setorLabel')}{' '}
@@ -265,12 +232,13 @@ export default function FormMoto() {
         >
           <View style={styles.modal}>
             <View
-              style={[styles.modalContainer, { backgroundColor: theme.colors.success }]}
+              style={[styles.modalContainer, { backgroundColor: theme.colors.success || "#4CAF50" }]}
             >
               <Text style={styles.modalTitle}>{t('formMoto.success')}</Text>
             </View>
           </View>
         </Modal>
+
       </View>
     </Provider>
     </SafeAreaView>
@@ -329,15 +297,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     flexDirection: 'row',
   },
-  placa: {
-    alignSelf: 'flex-start',
-    marginLeft: 65,
-    borderRadius: 5,
-    marginBottom: 20,
-    borderBottomWidth: 1,
-    paddingRight: 150,
-    paddingBottom: 3,
-  },
+placa: {
+  width: '85%',           
+  borderBottomWidth: 1,  
+  borderRadius: 5,
+  paddingVertical: 5,
+  paddingHorizontal: 10,
+  marginBottom: 20,
+},
   modal: {
     flex: 1,
     justifyContent: 'flex-start',

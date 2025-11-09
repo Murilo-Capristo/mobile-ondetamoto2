@@ -172,21 +172,20 @@ export default function CadastroSetor() {
               )}
             </TouchableOpacity>
           </View>
-
+          {/* Modal de sucesso */}
           <Modal
             visible={isModalVisible}
             transparent
             onRequestClose={() => setModalVisible(false)}
           >
-            <View style={styles.modal}>
+          <View style={styles.modal}>
               <View
                 style={[
                   styles.modalContainer,
-                  { backgroundColor: theme.colors.success },
+                  { backgroundColor: theme.colors.success  },
                 ]}
               >
-                <Text style={styles.modalTitle}>{t('cadastroSetor.success')}
-</Text>
+                <Text style={styles.modalTitle}>{t('cadastroSetor.success')}</Text>
               </View>
             </View>
           </Modal>
@@ -269,8 +268,11 @@ const styles = StyleSheet.create({
   },
 
   modal: {
+    flex: 1,
     justifyContent: 'flex-start',
-    margin: 0,
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.2)',
+    paddingTop: 50,
   },
   modalContainer: {
     padding: 10,

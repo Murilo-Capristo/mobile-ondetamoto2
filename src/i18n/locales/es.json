@@ -53,13 +53,13 @@
         "success": "¡Registro exitoso!"
     },
     "formMoto": {
-        "tipo": "Tipo",
+        "marca": "Marca",
         "setor": "Sector",
         "placa": "Placa",
         "cadastrar": "Registrar",
         "dataFilled": "Datos ingresados:",
         "placaLabel": "Placa:",
-        "tipoLabel": "Tipo:",
+        "marcaLabel": "Marca:",
         "setorLabel": "Sector:",
         "clear": "Limpiar",
         "error": "Error al registrar la moto",

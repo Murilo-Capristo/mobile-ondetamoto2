@@ -52,13 +52,13 @@
         "success": "Cadastro Bem-Sucedido!"
     },
     "formMoto": {
-        "tipo": "Tipo",
+        "marca": "Marca",
         "setor": "Setor",
         "placa": "Placa",
         "cadastrar": "Cadastrar",
         "dataFilled": "Dados preenchidos:",
         "placaLabel": "Placa:",
-        "tipoLabel": "Tipo:",
+        "marcaLabel": "Marca:",
         "setorLabel": "Setor:",
         "clear": "Limpar",
         "error": "Erro ao cadastrar moto",
