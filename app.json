@@ -9,18 +9,27 @@
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/logo-preenchida.png",
-      "resizeMode": "center",
+      "resizeMode": "fit",
       "backgroundColor": "#ffffff"
     },
     "ios": {
       "supportsTablet": true
     },
     "android": {
-      "icon": "./assets/logo-preenchida.png"
+      "icon": "./assets/logo-preenchida.png",
+      "package": "com.murilocapristo.ondetamoto"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["expo-localization"]
+    "plugins": [
+      "expo-localization"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "ed898e4e-b386-4213-b323-26bd3cb8ca21"
+      }
+    },
+    "owner": "murilocapristo"
   }
 }
