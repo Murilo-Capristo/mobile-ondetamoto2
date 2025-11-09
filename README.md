@@ -31,6 +31,14 @@ Baixe e instale o app **OndeTáMoto** no seu dispositivo Android utilizando o QR
 
 ---
 
+## ⚠️ Aviso sobre MQTT
+
+A função de detectar motos em tempo real via **MQTT** **não funciona no app publicado**.  
+Funciona normalmente apenas no ambiente de desenvolvimento.
+- Em ambiente de desenvolvimento, conexões HTTP/WS podem funcionar, mas no app publicado, apenas conexões seguras são permitidas.
+
+---
+
 ## 📱 Sobre o Projeto
 
 O **OndeTáMoto** é uma solução web e mobile integrada, que permite identificar ou registrar motocicletas por meio de **tags RFID** e um **leitor Bluetooth externo**, sem necessidade de hardware fixo na moto.
